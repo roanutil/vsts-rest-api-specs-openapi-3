@@ -1,0 +1,875 @@
+openapi: 3.0.1
+info:
+  title: PipelinesChecks
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 7.0-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Check Configurations
+- name: Check Evaluations
+paths:
+  /{organization}/{project}/_apis/pipelines/checks/configurations:
+    get:
+      tags:
+      - Check Configurations
+      description: Get Check configuration by resource type and id
+      operationId: Check Configurations_List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: resourceType
+        in: query
+        description: resource type
+        schema:
+          type: string
+      - name: resourceId
+        in: query
+        description: resource id
+        schema:
+          type: string
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - settings
+          x-ms-enum:
+            name: CheckConfigurationExpandParameter
+            values:
+            - value: none
+              description: ""
+            - value: settings
+              description: ""
+        x-ms-enum:
+          name: CheckConfigurationExpandParameter
+          values:
+          - value: none
+            description: ""
+          - value: settings
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CheckConfiguration'
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: configurations
+      x-ms-vss-method: GetCheckConfigurationsOnResource
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/configurations/GET__CheckConfigurationsOnResource.json
+    post:
+      tags:
+      - Check Configurations
+      description: Add a check configuration
+      operationId: Check Configurations_Add
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckConfiguration'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckConfiguration'
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: configurations
+      x-ms-vss-method: AddCheckConfiguration
+      x-ms-preview: true
+      x-ms-examples:
+        Approval:
+          $ref: ./httpExamples/configurations/POST__AddApprovalCheckConfiguration.json
+        Task Check:
+          $ref: ./httpExamples/configurations/POST__AddTaskCheckConfiguration.json
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/pipelines/checks/configurations/{id}:
+    get:
+      tags:
+      - Check Configurations
+      description: Get Check configuration by Id
+      operationId: Check Configurations_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - settings
+          x-ms-enum:
+            name: CheckConfigurationExpandParameter
+            values:
+            - value: none
+              description: ""
+            - value: settings
+              description: ""
+        x-ms-enum:
+          name: CheckConfigurationExpandParameter
+          values:
+          - value: none
+            description: ""
+          - value: settings
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckConfiguration'
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: configurations
+      x-ms-vss-method: GetCheckConfiguration
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/configurations/GET__CheckConfiguration.json
+    delete:
+      tags:
+      - Check Configurations
+      description: Delete check configuration by id
+      operationId: Check Configurations_Delete
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: check configuration id
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: configurations
+      x-ms-vss-method: DeleteCheckConfiguration
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/configurations/DELETE__CheckConfiguration.json
+    patch:
+      tags:
+      - Check Configurations
+      description: Update check configuration
+      operationId: Check Configurations_Update
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: check configuration id
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: check configuration
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckConfiguration'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckConfiguration'
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: configurations
+      x-ms-vss-method: UpdateCheckConfiguration
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/configurations/PATCH__TaskCheckConfiguration.json
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/pipelines/checks/queryconfigurations:
+    post:
+      tags:
+      - Check Configurations
+      description: Get check configurations for multiple resources by resource type
+        and id.
+      operationId: Check Configurations_Query
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: $expand
+        in: query
+        description: The properties that should be expanded in the list of check configurations.
+        schema:
+          type: string
+          enum:
+          - none
+          - settings
+          x-ms-enum:
+            name: CheckConfigurationExpandParameter
+            values:
+            - value: none
+              description: ""
+            - value: settings
+              description: ""
+        x-ms-enum:
+          name: CheckConfigurationExpandParameter
+          values:
+          - value: none
+            description: ""
+          - value: settings
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: List of resources.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Resource'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CheckConfiguration'
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: queryconfigurations
+      x-ms-vss-method: QueryCheckConfigurationsOnResources
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/queryconfigurations/POST__QueryCheckConfigurationsOnResources.json
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/pipelines/checks/runs:
+    post:
+      tags:
+      - Check Evaluations
+      description: Initiate an evaluation for a check in a pipeline
+      operationId: Check Evaluations_Evaluate
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - resources
+          x-ms-enum:
+            name: CheckSuiteExpandParameter
+            values:
+            - value: none
+              description: ""
+            - value: resources
+              description: ""
+        x-ms-enum:
+          name: CheckSuiteExpandParameter
+          values:
+          - value: none
+            description: ""
+          - value: resources
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckSuiteRequest'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckSuite'
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: runs
+      x-ms-vss-method: EvaluateCheckSuite
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/runs/POST__EvaluateCheckSuite.json
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/pipelines/checks/runs/{checkSuiteId}:
+    get:
+      tags:
+      - Check Evaluations
+      description: Get details for a specific check evaluation
+      operationId: Check Evaluations_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: checkSuiteId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - resources
+          x-ms-enum:
+            name: CheckSuiteExpandParameter
+            values:
+            - value: none
+              description: ""
+            - value: resources
+              description: ""
+        x-ms-enum:
+          name: CheckSuiteExpandParameter
+          values:
+          - value: none
+            description: ""
+          - value: resources
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckSuite'
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: runs
+      x-ms-vss-method: GetCheckSuite
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/runs/GET__CheckSuite.json
+components:
+  schemas:
+    ApprovalCheckConfiguration:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/CheckConfiguration'
+    ApprovalConfig:
+      type: object
+      properties:
+        approvers:
+          type: array
+          description: Ordered list of approvers.
+          items:
+            $ref: '#/components/schemas/IdentityRef'
+        blockedApprovers:
+          type: array
+          description: Identities which are not allowed to approve.
+          items:
+            $ref: '#/components/schemas/IdentityRef'
+        executionOrder:
+          type: string
+          description: Order in which approvers will be actionable.
+          enum:
+          - anyOrder
+          - inSequence
+          x-ms-enum:
+            name: ApprovalExecutionOrder
+            values:
+            - value: anyOrder
+              description: Indicates that the approvers can approve in any order.
+            - value: inSequence
+              description: Indicates that the approvers can only approve in a sequential
+                order(Order in which they were assigned).
+        instructions:
+          type: string
+          description: Instructions for the approver.
+        minRequiredApprovers:
+          type: integer
+          description: Minimum number of approvers that should approve for the entire
+            approval to be considered approved. Defaults to all.
+          format: int32
+      description: Config to create a new approval.
+    ApprovalConfigSettings:
+      description: Config to create a new approval.
+      allOf:
+      - $ref: '#/components/schemas/ApprovalConfig'
+    CheckConfiguration:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/CheckConfigurationRef'
+    CheckConfigurationData:
+      type: object
+      properties:
+        checkConfiguration:
+          $ref: '#/components/schemas/CheckConfiguration'
+        definitionRefId:
+          type: string
+          description: Definition Ref Id of the particular check.
+          format: uuid
+      description: ""
+    CheckConfigurationRef:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Check configuration id.
+          format: int32
+        resource:
+          $ref: '#/components/schemas/Resource'
+        type:
+          $ref: '#/components/schemas/CheckType'
+        url:
+          type: string
+          description: The URL from which one can fetch the configured check.
+      description: ""
+    CheckData:
+      type: object
+      properties:
+        checkConfigurationDataList:
+          type: array
+          description: List of check configuration data
+          items:
+            $ref: '#/components/schemas/CheckConfigurationData'
+        checkDefinitions:
+          type: array
+          description: List of check definitions
+          items:
+            $ref: '#/components/schemas/CheckDefinitionData'
+        timeZoneList:
+          type: array
+          description: List of time zones.
+          items:
+            $ref: '#/components/schemas/TimeZone'
+      description: ""
+    CheckDefinitionData:
+      type: object
+      properties:
+        allowMultipleConfigurations:
+          type: boolean
+          description: Flag to allow multiple configurations of a particular check
+            on a resource.
+        checkDefinition:
+          $ref: '#/components/schemas/JObject'
+        definitionRefId:
+          type: string
+          description: Check DefinitionRef Id
+          format: uuid
+        description:
+          type: string
+          description: Description about the check
+        icon:
+          $ref: '#/components/schemas/CheckIcon'
+        name:
+          type: string
+          description: Name of the check
+        uiContributionDependencies:
+          type: array
+          description: Check UI contribution Dependencies
+          items:
+            type: string
+        uiContributionType:
+          type: string
+          description: Check UI contribution Type
+      description: ""
+    CheckIcon:
+      type: object
+      properties:
+        assetLocation:
+          type: string
+          description: Asset Location of the icon
+        name:
+          type: string
+          description: Name of the icon
+        url:
+          type: string
+          description: Url of the icon
+      description: ""
+    CheckRun:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/CheckRunResult'
+    CheckRunResult:
+      type: object
+      properties:
+        resultMessage:
+          type: string
+        status:
+          type: string
+          enum:
+          - none
+          - queued
+          - running
+          - approved
+          - rejected
+          - canceled
+          - timedOut
+          - failed
+          - completed
+          - all
+          x-ms-enum:
+            name: CheckRunStatus
+            values:
+            - value: none
+              description: ""
+            - value: queued
+              description: ""
+            - value: running
+              description: ""
+            - value: approved
+              description: ""
+            - value: rejected
+              description: ""
+            - value: canceled
+              description: ""
+            - value: timedOut
+              description: ""
+            - value: failed
+              description: ""
+            - value: completed
+              description: ""
+            - value: all
+              description: ""
+      description: ""
+    CheckSuite:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/CheckSuiteRef'
+    CheckSuiteRef:
+      type: object
+      properties:
+        context:
+          $ref: '#/components/schemas/JObject'
+        id:
+          type: string
+          description: Unique suite id generated by the pipeline orchestrator for
+            the pipeline check runs request on the list of resources Pipeline orchestrator
+            will used this identifier to map the check requests on a stage
+          format: uuid
+      description: ""
+    CheckSuiteRequest:
+      type: object
+      properties:
+        context:
+          $ref: '#/components/schemas/JObject'
+        id:
+          type: string
+          format: uuid
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resource'
+      description: ""
+    CheckType:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Gets or sets check type id.
+          format: uuid
+        name:
+          type: string
+          description: Name of the check type.
+      description: ""
+    GenericCheckConfiguration:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/CheckConfiguration'
+    GraphSubjectBase:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        descriptor:
+          type: string
+          description: The descriptor is the primary way to reference the graph subject
+            while the system is running. This field will uniquely identify the same
+            graph subject across both Accounts and Organizations.
+        displayName:
+          type: string
+          description: This is the non-unique display name of the graph subject. To
+            change this field, you must alter its value in the source provider.
+        url:
+          type: string
+          description: This url is the full route to the source resource of this graph
+            subject.
+      description: ""
+    IdentityRef:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/GraphSubjectBase'
+    JObject:
+      type: object
+      properties:
+        item:
+          type: string
+          format: JToken
+        type:
+          type: string
+          description: Gets the node type for this JToken.
+          format: JTokenType
+      description: Represents a JSON object.
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    Resource:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of the resource.
+        name:
+          type: string
+          description: Name of the resource.
+        type:
+          type: string
+          description: Type of the resource.
+      description: ""
+    TaskCheckConfig:
+      type: object
+      properties:
+        definitionRef:
+          $ref: '#/components/schemas/TaskCheckDefinitionReference'
+        displayName:
+          type: string
+        inputs:
+          type: object
+          additionalProperties:
+            type: string
+        linkedVariableGroup:
+          type: string
+        retryInterval:
+          type: integer
+          format: int32
+      description: Config to facilitate task check
+    TaskCheckConfiguration:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/CheckConfiguration'
+    TaskCheckDefinitionReference:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        version:
+          type: string
+      description: ""
+    TimeZone:
+      type: object
+      properties:
+        displayName:
+          type: string
+          description: Display name of the time zone.
+        id:
+          type: string
+          description: Id of the time zone.
+      description: ""
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+x-ms-vss-area: PipelinesChecks
+x-ms-vss-resource-area-id: 4a933897-0488-45af-bd82-6fd3ad33f46a

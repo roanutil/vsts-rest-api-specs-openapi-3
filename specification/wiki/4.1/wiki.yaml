@@ -1,0 +1,1063 @@
+openapi: 3.0.1
+info:
+  title: Wiki
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: "4.1"
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Attachments
+  description: Wiki attachments are files that can be attached to wiki pages using
+    MD links.
+- name: Page Moves
+  description: Wiki page moves are operations to move wiki pages to new path or new
+    order in the pages hierarchy.
+- name: Pages
+  description: Wiki pages are the MD files that are stored in a Git repository in
+    the backend.
+- name: Wikis
+  description: Wiki is a collection of pages maintained in a particular hierarchy.
+    Every wiki is backed up by a Git repository.
+paths:
+  /{organization}/{project}/_apis/wiki/wikis:
+    get:
+      tags:
+      - Wikis
+      description: Gets all wikis in a project or collection.
+      operationId: List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WikiV2'
+      security:
+      - oauth2:
+        - vso.wiki
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: wikis
+      x-ms-vss-method: GetAllWikis
+      x-ms-examples:
+        Query in collection:
+          $ref: ./httpExamples/wikis/GET_wikis_queryInCollection.json
+        Query in project:
+          $ref: ./httpExamples/wikis/GET_wikis_queryInProject.json
+    post:
+      tags:
+      - Wikis
+      description: Creates the wiki resource.
+      operationId: Create
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Parameters for the wiki creation.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WikiCreateParametersV2'
+        required: true
+      responses:
+        201:
+          description: Wiki created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WikiV2'
+      security:
+      - oauth2:
+        - vso.wiki_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: wikis
+      x-ms-vss-method: CreateWiki
+      x-ms-examples:
+        Create project wiki:
+          $ref: ./httpExamples/wikis/POST_wiki_type_project.json
+        Create code wiki:
+          $ref: ./httpExamples/wikis/POST_wiki_type_code.json
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}:
+    get:
+      tags:
+      - Wikis
+      description: Gets the wiki corresponding to the wiki name or Id provided.
+      operationId: Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: wikiIdentifier
+        in: path
+        description: Wiki name or id.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WikiV2'
+      security:
+      - oauth2:
+        - vso.wiki
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: wikis
+      x-ms-vss-method: GetWiki
+      x-ms-examples:
+        Query by name:
+          $ref: ./httpExamples/wikis/GET_wiki_queryByName.json
+        Query by Id:
+          $ref: ./httpExamples/wikis/GET_wiki_queryById.json
+    delete:
+      tags:
+      - Wikis
+      description: Deletes the wiki corresponding to the wiki name or Id provided.
+      operationId: Delete
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: wikiIdentifier
+        in: path
+        description: Wiki name or Id.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Wiki deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WikiV2'
+      security:
+      - oauth2:
+        - vso.wiki_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: wikis
+      x-ms-vss-method: DeleteWiki
+      x-ms-examples:
+        Delete code wiki:
+          $ref: ./httpExamples/wikis/DELETE_wiki_type_code.json
+    patch:
+      tags:
+      - Wikis
+      description: Updates the wiki corresponding to the wiki Id or name provided
+        using the update parameters.
+      operationId: Update
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: wikiIdentifier
+        in: path
+        description: Wiki name or Id.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Update parameters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WikiUpdateParameters'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WikiV2'
+      security:
+      - oauth2:
+        - vso.wiki_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: wikis
+      x-ms-vss-method: UpdateWiki
+      x-ms-examples:
+        Update wiki versions:
+          $ref: ./httpExamples/wikis/PATCH_wiki_versions.json
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/attachments/{name}:
+    put:
+      tags:
+      - Attachments
+      description: Creates an attachment in the wiki.
+      operationId: Create
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: wikiIdentifier
+        in: path
+        description: Wiki Id or name.
+        required: true
+        schema:
+          type: string
+      - name: name
+        in: path
+        description: Wiki attachment name.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Stream to upload
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: Stream
+        required: true
+      responses:
+        201:
+          description: Attachment created. Attachment's version is populated in the
+            ETag response header.
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WikiAttachment'
+      security:
+      - oauth2:
+        - vso.wiki_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: attachments
+      x-ms-vss-method: CreateAttachment
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/attachments/PUT_attachments.json
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pagemoves:
+    post:
+      tags:
+      - Page Moves
+      description: Creates a page move operation that updates the path and order of
+        the page as provided in the parameters.
+      operationId: Create
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: wikiIdentifier
+        in: path
+        description: Wiki Id or name.
+        required: true
+        schema:
+          type: string
+      - name: comment
+        in: query
+        description: Comment that is to be associated with this page move.
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Page more operation parameters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WikiPageMoveParameters'
+        required: true
+      responses:
+        201:
+          description: Page move created. Moved page's version is populated in the
+            ETag response header.
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WikiPageMove'
+      security:
+      - oauth2:
+        - vso.wiki_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: pageMoves
+      x-ms-vss-method: CreatePageMove
+      x-ms-examples:
+        Reorder page:
+          $ref: ./httpExamples/pageMoves/POST_pageMoves_reorder.json
+        Reparent page:
+          $ref: ./httpExamples/pageMoves/POST_pageMoves_reparent.json
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages:
+    get:
+      tags:
+      - Pages
+      description: Gets metadata or content of the wiki page for the provided path.
+        Content negotiation is done based on the `Accept` header sent in the request.
+      operationId: Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: wikiIdentifier
+        in: path
+        description: Wiki Id or name.
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: query
+        description: Wiki page path.
+        schema:
+          type: string
+      - name: recursionLevel
+        in: query
+        description: Recursion level for subpages retrieval. Defaults to `None` (Optional).
+        schema:
+          type: string
+          enum:
+          - none
+          - oneLevel
+          - oneLevelPlusNestedEmptyFolders
+          - full
+          x-ms-enum:
+            name: VersionControlRecursionType
+            values:
+            - value: none
+              description: Only return the specified item.
+            - value: oneLevel
+              description: Return the specified item and its direct children.
+            - value: oneLevelPlusNestedEmptyFolders
+              description: Return the specified item and its direct children, as well
+                as recursive chains of nested child folders that only contain a single
+                folder.
+            - value: full
+              description: Return specified item and all descendants
+        x-ms-enum:
+          name: VersionControlRecursionType
+          values:
+          - value: none
+            description: Only return the specified item.
+          - value: oneLevel
+            description: Return the specified item and its direct children.
+          - value: oneLevelPlusNestedEmptyFolders
+            description: Return the specified item and its direct children, as well
+              as recursive chains of nested child folders that only contain a single
+              folder.
+          - value: full
+            description: Return specified item and all descendants
+      - name: versionDescriptor.versionOptions
+        in: query
+        description: Version options - Specify additional modifiers to version (e.g
+          Previous)
+        schema:
+          type: string
+          enum:
+          - none
+          - previousChange
+          - firstParent
+          x-ms-enum:
+            name: GitVersionOptions
+            values:
+            - value: none
+              description: Not specified
+            - value: previousChange
+              description: Commit that changed item prior to the current version
+            - value: firstParent
+              description: First parent of commit (HEAD^)
+        x-ms-enum:
+          name: GitVersionOptions
+          values:
+          - value: none
+            description: Not specified
+          - value: previousChange
+            description: Commit that changed item prior to the current version
+          - value: firstParent
+            description: First parent of commit (HEAD^)
+      - name: versionDescriptor.version
+        in: query
+        description: Version string identifier (name of tag/branch, SHA1 of commit)
+        schema:
+          type: string
+      - name: versionDescriptor.versionType
+        in: query
+        description: Version type (branch, tag, or commit). Determines how Id is interpreted
+        schema:
+          type: string
+          enum:
+          - branch
+          - tag
+          - commit
+          x-ms-enum:
+            name: GitVersionType
+            values:
+            - value: branch
+              description: Interpret the version as a branch name
+            - value: tag
+              description: Interpret the version as a tag name
+            - value: commit
+              description: Interpret the version as a commit ID (SHA1)
+        x-ms-enum:
+          name: GitVersionType
+          values:
+          - value: branch
+            description: Interpret the version as a branch name
+          - value: tag
+            description: Interpret the version as a tag name
+          - value: commit
+            description: Interpret the version as a commit ID (SHA1)
+      - name: includeContent
+        in: query
+        description: True to include the content of the page in the response for Json
+          content type. Defaults to false (Optional)
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/WikiPage'
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/WikiPage'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WikiPage'
+      security:
+      - oauth2:
+        - vso.wiki
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: pages
+      x-ms-vss-method: GetPage
+      x-ms-examples:
+        Get page as JSON:
+          $ref: ./httpExamples/pages/GET_wiki_page_JSON.json
+        Get page as JSON with content:
+          $ref: ./httpExamples/pages/GET_wiki_page_JSON_withContent.json
+        Get page as text:
+          $ref: ./httpExamples/pages/GET_wiki_page_text.json
+        Get page as JSON with recursion level:
+          $ref: ./httpExamples/pages/GET_wiki_page_JSON_withRecursionLevel.json
+    put:
+      tags:
+      - Pages
+      description: Creates or edits a wiki page.
+      operationId: Create Or Update
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: wikiIdentifier
+        in: path
+        description: Wiki Id or name.
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: query
+        description: Wiki page path.
+        required: true
+        schema:
+          type: string
+      - name: Version
+        in: header
+        description: Version of the page on which the change is to be made. Mandatory
+          for `Edit` scenario. To be populated in the If-Match header of the request.
+        required: true
+        schema:
+          type: string
+      - name: comment
+        in: query
+        description: Comment to be associated with the page operation.
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Wiki create or update operation parameters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WikiPageCreateOrUpdateParameters'
+        required: true
+      responses:
+        200:
+          description: Page edited. Edited page's version is populated in the ETag
+            response header.
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WikiPage'
+        201:
+          description: Page created. Created page's version is populated in the ETag
+            response header.
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WikiPage'
+      security:
+      - oauth2:
+        - vso.wiki_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: pages
+      x-ms-vss-method: CreateOrUpdatePage
+      x-ms-examples:
+        Add a page:
+          $ref: ./httpExamples/pages/PUT_wiki_page_add.json
+        Edit a page:
+          $ref: ./httpExamples/pages/PUT_wiki_page_edit.json
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Pages
+      description: Deletes a wiki page.
+      operationId: Delete
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: wikiIdentifier
+        in: path
+        description: Wiki Id or name.
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: query
+        description: Wiki page path.
+        required: true
+        schema:
+          type: string
+      - name: comment
+        in: query
+        description: Comment to be associated with this page delete.
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Page deleted.
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WikiPage'
+      security:
+      - oauth2:
+        - vso.wiki_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: pages
+      x-ms-vss-method: DeletePage
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/pages/DELETE_wiki_page.json
+components:
+  schemas:
+    GitRepository:
+      type: object
+      properties:
+        _links:
+          type: string
+          format: ReferenceLinks
+        defaultBranch:
+          type: string
+        id:
+          type: string
+          format: uuid
+        isFork:
+          type: boolean
+          description: True if the repository was created as a fork
+        name:
+          type: string
+        parentRepository:
+          $ref: '#/components/schemas/GitRepositoryRef'
+        project:
+          type: string
+          format: TeamProjectReference
+        remoteUrl:
+          type: string
+        sshUrl:
+          type: string
+        url:
+          type: string
+        validRemoteUrls:
+          type: array
+          items:
+            type: string
+      description: ""
+    GitRepositoryRef:
+      type: object
+      properties:
+        collection:
+          type: string
+          description: Team Project Collection where this Fork resides
+          format: TeamProjectCollectionReference
+        id:
+          type: string
+          format: uuid
+        isFork:
+          type: boolean
+          description: True if the repository was created as a fork
+        name:
+          type: string
+        project:
+          type: string
+          format: TeamProjectReference
+        remoteUrl:
+          type: string
+        sshUrl:
+          type: string
+        url:
+          type: string
+      description: ""
+    GitVersionDescriptor:
+      type: object
+      properties:
+        version:
+          type: string
+          description: Version string identifier (name of tag/branch, SHA1 of commit)
+        versionOptions:
+          type: string
+          description: Version options - Specify additional modifiers to version (e.g
+            Previous)
+          enum:
+          - none
+          - previousChange
+          - firstParent
+          x-ms-enum:
+            name: GitVersionOptions
+            values:
+            - value: none
+              description: Not specified
+            - value: previousChange
+              description: Commit that changed item prior to the current version
+            - value: firstParent
+              description: First parent of commit (HEAD^)
+        versionType:
+          type: string
+          description: Version type (branch, tag, or commit). Determines how Id is
+            interpreted
+          enum:
+          - branch
+          - tag
+          - commit
+          x-ms-enum:
+            name: GitVersionType
+            values:
+            - value: branch
+              description: Interpret the version as a branch name
+            - value: tag
+              description: Interpret the version as a tag name
+            - value: commit
+              description: Interpret the version as a commit ID (SHA1)
+      description: ""
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+    Wiki:
+      description: Defines a wiki repository which encapsulates the git repository
+        backing the wiki.
+      allOf:
+      - $ref: '#/components/schemas/WikiCreateParameters'
+    WikiAttachment:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the wiki attachment file.
+        path:
+          type: string
+          description: Path of the wiki attachment file.
+      description: Defines properties for wiki attachment file.
+    WikiAttachmentResponse:
+      type: object
+      properties:
+        attachment:
+          $ref: '#/components/schemas/WikiAttachment'
+        eTag:
+          type: array
+          description: Contains the list of ETag values from the response header of
+            the attachments API call. The first item in the list contains the version
+            of the wiki attachment.
+          items:
+            type: string
+      description: Response contract for the Wiki Attachments API
+    WikiCreateBaseParameters:
+      type: object
+      properties:
+        mappedPath:
+          type: string
+          description: Folder path inside repository which is shown as Wiki. Not required
+            for ProjectWiki type.
+        name:
+          type: string
+          description: Wiki name.
+        projectId:
+          type: string
+          description: ID of the project in which the wiki is to be created.
+          format: uuid
+        repositoryId:
+          type: string
+          description: ID of the git repository that backs up the wiki. Not required
+            for ProjectWiki type.
+          format: uuid
+        type:
+          type: string
+          description: Type of the wiki.
+          enum:
+          - projectWiki
+          - codeWiki
+          x-ms-enum:
+            name: WikiType
+            values:
+            - value: projectWiki
+              description: Indicates that the wiki is provisioned for the team project
+            - value: codeWiki
+              description: Indicates that the wiki is published from a git repository
+      description: Base wiki creation parameters.
+    WikiCreateParameters:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Wiki name.
+        projectId:
+          type: string
+          description: ID of the project in which the wiki is to be created.
+          format: uuid
+      description: Wiki creations parameters.
+    WikiCreateParametersV2:
+      description: Wiki creation parameters.
+      allOf:
+      - $ref: '#/components/schemas/WikiCreateBaseParameters'
+    WikiPage:
+      description: Defines a page in a wiki.
+      allOf:
+      - $ref: '#/components/schemas/WikiPageCreateOrUpdateParameters'
+    WikiPageCreateOrUpdateParameters:
+      type: object
+      properties:
+        content:
+          type: string
+          description: Content of the wiki page.
+      description: Contract encapsulating parameters for the page create or update
+        operations.
+    WikiPageMove:
+      description: Request contract for Wiki Page Move.
+      allOf:
+      - $ref: '#/components/schemas/WikiPageMoveParameters'
+    WikiPageMoveParameters:
+      type: object
+      properties:
+        newOrder:
+          type: integer
+          description: New order of the wiki page.
+          format: int32
+        newPath:
+          type: string
+          description: New path of the wiki page.
+        path:
+          type: string
+          description: Current path of the wiki page.
+      description: Contract encapsulating parameters for the page move operation.
+    WikiPageMoveResponse:
+      type: object
+      properties:
+        eTag:
+          type: array
+          description: Contains the list of ETag values from the response header of
+            the page move API call. The first item in the list contains the version
+            of the wiki page subject to page move.
+          items:
+            type: string
+        pageMove:
+          $ref: '#/components/schemas/WikiPageMove'
+      description: Response contract for the Wiki Page Move API.
+    WikiPageResponse:
+      type: object
+      properties:
+        eTag:
+          type: array
+          description: Contains the list of ETag values from the response header of
+            the pages API call. The first item in the list contains the version of
+            the wiki page.
+          items:
+            type: string
+        page:
+          $ref: '#/components/schemas/WikiPage'
+      description: Response contract for the Wiki Pages PUT, PATCH and DELETE APIs.
+    WikiPageViewStats:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Wiki page view count.
+          format: int32
+        lastViewedTime:
+          type: string
+          description: Wiki page last viewed time.
+          format: date-time
+        path:
+          type: string
+          description: Wiki page path.
+      description: Defines properties for wiki page view stats.
+    WikiUpdateParameters:
+      type: object
+      properties:
+        versions:
+          type: array
+          description: Versions of the wiki.
+          items:
+            $ref: '#/components/schemas/GitVersionDescriptor'
+      description: Wiki update parameters.
+    WikiV2:
+      description: Defines a wiki resource.
+      allOf:
+      - $ref: '#/components/schemas/WikiCreateBaseParameters'
+  parameters:
+    api-Version:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '4.1' to use
+        this version of the api.
+      required: true
+      schema:
+        type: string
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '4.1-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.wiki: Grants the ability to read wikis, wiki pages and wiki attachments.
+            vso.wiki_write: Grants the ability to read, create and updates wikis,
+              wiki pages and wiki attachments.
+x-ms-vss-area: Wiki
+x-ms-vss-resource-area-id: bf7d82a0-8aa5-4613-94ef-6172a5ea01f3

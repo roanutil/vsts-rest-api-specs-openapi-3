@@ -1,0 +1,840 @@
+openapi: 3.0.1
+info:
+  title: Audit
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 6.0-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://auditservice.dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Actions
+- name: Audit Log
+- name: Download Log
+- name: Streams
+paths:
+  /{organization}/_apis/audit/actions:
+    get:
+      tags:
+      - Actions
+      description: Get all auditable actions filterable by area.
+      operationId: Actions_List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: areaName
+        in: query
+        description: Optional. Get actions scoped to area
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '6.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditActionInfo'
+      x-ms-docs-override-version: 6.0-preview.1
+      x-ms-vss-resource: actions
+      x-ms-vss-method: GetActions
+      x-ms-preview: true
+      x-ms-examples:
+        By areaName:
+          $ref: ./httpExamples/actions/GET__AuditLog_GetActions_by_areaName.json
+  /{organization}/_apis/audit/auditlog:
+    get:
+      tags:
+      - Audit Log
+      description: Queries audit log entries
+      operationId: Audit Log_Query
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: startTime
+        in: query
+        description: Start time of download window. Optional
+        schema:
+          type: string
+          format: date-time
+      - name: endTime
+        in: query
+        description: End time of download window. Optional
+        schema:
+          type: string
+          format: date-time
+      - name: batchSize
+        in: query
+        description: Max number of results to return. Optional
+        schema:
+          type: integer
+          format: int32
+      - name: continuationToken
+        in: query
+        description: Token used for returning next set of results from previous query.
+          Optional
+        schema:
+          type: string
+      - name: skipAggregation
+        in: query
+        description: 'Skips aggregating events and leaves them as individual entries
+          instead. By default events are aggregated. Event types that are aggregated:
+          AuditLog.AccessLog.'
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '6.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLogQueryResult'
+      security:
+      - oauth2:
+        - vso.auditlog
+      x-ms-docs-override-version: 6.0-preview.1
+      x-ms-vss-resource: auditLog
+      x-ms-vss-method: QueryLog
+      x-ms-preview: true
+      x-ms-examples:
+        By date:
+          $ref: ./httpExamples/auditLog/GET__AuditLog_QueryLog_by_date.json
+  /{organization}/_apis/audit/downloadlog:
+    get:
+      tags:
+      - Download Log
+      description: Downloads audit log entries.
+      operationId: Download Log_Download Log
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: format
+        in: query
+        description: File format for download. Can be "json" or "csv".
+        required: true
+        schema:
+          type: string
+      - name: startTime
+        in: query
+        description: Start time of download window. Optional
+        schema:
+          type: string
+          format: date-time
+      - name: endTime
+        in: query
+        description: End time of download window. Optional
+        schema:
+          type: string
+          format: date-time
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '6.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: Stream
+      x-ms-docs-override-version: 6.0-preview.1
+      x-ms-vss-resource: downloadLog
+      x-ms-vss-method: DownloadLog
+      x-ms-preview: true
+      x-ms-examples:
+        Download log as JSON:
+          $ref: ./httpExamples/downloadLog/GET__AuditLog_DownloadLog_json.json
+  /{organization}/_apis/audit/streams:
+    get:
+      tags:
+      - Streams
+      description: Return all Audit Streams scoped to an organization
+      operationId: Streams_Query All Streams
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '6.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditStream'
+      x-ms-docs-override-version: 6.0-preview.1
+      x-ms-vss-resource: streams
+      x-ms-vss-method: QueryAllStreams
+      x-ms-preview: true
+      x-ms-examples:
+        Query all streams in the organization:
+          $ref: ./httpExamples/streams/GET__AuditLog_streams_query_all.json
+    put:
+      tags:
+      - Streams
+      description: Update existing Audit Stream
+      operationId: Streams_Update Stream
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '6.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Stream entry
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditStream'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditStream'
+      x-ms-docs-override-version: 6.0-preview.1
+      x-ms-vss-resource: streams
+      x-ms-vss-method: UpdateStream
+      x-ms-preview: true
+      x-ms-examples:
+        Update a stream:
+          $ref: ./httpExamples/streams/PUT__AuditLog_streams_update.json
+      x-codegen-request-body-name: body
+    post:
+      tags:
+      - Streams
+      description: Create new Audit Stream
+      operationId: Streams_Create
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: daysToBackfill
+        in: query
+        description: The number of days of previously recorded audit data that will
+          be replayed into the stream. A value of zero will result in only new events
+          being streamed.
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '6.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Stream entry
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditStream'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditStream'
+      x-ms-docs-override-version: 6.0-preview.1
+      x-ms-vss-resource: streams
+      x-ms-vss-method: CreateStream
+      x-ms-preview: true
+      x-ms-examples:
+        Create a stream:
+          $ref: ./httpExamples/streams/POST__AuditLog_streams_create.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/audit/streams/{streamId}:
+    get:
+      tags:
+      - Streams
+      description: Return Audit Stream with id of streamId if one exists otherwise
+        throw
+      operationId: Streams_Query Stream By Id
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: streamId
+        in: path
+        description: Id of stream entry to retrieve
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '6.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditStream'
+      x-ms-docs-override-version: 6.0-preview.1
+      x-ms-vss-resource: streams
+      x-ms-vss-method: QueryStreamById
+      x-ms-preview: true
+      x-ms-examples:
+        Query a stream by its id:
+          $ref: ./httpExamples/streams/GET__AuditLog_streams_query_by_id.json
+    put:
+      tags:
+      - Streams
+      description: Update existing Audit Stream status
+      operationId: Streams_Update Status
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: streamId
+        in: path
+        description: Id of stream entry to be updated
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: status
+        in: query
+        description: Status of the stream
+        required: true
+        schema:
+          type: string
+          enum:
+          - unknown
+          - enabled
+          - disabledByUser
+          - disabledBySystem
+          - deleted
+          - backfilling
+          x-ms-enum:
+            name: AuditStreamStatus
+            values:
+            - value: unknown
+              description: The state has not been set, The stream is new
+            - value: enabled
+              description: The stream is enabled and can deliver events
+            - value: disabledByUser
+              description: The stream has been disabled by a user
+            - value: disabledBySystem
+              description: The stream has been disabled by the system
+            - value: deleted
+              description: The stream has been marked for deletion
+            - value: backfilling
+              description: The stream is delivering old events
+        x-ms-enum:
+          name: AuditStreamStatus
+          values:
+          - value: unknown
+            description: The state has not been set, The stream is new
+          - value: enabled
+            description: The stream is enabled and can deliver events
+          - value: disabledByUser
+            description: The stream has been disabled by a user
+          - value: disabledBySystem
+            description: The stream has been disabled by the system
+          - value: deleted
+            description: The stream has been marked for deletion
+          - value: backfilling
+            description: The stream is delivering old events
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '6.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditStream'
+      x-ms-docs-override-version: 6.0-preview.1
+      x-ms-vss-resource: streams
+      x-ms-vss-method: UpdateStatus
+      x-ms-preview: true
+      x-ms-examples:
+        Update a stream status:
+          $ref: ./httpExamples/streams/PUT__AuditLog_streams_update_status.json
+    delete:
+      tags:
+      - Streams
+      description: Delete Audit Stream
+      operationId: Streams_Delete
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: streamId
+        in: path
+        description: Id of stream entry to delete
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '6.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: 6.0-preview.1
+      x-ms-vss-resource: streams
+      x-ms-vss-method: DeleteStream
+      x-ms-preview: true
+      x-ms-examples:
+        Delete a stream by its id:
+          $ref: ./httpExamples/streams/DELETE__AuditLog_streams.json
+components:
+  schemas:
+    AuditActionInfo:
+      type: object
+      properties:
+        actionId:
+          type: string
+          description: The action id for the event, i.e Git.CreateRepo, Project.RenameProject
+        area:
+          type: string
+          description: Area of Azure DevOps the action occurred
+        category:
+          type: string
+          description: Type of action executed
+          enum:
+          - unknown
+          - modify
+          - remove
+          - create
+          - access
+          - execute
+          x-ms-enum:
+            name: AuditActionCategory
+            values:
+            - value: unknown
+              description: The category is not known
+            - value: modify
+              description: An artifact has been Modified
+            - value: remove
+              description: An artifact has been Removed
+            - value: create
+              description: An artifact has been Created
+            - value: access
+              description: An artifact has been Accessed
+            - value: execute
+              description: An artifact has been Executed
+      description: ""
+    AuditLogEntry:
+      type: object
+      properties:
+        actionId:
+          type: string
+          description: The action if for the event, i.e Git.CreateRepo, Project.RenameProject
+        activityId:
+          type: string
+          description: ActivityId
+          format: uuid
+        actorCUID:
+          type: string
+          description: The Actor's CUID
+          format: uuid
+        actorUPN:
+          type: string
+          description: The Actor's UPN
+        actorUserId:
+          type: string
+          description: The Actor's User Id
+          format: uuid
+        authenticationMechanism:
+          type: string
+          description: Type of authentication used by the author
+        correlationId:
+          type: string
+          description: This allows us to group things together, like one user action
+            that caused a cascade of event entries (project creation).
+          format: uuid
+        data:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: External data such as CUIDs, item names, etc.
+        id:
+          type: string
+          description: EventId, should be unique
+          format: uuid
+        ipAddress:
+          type: string
+          description: IP Address where the event was originated
+        projectId:
+          type: string
+          description: When specified, the id of the project this event is associated
+            to
+          format: uuid
+        scopeId:
+          type: string
+          description: The organization Id (Organization is the only scope currently
+            supported)
+          format: uuid
+        scopeType:
+          type: string
+          description: The type of the scope (Organization is only scope currently
+            supported)
+          enum:
+          - unknown
+          - deployment
+          - enterprise
+          - organization
+          - project
+          x-ms-enum:
+            name: AuditScopeType
+            values:
+            - value: unknown
+              description: The scope is not known or has not been set
+            - value: deployment
+              description: Deployment
+            - value: enterprise
+              description: Enterprise
+            - value: organization
+              description: Organization
+            - value: project
+              description: Project
+        timestamp:
+          type: string
+          description: The time when the event occurred in UTC
+          format: date-time
+        userAgent:
+          type: string
+          description: The user agent from the request
+      description: ""
+    AuditLogQueryResult:
+      type: object
+      properties:
+        continuationToken:
+          type: string
+          description: The continuation token to pass to get the next set of results
+        decoratedAuditLogEntries:
+          type: array
+          description: The list of audit log entries
+          items:
+            $ref: '#/components/schemas/DecoratedAuditLogEntry'
+        hasMore:
+          type: boolean
+          description: True when there are more matching results to be fetched, false
+            otherwise.
+      description: The object returned when the audit log is queried. It contains
+        the log and the information needed to query more audit entries.
+    AuditStream:
+      type: object
+      properties:
+        consumerInputs:
+          type: object
+          additionalProperties:
+            type: string
+          description: Inputs used to communicate with external service. Inputs could
+            be url, a connection string, a token, etc.
+        consumerType:
+          type: string
+          description: Type of the consumer, i.e. splunk, azureEventHub, etc.
+        createdTime:
+          type: string
+          description: The time when the stream was created
+          format: date-time
+        displayName:
+          type: string
+          description: Used to identify individual streams
+        id:
+          type: integer
+          description: Unique stream identifier
+          format: int32
+        status:
+          type: string
+          description: Status of the stream, Enabled, Disabled
+          enum:
+          - unknown
+          - enabled
+          - disabledByUser
+          - disabledBySystem
+          - deleted
+          - backfilling
+          x-ms-enum:
+            name: AuditStreamStatus
+            values:
+            - value: unknown
+              description: The state has not been set, The stream is new
+            - value: enabled
+              description: The stream is enabled and can deliver events
+            - value: disabledByUser
+              description: The stream has been disabled by a user
+            - value: disabledBySystem
+              description: The stream has been disabled by the system
+            - value: deleted
+              description: The stream has been marked for deletion
+            - value: backfilling
+              description: The stream is delivering old events
+        statusReason:
+          type: string
+          description: Reason for the current stream status, i.e. Disabled by the
+            system, Invalid credentials, etc.
+        updatedTime:
+          type: string
+          description: The time when the stream was last updated
+          format: date-time
+      description: This class represents an audit stream
+    DecoratedAuditLogEntry:
+      type: object
+      properties:
+        actionId:
+          type: string
+          description: The action id for the event, i.e Git.CreateRepo, Project.RenameProject
+        activityId:
+          type: string
+          description: ActivityId
+          format: uuid
+        actorCUID:
+          type: string
+          description: The Actor's CUID
+          format: uuid
+        actorDisplayName:
+          type: string
+          description: DisplayName of the user who initiated the action
+        actorImageUrl:
+          type: string
+          description: URL of Actor's Profile image
+        actorUPN:
+          type: string
+          description: The Actor's UPN
+        actorUserId:
+          type: string
+          description: The Actor's User Id
+          format: uuid
+        area:
+          type: string
+          description: Area of Azure DevOps the action occurred
+        authenticationMechanism:
+          type: string
+          description: Type of authentication used by the actor
+        category:
+          type: string
+          description: Type of action executed
+          enum:
+          - unknown
+          - modify
+          - remove
+          - create
+          - access
+          - execute
+          x-ms-enum:
+            name: AuditActionCategory
+            values:
+            - value: unknown
+              description: The category is not known
+            - value: modify
+              description: An artifact has been Modified
+            - value: remove
+              description: An artifact has been Removed
+            - value: create
+              description: An artifact has been Created
+            - value: access
+              description: An artifact has been Accessed
+            - value: execute
+              description: An artifact has been Executed
+        categoryDisplayName:
+          type: string
+          description: DisplayName of the category
+        correlationId:
+          type: string
+          description: This allows related audit entries to be grouped together. Generally
+            this occurs when a single action causes a cascade of audit entries. For
+            example, project creation.
+          format: uuid
+        data:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: External data such as CUIDs, item names, etc.
+        details:
+          type: string
+          description: Decorated details
+        id:
+          type: string
+          description: EventId - Needs to be unique per service
+        ipAddress:
+          type: string
+          description: IP Address where the event was originated
+        projectId:
+          type: string
+          description: When specified, the id of the project this event is associated
+            to
+          format: uuid
+        projectName:
+          type: string
+          description: When specified, the name of the project this event is associated
+            to
+        scopeDisplayName:
+          type: string
+          description: DisplayName of the scope
+        scopeId:
+          type: string
+          description: The organization Id (Organization is the only scope currently
+            supported)
+          format: uuid
+        scopeType:
+          type: string
+          description: The type of the scope (Organization is only scope currently
+            supported)
+          enum:
+          - unknown
+          - deployment
+          - enterprise
+          - organization
+          - project
+          x-ms-enum:
+            name: AuditScopeType
+            values:
+            - value: unknown
+              description: The scope is not known or has not been set
+            - value: deployment
+              description: Deployment
+            - value: enterprise
+              description: Enterprise
+            - value: organization
+              description: Organization
+            - value: project
+              description: Project
+        timestamp:
+          type: string
+          description: The time when the event occurred in UTC
+          format: date-time
+        userAgent:
+          type: string
+          description: The user agent from the request
+      description: ""
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '6.0-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.auditlog: Grants the ability to read the auditing log to users
+x-ms-vss-area: Audit
+x-ms-vss-resource-area-id: 94ff054d-5ee1-413d-9341-3f4a7827de2e

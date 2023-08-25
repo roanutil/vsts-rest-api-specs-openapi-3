@@ -1,0 +1,668 @@
+openapi: 3.0.1
+info:
+  title: Approval
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 7.1-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Approvals
+paths:
+  /{organization}/{project}/_apis/pipelines/approvals:
+    get:
+      tags:
+      - Approvals
+      description: List Approvals. This can be used to get a set of pending approvals
+        in a pipeline, on an user or for a resource..
+      operationId: Approvals_Query
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: approvalIds
+        in: query
+        schema:
+          type: string
+          format: array (uuid)
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - steps
+          - permissions
+          x-ms-enum:
+            name: ApprovalDetailsExpandParameter
+            values:
+            - value: none
+              description: ""
+            - value: steps
+              description: ""
+            - value: permissions
+              description: ""
+        x-ms-enum:
+          name: ApprovalDetailsExpandParameter
+          values:
+          - value: none
+            description: ""
+          - value: steps
+            description: ""
+          - value: permissions
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Approval'
+      security:
+      - oauth2:
+        - vso.build
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: approvals
+      x-ms-vss-method: QueryApprovals
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/approvals/GET__QueryApproval.json
+    patch:
+      tags:
+      - Approvals
+      description: Update approvals.
+      operationId: Approvals_Update
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ApprovalUpdateParameters'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Approval'
+      security:
+      - oauth2:
+        - vso.build_execute
+        - vso.pipelineresources_use
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: approvals
+      x-ms-vss-method: UpdateApprovals
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/approvals/PATCH__UpdateApproval.json
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/pipelines/approvals/{approvalId}:
+    get:
+      tags:
+      - Approvals
+      description: Get an approval.
+      operationId: Approvals_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: approvalId
+        in: path
+        description: Id of the approval.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - steps
+          - permissions
+          x-ms-enum:
+            name: ApprovalDetailsExpandParameter
+            values:
+            - value: none
+              description: ""
+            - value: steps
+              description: ""
+            - value: permissions
+              description: ""
+        x-ms-enum:
+          name: ApprovalDetailsExpandParameter
+          values:
+          - value: none
+            description: ""
+          - value: steps
+            description: ""
+          - value: permissions
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Approval'
+      security:
+      - oauth2:
+        - vso.build
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: approvals
+      x-ms-vss-method: GetApproval
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/approvals/GET__Approval.json
+components:
+  schemas:
+    Approval:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        blockedApprovers:
+          type: array
+          description: Identities which are not allowed to approve.
+          items:
+            $ref: '#/components/schemas/IdentityRef'
+        createdOn:
+          type: string
+          description: Date on which approval got created.
+          format: date-time
+        executionOrder:
+          type: string
+          description: Order in which approvers will be actionable.
+          enum:
+          - anyOrder
+          - inSequence
+          x-ms-enum:
+            name: ApprovalExecutionOrder
+            values:
+            - value: anyOrder
+              description: Indicates that the approvers can approve in any order.
+            - value: inSequence
+              description: Indicates that the approvers can only approve in a sequential
+                order(Order in which they were assigned).
+        id:
+          type: string
+          description: Unique identifier of the approval.
+          format: uuid
+        instructions:
+          type: string
+          description: Instructions for the approvers.
+        lastModifiedOn:
+          type: string
+          description: Date on which approval was last modified.
+          format: date-time
+        minRequiredApprovers:
+          type: integer
+          description: Minimum number of approvers that should approve for the entire
+            approval to be considered approved.
+          format: int32
+        permissions:
+          type: string
+          description: Current user permissions for approval object.
+          enum:
+          - none
+          - view
+          - update
+          - reassign
+          - resourceAdmin
+          - queueBuild
+          x-ms-enum:
+            name: ApprovalPermissions
+            values:
+            - value: none
+              description: ""
+            - value: view
+              description: ""
+            - value: update
+              description: ""
+            - value: reassign
+              description: ""
+            - value: resourceAdmin
+              description: ""
+            - value: queueBuild
+              description: ""
+        status:
+          type: string
+          description: Overall status of the approval.
+          enum:
+          - undefined
+          - uninitiated
+          - pending
+          - approved
+          - rejected
+          - skipped
+          - canceled
+          - timedOut
+          - failed
+          - completed
+          - all
+          x-ms-enum:
+            name: ApprovalStatus
+            values:
+            - value: undefined
+              description: ""
+            - value: uninitiated
+              description: Indicates the approval is Uninitiated. Used in case of
+                in sequence order of execution where given approver is not yet actionable.
+            - value: pending
+              description: Indicates the approval is Pending.
+            - value: approved
+              description: Indicates the approval is Approved.
+            - value: rejected
+              description: Indicates the approval is Rejected.
+            - value: skipped
+              description: Indicates the approval is Skipped.
+            - value: canceled
+              description: Indicates the approval is Canceled.
+            - value: timedOut
+              description: Indicates the approval is Timed out.
+            - value: failed
+              description: ""
+            - value: completed
+              description: ""
+            - value: all
+              description: ""
+        steps:
+          type: array
+          description: List of steps associated with the approval.
+          items:
+            $ref: '#/components/schemas/ApprovalStep'
+      description: ""
+    ApprovalCompletedNotificationEvent:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/ApprovalNotificationEventBase'
+    ApprovalConfig:
+      type: object
+      properties:
+        approvers:
+          type: array
+          description: Ordered list of approvers.
+          items:
+            $ref: '#/components/schemas/IdentityRef'
+        blockedApprovers:
+          type: array
+          description: Identities which are not allowed to approve.
+          items:
+            $ref: '#/components/schemas/IdentityRef'
+        executionOrder:
+          type: string
+          description: Order in which approvers will be actionable.
+          enum:
+          - anyOrder
+          - inSequence
+          x-ms-enum:
+            name: ApprovalExecutionOrder
+            values:
+            - value: anyOrder
+              description: Indicates that the approvers can approve in any order.
+            - value: inSequence
+              description: Indicates that the approvers can only approve in a sequential
+                order(Order in which they were assigned).
+        instructions:
+          type: string
+          description: Instructions for the approver.
+        minRequiredApprovers:
+          type: integer
+          description: Minimum number of approvers that should approve for the entire
+            approval to be considered approved. Defaults to all.
+          format: int32
+      description: Config to create a new approval.
+    ApprovalConfigSettings:
+      description: Config to create a new approval.
+      allOf:
+      - $ref: '#/components/schemas/ApprovalConfig'
+    ApprovalNotificationEventBase:
+      type: object
+      properties:
+        approval:
+          $ref: '#/components/schemas/Approval'
+        projectId:
+          type: string
+          format: uuid
+      description: Data for notification base class for approval events.
+    ApprovalRequest:
+      type: object
+      properties:
+        approvalId:
+          type: string
+          description: Unique identifier with which the approval is to be registered.
+          format: uuid
+        config:
+          $ref: '#/components/schemas/ApprovalConfig'
+      description: Request to create a new approval.
+    ApprovalsQueryParameters:
+      type: object
+      properties:
+        approvalIds:
+          type: array
+          description: Query approvals based on list of approval IDs.
+          items:
+            type: string
+            format: uuid
+      description: ""
+    ApprovalStep:
+      type: object
+      properties:
+        actualApprover:
+          $ref: '#/components/schemas/IdentityRef'
+        assignedApprover:
+          $ref: '#/components/schemas/IdentityRef'
+        comment:
+          type: string
+          description: Comment associated with this step.
+        history:
+          type: array
+          description: History of the approval step
+          items:
+            $ref: '#/components/schemas/ApprovalStepHistory'
+        initiatedOn:
+          type: string
+          description: Timestamp at which this step was initiated.
+          format: date-time
+        lastModifiedBy:
+          $ref: '#/components/schemas/IdentityRef'
+        lastModifiedOn:
+          type: string
+          description: Timestamp at which this step was last modified.
+          format: date-time
+        order:
+          type: integer
+          description: Order in which the approvers are allowed to approve.
+          format: int32
+        permissions:
+          type: string
+          description: Current user permissions for step.
+          enum:
+          - none
+          - view
+          - update
+          - reassign
+          - resourceAdmin
+          - queueBuild
+          x-ms-enum:
+            name: ApprovalPermissions
+            values:
+            - value: none
+              description: ""
+            - value: view
+              description: ""
+            - value: update
+              description: ""
+            - value: reassign
+              description: ""
+            - value: resourceAdmin
+              description: ""
+            - value: queueBuild
+              description: ""
+        status:
+          type: string
+          description: Current status of this step.
+          enum:
+          - undefined
+          - uninitiated
+          - pending
+          - approved
+          - rejected
+          - skipped
+          - canceled
+          - timedOut
+          - failed
+          - completed
+          - all
+          x-ms-enum:
+            name: ApprovalStatus
+            values:
+            - value: undefined
+              description: ""
+            - value: uninitiated
+              description: Indicates the approval is Uninitiated. Used in case of
+                in sequence order of execution where given approver is not yet actionable.
+            - value: pending
+              description: Indicates the approval is Pending.
+            - value: approved
+              description: Indicates the approval is Approved.
+            - value: rejected
+              description: Indicates the approval is Rejected.
+            - value: skipped
+              description: Indicates the approval is Skipped.
+            - value: canceled
+              description: Indicates the approval is Canceled.
+            - value: timedOut
+              description: Indicates the approval is Timed out.
+            - value: failed
+              description: ""
+            - value: completed
+              description: ""
+            - value: all
+              description: ""
+      description: Data for a single approval step.
+    ApprovalStepHistory:
+      type: object
+      properties:
+        assignedTo:
+          $ref: '#/components/schemas/IdentityRef'
+        comment:
+          type: string
+          description: Comment associated with this step history.
+        createdBy:
+          $ref: '#/components/schemas/IdentityRef'
+        createdOn:
+          type: string
+          description: Timestamp at which this step history was created.
+          format: date-time
+      description: Data for a single approval step history.
+    ApprovalUpdateParameters:
+      type: object
+      properties:
+        approvalId:
+          type: string
+          description: ID of the approval to be updated.
+          format: uuid
+        assignedApprover:
+          $ref: '#/components/schemas/IdentityRef'
+        comment:
+          type: string
+          description: Gets or sets comment.
+        reassignTo:
+          $ref: '#/components/schemas/IdentityRef'
+        status:
+          type: string
+          description: Gets or sets status.
+          enum:
+          - undefined
+          - uninitiated
+          - pending
+          - approved
+          - rejected
+          - skipped
+          - canceled
+          - timedOut
+          - failed
+          - completed
+          - all
+          x-ms-enum:
+            name: ApprovalStatus
+            values:
+            - value: undefined
+              description: ""
+            - value: uninitiated
+              description: Indicates the approval is Uninitiated. Used in case of
+                in sequence order of execution where given approver is not yet actionable.
+            - value: pending
+              description: Indicates the approval is Pending.
+            - value: approved
+              description: Indicates the approval is Approved.
+            - value: rejected
+              description: Indicates the approval is Rejected.
+            - value: skipped
+              description: Indicates the approval is Skipped.
+            - value: canceled
+              description: Indicates the approval is Canceled.
+            - value: timedOut
+              description: Indicates the approval is Timed out.
+            - value: failed
+              description: ""
+            - value: completed
+              description: ""
+            - value: all
+              description: ""
+      description: Data to update an approval object or its individual step.
+    GraphSubjectBase:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        descriptor:
+          type: string
+          description: The descriptor is the primary way to reference the graph subject
+            while the system is running. This field will uniquely identify the same
+            graph subject across both Accounts and Organizations.
+        displayName:
+          type: string
+          description: This is the non-unique display name of the graph subject. To
+            change this field, you must alter its value in the source provider.
+        url:
+          type: string
+          description: This url is the full route to the source resource of this graph
+            subject.
+      description: ""
+    IdentityRef:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/GraphSubjectBase'
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    VssJsonCollectionWrapper:
+      description: This class is used to serialize collections as a single JSON object
+        on the wire.
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: The number of serialized items.
+          format: int32
+      description: ""
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.1-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.build: Grants the ability to access build artifacts, including build
+              results, definitions, and requests, and the ability to receive notifications
+              about build events via service hooks.
+            vso.build_execute: Grants the ability to access build artifacts, including
+              build results, definitions, and requests, and the ability to queue a
+              build, update build properties, and the ability to receive notifications
+              about build events via service hooks.
+            vso.pipelineresources_use: 'Grants the ability to approve a pipeline''s
+              request to use a protected resource: agent pool, environment, queue,
+              repository, secure files, service connection, and variable group'
+x-ms-vss-area: approval
+x-ms-vss-resource-area-id: 5b55a9b6-2e0f-40d7-829d-3741d2b8c4e4

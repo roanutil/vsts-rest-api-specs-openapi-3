@@ -1,0 +1,512 @@
+openapi: 3.0.1
+info:
+  title: SecurityRoles
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 7.0-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Roleassignments
+- name: Roledefinitions
+paths:
+  /{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}:
+    get:
+      tags:
+      - Roleassignments
+      description: Get role assignments for the resource
+      operationId: Roleassignments_List
+      parameters:
+      - name: scopeId
+        in: path
+        description: Id of the assigned scope
+        required: true
+        schema:
+          type: string
+      - name: resourceId
+        in: path
+        description: Id of the resource that is assigned the scope
+        required: true
+        schema:
+          type: string
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoleAssignment'
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: roleassignments
+      x-ms-vss-method: GetRoleAssignments
+      x-ms-preview: true
+    put:
+      tags:
+      - Roleassignments
+      description: Set role assignments on a resource
+      operationId: Roleassignments_Set Role Assignments
+      parameters:
+      - name: scopeId
+        in: path
+        description: Id of the assigned scope
+        required: true
+        schema:
+          type: string
+      - name: resourceId
+        in: path
+        description: Id of the resource on which the role is to be assigned
+        required: true
+        schema:
+          type: string
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: limitToCallerIdentityDomain
+        in: query
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Roles to be assigned
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserRoleAssignmentRef'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoleAssignment'
+      security:
+      - oauth2:
+        - vso.security_manage
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: roleassignments
+      x-ms-vss-method: SetRoleAssignments
+      x-ms-preview: true
+      x-ms-examples:
+        Set Role assignments:
+          $ref: ./httpExamples/roleassignments/AddRoleAssignments.json
+      x-codegen-request-body-name: body
+    patch:
+      tags:
+      - Roleassignments
+      operationId: Roleassignments_Remove Role Assignments
+      parameters:
+      - name: scopeId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: resourceId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uuid
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: roleassignments
+      x-ms-vss-method: RemoveRoleAssignments
+      x-ms-preview: true
+      x-codegen-request-body-name: body
+  /{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}/{identityId}:
+    put:
+      tags:
+      - Roleassignments
+      description: Set role assignment on a resource
+      operationId: Roleassignments_Set Role Assignment
+      parameters:
+      - name: scopeId
+        in: path
+        description: Id of the assigned scope
+        required: true
+        schema:
+          type: string
+      - name: resourceId
+        in: path
+        description: Id of the resource on which the role is to be assigned
+        required: true
+        schema:
+          type: string
+      - name: identityId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Roles to be assigned
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRoleAssignmentRef'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleAssignment'
+      security:
+      - oauth2:
+        - vso.security_manage
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: roleassignments
+      x-ms-vss-method: SetRoleAssignment
+      x-ms-preview: true
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Roleassignments
+      description: Remove the role assignment on a resource
+      operationId: Roleassignments_Remove Role Assignment
+      parameters:
+      - name: scopeId
+        in: path
+        description: Id of the assigned scope
+        required: true
+        schema:
+          type: string
+      - name: resourceId
+        in: path
+        description: Id of the resource on which the role is to be removed
+        required: true
+        schema:
+          type: string
+      - name: identityId
+        in: path
+        description: Identity on which the assignment is to be removed
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.security_manage
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: roleassignments
+      x-ms-vss-method: RemoveRoleAssignment
+      x-ms-preview: true
+  /{organization}/_apis/securityroles/scopes/{scopeId}/roledefinitions:
+    get:
+      tags:
+      - Roledefinitions
+      operationId: Roledefinitions_List
+      parameters:
+      - name: scopeId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SecurityRole'
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: roledefinitions
+      x-ms-vss-method: GetRoleDefinitions
+      x-ms-preview: true
+components:
+  schemas:
+    GraphSubjectBase:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        descriptor:
+          type: string
+          description: The descriptor is the primary way to reference the graph subject
+            while the system is running. This field will uniquely identify the same
+            graph subject across both Accounts and Organizations.
+        displayName:
+          type: string
+          description: This is the non-unique display name of the graph subject. To
+            change this field, you must alter its value in the source provider.
+        url:
+          type: string
+          description: This url is the full route to the source resource of this graph
+            subject.
+      description: ""
+    IdentityRef:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/GraphSubjectBase'
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    RoleAssignment:
+      type: object
+      properties:
+        access:
+          type: string
+          description: Designates the role as explicitly assigned or inherited.
+          enum:
+          - assigned
+          - inherited
+          x-ms-enum:
+            name: RoleAccess
+            values:
+            - value: assigned
+              description: Access has been explicitly set.
+            - value: inherited
+              description: Access has been inherited from a higher scope.
+        accessDisplayName:
+          type: string
+          description: User friendly description of access assignment.
+        identity:
+          $ref: '#/components/schemas/IdentityRef'
+        role:
+          $ref: '#/components/schemas/SecurityRole'
+      description: ""
+    SecurityRole:
+      type: object
+      properties:
+        allowPermissions:
+          type: integer
+          description: Permissions the role is allowed.
+          format: int32
+        denyPermissions:
+          type: integer
+          description: Permissions the role is denied.
+          format: int32
+        description:
+          type: string
+          description: Description of user access defined by the role
+        displayName:
+          type: string
+          description: User friendly name of the role.
+        identifier:
+          type: string
+          description: Globally unique identifier for the role.
+        name:
+          type: string
+          description: Unique name of the role in the scope.
+        scope:
+          type: string
+          description: Returns the id of the ParentScope.
+      description: ""
+    UserRoleAssignmentRef:
+      type: object
+      properties:
+        roleName:
+          type: string
+          description: The name of the role assigned.
+        uniqueName:
+          type: string
+          description: Identifier of the user given the role assignment.
+        userId:
+          type: string
+          description: Unique id of the user given the role assignment.
+          format: uuid
+      description: ""
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.security_manage: Grants the ability to read, write, and manage security
+              permissions.
+x-ms-vss-area: SecurityRoles
+x-ms-paths:
+  ? /{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}?inheritPermissions={inheritPermissions}
+  : patch:
+      tags:
+      - Roleassignments
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: roleassignments
+      x-ms-vss-method: ChangeInheritance
+      x-ms-preview: true
+      description: ""
+      operationId: Roleassignments_Change Inheritance
+      parameters:
+      - in: path
+        name: scopeId
+        description: ""
+        required: true
+        type: string
+      - in: path
+        name: resourceId
+        description: ""
+        required: true
+        type: string
+      - in: query
+        name: inheritPermissions
+        description: ""
+        required: true
+        type: boolean
+      - in: path
+        name: organization
+        description: The name of the Azure DevOps organization.
+        required: true
+        x-ms-required: false
+        type: string
+      - $ref: '#/parameters/api-Version-preview.1'
+      responses:
+        200:
+          description: successful operation

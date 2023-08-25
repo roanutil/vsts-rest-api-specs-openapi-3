@@ -1,0 +1,924 @@
+openapi: 3.0.1
+info:
+  title: Search
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: "7.0"
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://almsearch.dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Code Search Results
+  description: Rest api for code search.
+- name: Package Search Results
+  description: REST API for package search.
+- name: Repositories
+  description: REST API controller for Repository Status.
+- name: Tfvc
+  description: REST API controller for TFVC Repository Status.
+- name: Wiki Search Results
+  description: REST API controller for wiki search.
+- name: Work Item Search Results
+  description: Rest api for work item search.
+paths:
+  /{organization}/_apis/search/packagesearchresults:
+    post:
+      tags:
+      - Package Search Results
+      description: Provides a set of results for the search text.
+      operationId: Package Search Results_Fetch Package Search Results
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The Package Search Request.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PackageSearchRequest'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          headers:
+            ActivityId:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageSearchResponseContent'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: packageSearchResults
+      x-ms-vss-method: FetchPackageSearchResults
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/packageSearchResults/POST__PackageSearchResults.json
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/search/codesearchresults:
+    post:
+      tags:
+      - Code Search Results
+      description: Provides a set of results for the search text.
+      operationId: Code Search Results_Fetch Code Search Results
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The Code Search Request.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CodeSearchRequest'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeSearchResponse'
+      security:
+      - oauth2:
+        - vso.code
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: codeSearchResults
+      x-ms-vss-method: FetchCodeSearchResults
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/codeSearchResults/POST__CodeSearchResults.json
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/search/status/repositories/{repository}:
+    get:
+      tags:
+      - Repositories
+      description: Provides status of Repository.
+      operationId: Repositories_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: repository
+        in: path
+        description: Repository ID or repository name.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RepositoryStatusResponse'
+      security:
+      - oauth2:
+        - vso.code
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: repositories
+      x-ms-vss-method: GetRepositoryStatus
+  /{organization}/{project}/_apis/search/status/tfvc:
+    get:
+      tags:
+      - Tfvc
+      description: Provides status of TFVC Repository.
+      operationId: Tfvc_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TfvcRepositoryStatusResponse'
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: tfvc
+      x-ms-vss-method: GetTfvcRepositoryStatus
+  /{organization}/{project}/_apis/search/wikisearchresults:
+    post:
+      tags:
+      - Wiki Search Results
+      description: Provides a set of results for the search request.
+      operationId: Wiki Search Results_Fetch Wiki Search Results
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The Wiki Search Request.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WikiSearchRequest'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WikiSearchResponse'
+      security:
+      - oauth2:
+        - vso.wiki
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: wikiSearchResults
+      x-ms-vss-method: FetchWikiSearchResults
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/wikiSearchResults/POST__WikiSearchResults.json
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/search/workitemsearchresults:
+    post:
+      tags:
+      - Work Item Search Results
+      description: Provides a set of results for the search text.
+      operationId: Work Item Search Results_Fetch Work Item Search Results
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The Work Item Search Request.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkItemSearchRequest'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemSearchResponse'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: workItemSearchResults
+      x-ms-vss-method: FetchWorkItemSearchResults
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/workItemSearchResults/POST__WorkItemSearchResults.json
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    BoardResult:
+      type: object
+      properties:
+        boardtype:
+          type: string
+          description: Board Type of the board document.
+        collection:
+          $ref: '#/components/schemas/Collection'
+        project:
+          $ref: '#/components/schemas/Project'
+        team:
+          $ref: '#/components/schemas/Team'
+      description: Defines the Board result that matched a Board search request.
+    BoardSearchRequest:
+      description: Defines a Board search request.
+      allOf:
+      - $ref: '#/components/schemas/EntitySearchRequest'
+    BoardSearchResponse:
+      description: Defines a Board search response item.
+      allOf:
+      - $ref: '#/components/schemas/EntitySearchResponse'
+    BranchInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the indexed branch
+      description: Information about the configured branch.
+    CodeResult:
+      type: object
+      properties:
+        collection:
+          $ref: '#/components/schemas/Collection'
+        contentId:
+          type: string
+          description: ContentId of the result file.
+        fileName:
+          type: string
+          description: Name of the result file.
+        matches:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/Hit'
+          description: 'Dictionary of field to hit offsets in the result file. Key
+            identifies the area in which hits were found, for ex: file content/file
+            name etc.'
+        path:
+          type: string
+          description: Path at which result file is present.
+        project:
+          $ref: '#/components/schemas/Project'
+        repository:
+          $ref: '#/components/schemas/Repository'
+        versions:
+          type: array
+          description: Versions of the result file.
+          items:
+            $ref: '#/components/schemas/Version'
+      description: Defines the code result containing information of the searched
+        files and its metadata.
+    CodeSearchRequest:
+      description: Defines a code search request.
+      allOf:
+      - $ref: '#/components/schemas/EntitySearchRequest'
+    CodeSearchResponse:
+      description: Defines a code search response item.
+      allOf:
+      - $ref: '#/components/schemas/EntitySearchResponse'
+    Collection:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the collection.
+      description: Defines the details of the collection.
+    CustomRepositoryBranchStatusResponse:
+      type: object
+      properties:
+        lastIndexedChangeId:
+          type: integer
+          format: int64
+        lastIndexedChangeIdChangeTime:
+          type: string
+          format: date-time
+        latestChangeId:
+          type: integer
+          format: int64
+        latestChangeIdChangeTime:
+          type: string
+          format: date-time
+      description: ""
+    CustomRepositoryStatusResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Repository Id.
+          format: uuid
+        indexedTopLevelFolders:
+          type: array
+          description: List of indexed top level folders info.
+          items:
+            $ref: '#/components/schemas/DepotInfo'
+        name:
+          type: string
+          description: Repository Name.
+      description: Defines the custom repository status.
+    DepotInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the indexed top level folder (depot).
+      description: Information about the custom repository indexing freshness for
+        configured branches and depots.
+    EntitySearchRequest:
+      description: Base contract for search request types without scroll support.
+      allOf:
+      - $ref: '#/components/schemas/EntitySearchRequestBase'
+    EntitySearchRequestBase:
+      type: object
+      properties:
+        filters:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          description: Filters to be applied. Set it to null if there are no filters
+            to be applied.
+        searchText:
+          type: string
+          description: The search text.
+      description: Base class for search request types.
+    EntitySearchResponse:
+      type: object
+      properties:
+        facets:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/Filter'
+          description: A dictionary storing an array of <code>Filter</code> object
+            against each facet.
+        infoCode:
+          type: integer
+          description: 'Numeric code indicating any additional information: 0 - Ok,
+            1 - Account is being reindexed, 2 - Account indexing has not started,
+            3 - Invalid Request, 4 - Prefix wildcard query not supported, 5 - MultiWords
+            with code facet not supported, 6 - Account is being onboarded, 7 - Account
+            is being onboarded or reindexed, 8 - Top value trimmed to maxresult allowed
+            9 - Branches are being indexed, 10 - Faceting not enabled, 11 - Work items
+            not accessible, 19 - Phrase queries with code type filters not supported,
+            20 - Wildcard queries with code type filters not supported. Any other
+            info code is used for internal purpose.'
+          format: int32
+      description: Defines the base contract for search response.
+    FeedInfo:
+      type: object
+      properties:
+        collectionId:
+          type: string
+          description: Id of the collection.
+        collectionName:
+          type: string
+          description: Name of the collection.
+        feedId:
+          type: string
+          description: Id of the feed.
+        feedName:
+          type: string
+          description: Name of the feed.
+        latestMatchedVersion:
+          type: string
+          description: Latest matched version of package in this Feed.
+        latestVersion:
+          type: string
+          description: Latest version of package in this Feed.
+        packageUrl:
+          type: string
+          description: Url of package in this Feed.
+        views:
+          type: array
+          description: List of views which contain the matched package.
+          items:
+            type: string
+      description: Defines the details of a feed.
+    Filter:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of the filter bucket.
+        name:
+          type: string
+          description: Name of the filter bucket.
+        resultCount:
+          type: integer
+          description: Count of matches in the filter bucket.
+          format: int32
+      description: Describes a filter bucket item representing the total matches of
+        search result, name and id.
+    Hit:
+      type: object
+      properties:
+        charOffset:
+          type: integer
+          description: Gets or sets the start character offset of a piece of text.
+          format: int32
+        codeSnippet:
+          type: string
+          description: Gets or sets an extract of code where the match appears. Usually
+            it is the line where there is the match.
+        column:
+          type: integer
+          description: Gets or sets the column number where the match appears in the
+            line.
+          format: int32
+        length:
+          type: integer
+          description: Gets or sets the length of a piece of text.
+          format: int32
+        line:
+          type: integer
+          description: Gets or sets the line number where the match appears in the
+            file.
+          format: int32
+        type:
+          type: string
+          description: Gets or sets the name of type of a piece of text.
+      description: Describes the position of a piece of text in a document.
+    PackageHit:
+      type: object
+      properties:
+        fieldReferenceName:
+          type: string
+          description: Reference name of the highlighted field.
+        highlights:
+          type: array
+          description: Matched/highlighted snippets of the field.
+          items:
+            type: string
+      description: Defines the matched terms in the field of the package result.
+    PackageResult:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the package.
+        feeds:
+          type: array
+          description: List of feeds which contain the matching package.
+          items:
+            $ref: '#/components/schemas/FeedInfo'
+        hits:
+          type: array
+          description: List of highlighted fields for the match.
+          items:
+            $ref: '#/components/schemas/PackageHit'
+        id:
+          type: string
+          description: Id of the package.
+        name:
+          type: string
+          description: Name of the package.
+        protocolType:
+          type: string
+          description: Type of the package.
+      description: Defines the package result that matched a package search request.
+    PackageSearchRequest:
+      description: Defines a package search request.
+      allOf:
+      - $ref: '#/components/schemas/EntitySearchRequest'
+    PackageSearchResponse:
+      type: object
+      properties:
+        activityId:
+          type: array
+          items:
+            type: string
+        content:
+          $ref: '#/components/schemas/PackageSearchResponseContent'
+      description: ""
+    PackageSearchResponseContent:
+      description: Defines a response item that is returned for a package search request.
+      allOf:
+      - $ref: '#/components/schemas/EntitySearchResponse'
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of the project.
+          format: uuid
+        name:
+          type: string
+          description: Name of the project.
+      description: Defines the details of the project.
+    ProjectReference:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the project.
+          format: uuid
+        name:
+          type: string
+          description: Name of the project.
+        visibility:
+          type: string
+          description: Visibility of the project.
+      description: Defines the details of the project.
+    Repository:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of the repository.
+        name:
+          type: string
+          description: Name of the repository.
+        type:
+          type: string
+          description: Version control type of the result file.
+          enum:
+          - git
+          - tfvc
+          - custom
+          x-ms-enum:
+            name: VersionControlType
+            values:
+            - value: git
+              description: ""
+            - value: tfvc
+              description: ""
+            - value: custom
+              description: For internal use.
+      description: Defines the details of the repository.
+    RepositoryStatusResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Repository Id.
+          format: uuid
+        indexedBranches:
+          type: array
+          description: List of Indexed branches info.
+          items:
+            $ref: '#/components/schemas/BranchInfo'
+        name:
+          type: string
+          description: Repository Name.
+      description: Defines the repository status.
+    ScrollSearchRequest:
+      description: Defines a scroll code search request.
+      allOf:
+      - $ref: '#/components/schemas/EntitySearchRequestBase'
+    SettingResult:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the settings page
+        icon:
+          type: string
+          description: Icon name of the settings page
+        routeId:
+          type: string
+          description: Contribution url route id of the corresponding settings page
+        routeParameterMapping:
+          type: object
+          additionalProperties:
+            type: string
+          description: Contribution url route parameter of the corresponding settings
+            page
+        scope:
+          type: string
+          description: Scope of the settings page, either organization, project or
+            user
+          enum:
+          - none
+          - organization
+          - project
+          - user
+          x-ms-enum:
+            name: SearchScope
+            values:
+            - value: none
+              description: ""
+            - value: organization
+              description: ""
+            - value: project
+              description: ""
+            - value: user
+              description: ""
+        title:
+          type: string
+          description: Title of the settings page
+      description: Defines the setting result that matched a setting search request
+    SettingSearchRequest:
+      description: Defines a setting search request
+      allOf:
+      - $ref: '#/components/schemas/EntitySearchRequest'
+    SettingSearchResponse:
+      description: Defines a setting search response item
+      allOf:
+      - $ref: '#/components/schemas/EntitySearchResponse'
+    SortOption:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field name on which sorting should be done.
+        sortOrder:
+          type: string
+          description: Order (ASC/DESC) in which the results should be sorted.
+      description: Defines how to sort the result.
+    Team:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of the team.
+          format: uuid
+        name:
+          type: string
+          description: Name of the Team.
+      description: Defines the details of the team.
+    TfvcRepositoryStatusResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Repository Id.
+          format: uuid
+        indexingInformation:
+          type: array
+          description: List of Indexing Information for TFVC repository
+          items:
+            $ref: '#/components/schemas/BranchInfo'
+        name:
+          type: string
+          description: Repository Name.
+      description: Defines the TFVC repository status.
+    Version:
+      type: object
+      properties:
+        branchName:
+          type: string
+          description: Name of the branch.
+        changeId:
+          type: string
+          description: ChangeId in the given branch associated with this match.
+      description: Describes the details pertaining to a version of the result file.
+    Wiki:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of the wiki.
+        mappedPath:
+          type: string
+          description: Mapped path for the wiki.
+        name:
+          type: string
+          description: Name of the wiki.
+        version:
+          type: string
+          description: Version for wiki.
+      description: Defines the details of wiki.
+    WikiHit:
+      type: object
+      properties:
+        fieldReferenceName:
+          type: string
+          description: Reference name of the highlighted field.
+        highlights:
+          type: array
+          description: Matched/highlighted snippets of the field.
+          items:
+            type: string
+      description: Defines the matched terms in the field of the wiki result.
+    WikiResult:
+      type: object
+      properties:
+        collection:
+          $ref: '#/components/schemas/Collection'
+        contentId:
+          type: string
+          description: ContentId of the result file.
+        fileName:
+          type: string
+          description: Name of the result file.
+        hits:
+          type: array
+          description: Highlighted snippets of fields that match the search request.
+            The list is sorted by relevance of the snippets.
+          items:
+            $ref: '#/components/schemas/WikiHit'
+        path:
+          type: string
+          description: Path at which result file is present.
+        project:
+          $ref: '#/components/schemas/ProjectReference'
+        wiki:
+          $ref: '#/components/schemas/Wiki'
+      description: Defines the wiki result that matched a wiki search request.
+    WikiSearchRequest:
+      description: Defines a wiki search request.
+      allOf:
+      - $ref: '#/components/schemas/EntitySearchRequest'
+    WikiSearchResponse:
+      description: Defines a wiki search response item.
+      allOf:
+      - $ref: '#/components/schemas/EntitySearchResponse'
+    WorkItemHit:
+      type: object
+      properties:
+        fieldReferenceName:
+          type: string
+          description: Reference name of the highlighted field.
+        highlights:
+          type: array
+          description: Matched/highlighted snippets of the field.
+          items:
+            type: string
+      description: Defines the matched terms in the field of the work item result.
+    WorkItemResult:
+      type: object
+      properties:
+        fields:
+          type: object
+          additionalProperties:
+            type: string
+          description: A standard set of work item fields and their values.
+        hits:
+          type: array
+          description: Highlighted snippets of fields that match the search request.
+            The list is sorted by relevance of the snippets.
+          items:
+            $ref: '#/components/schemas/WorkItemHit'
+        project:
+          $ref: '#/components/schemas/Project'
+        url:
+          type: string
+          description: Reference to the work item.
+      description: Defines the work item result that matched a work item search request.
+    WorkItemSearchRequest:
+      description: Defines a work item search request.
+      allOf:
+      - $ref: '#/components/schemas/EntitySearchRequest'
+    WorkItemSearchResponse:
+      description: Defines a response item that is returned for a work item search
+        request.
+      allOf:
+      - $ref: '#/components/schemas/EntitySearchResponse'
+  parameters:
+    api-Version:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0' to use
+        this version of the api.
+      required: true
+      schema:
+        type: string
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.code: Grants the ability to read source code and metadata about commits,
+              changesets, branches, and other version control artifacts. Also grants
+              the ability to search code and get notified about version control events
+              via service hooks.
+            vso.work: Grants the ability to read work items, queries, boards, area
+              and iterations paths, and other work item tracking related metadata.
+              Also grants the ability to execute queries, search work items and to
+              receive notifications about work item events via service hooks.
+            vso.wiki: Grants the ability to read wikis, wiki pages and wiki attachments.
+              Also grants the ability to search wiki pages.
+            vso.packaging: Grants the ability to read feeds and packages. Also grants
+              the ability to search packages.
+x-ms-vss-area: Search
+x-ms-vss-resource-area-id: ea48a0a1-269c-42d8-b8ad-ddc8fcdcf578

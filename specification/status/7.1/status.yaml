@@ -1,0 +1,436 @@
+openapi: 3.0.1
+info:
+  title: Status
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 7.1-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://status.dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Health
+paths:
+  /_apis/status/health:
+    get:
+      tags:
+      - Health
+      description: Queries status information for the service all-up, or scoped to
+        a particular service and/or geography
+      operationId: Health_Get
+      parameters:
+      - name: services
+        in: query
+        description: 'A comma-separated list of services for which to get status information
+          for. Supported values: Artifacts, Boards, Core services, Other services,
+          Pipelines, Repos, Test Plans.'
+        schema:
+          type: string
+          format: array (string)
+      - name: geographies
+        in: query
+        description: 'A comma-separated list of geographies for which to get status
+          information for. Supported values: APAC, AU, BR, CA, EU, IN, UK, US.'
+        schema:
+          type: string
+          format: array (string)
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceStatus'
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: health
+      x-ms-vss-method: GetServiceStatus
+      x-ms-preview: true
+      x-ms-examples:
+        Get service health:
+          $ref: ./httpExamples/health/GET__health.json
+        Get service health for one or more services:
+          $ref: ./httpExamples/health/GET__health__services.json
+        Get service health for one or more geographies:
+          $ref: ./httpExamples/health/GET__health__geographies.json
+        Get service health for one or more services and one or more geographies:
+          $ref: ./httpExamples/health/GET__health__services__geographies.json
+components:
+  schemas:
+    EnterpriseStatus:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/Status'
+    Geography:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      description: ""
+    GeographyWithHealth:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/Geography'
+    LiveSiteEvent:
+      type: object
+      properties:
+        endTime:
+          type: string
+          format: date-time
+        id:
+          type: integer
+          format: int64
+        impact:
+          type: array
+          items:
+            $ref: '#/components/schemas/LiveSiteEventImpact'
+        incidentUri:
+          type: string
+        isDeleted:
+          type: boolean
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/LiveSiteEventLog'
+        nextUpdateTime:
+          type: string
+          format: date-time
+        severity:
+          type: string
+          enum:
+          - unhealthy
+          - degraded
+          - advisory
+          x-ms-enum:
+            name: LiveSiteEventSeverity
+            values:
+            - value: unhealthy
+              description: ""
+            - value: degraded
+              description: ""
+            - value: advisory
+              description: ""
+        startTime:
+          type: string
+          format: date-time
+        state:
+          type: string
+          enum:
+          - active
+          - resolved
+          x-ms-enum:
+            name: LiveSiteEventState
+            values:
+            - value: active
+              description: ""
+            - value: resolved
+              description: ""
+        title:
+          type: string
+      description: ""
+    LiveSiteEventAuthor:
+      type: object
+      properties:
+        displayName:
+          type: string
+        id:
+          type: string
+          format: uuid
+      description: ""
+    LiveSiteEventImpact:
+      type: object
+      properties:
+        scopeName:
+          type: string
+        scopeType:
+          type: string
+          enum:
+          - geography
+          - organization
+          x-ms-enum:
+            name: ScopeType
+            values:
+            - value: geography
+              description: ""
+            - value: organization
+              description: ""
+        serviceId:
+          type: string
+      description: ""
+    LiveSiteEventLog:
+      type: object
+      properties:
+        author:
+          $ref: '#/components/schemas/LiveSiteEventAuthor'
+        creationDateTime:
+          type: string
+          format: date-time
+        description:
+          type: string
+        descriptionMd:
+          type: string
+        id:
+          type: integer
+          format: int32
+        isDeleted:
+          type: boolean
+        lastUpdatedDateTime:
+          type: string
+          format: date-time
+        scopeType:
+          type: string
+          enum:
+          - geography
+          - organization
+          x-ms-enum:
+            name: ScopeType
+            values:
+            - value: geography
+              description: ""
+            - value: organization
+              description: ""
+        type:
+          type: string
+          enum:
+          - event
+          - postmortem
+          - notification
+          x-ms-enum:
+            name: LiveSiteEventLogType
+            values:
+            - value: event
+              description: ""
+            - value: postmortem
+              description: ""
+            - value: notification
+              description: ""
+      description: ""
+    LiveSiteEventLogAttachment:
+      type: object
+      properties:
+        author:
+          $ref: '#/components/schemas/LiveSiteEventAuthor'
+        creationDateTime:
+          type: string
+          format: date-time
+        displayName:
+          type: string
+        eventId:
+          type: integer
+          format: int64
+        fileId:
+          type: integer
+          format: int32
+        fileName:
+          type: string
+        scopeType:
+          type: string
+          enum:
+          - geography
+          - organization
+          x-ms-enum:
+            name: ScopeType
+            values:
+            - value: geography
+              description: ""
+            - value: organization
+              description: ""
+      description: ""
+    LiveSiteEventTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+        initialDescription:
+          type: string
+        title:
+          type: string
+      description: ""
+    LiveSiteEventTemplateData:
+      type: object
+      properties:
+        defaultId:
+          type: string
+        finalDescription:
+          type: string
+        intermediateDescription:
+          type: string
+        templates:
+          type: array
+          items:
+            $ref: '#/components/schemas/LiveSiteEventTemplate'
+      description: ""
+    MicroService:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        scaleUnits:
+          type: array
+          items:
+            $ref: '#/components/schemas/MicroServiceScaleUnit'
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/Service'
+      description: ""
+    MicroServiceScaleUnit:
+      type: object
+      properties:
+        geography:
+          $ref: '#/components/schemas/Geography'
+        id:
+          type: string
+        isInternal:
+          type: boolean
+      description: ""
+    OrganizationHealth:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceWithHealth'
+      description: ""
+    Service:
+      type: object
+      properties:
+        id:
+          type: string
+        isInternal:
+          type: boolean
+        state:
+          type: string
+          enum:
+          - active
+          - hidden
+          - deleted
+          x-ms-enum:
+            name: ScopeState
+            values:
+            - value: active
+              description: ""
+            - value: hidden
+              description: ""
+            - value: deleted
+              description: ""
+      description: ""
+    ServiceHealth:
+      type: object
+      properties:
+        geographies:
+          type: array
+          items:
+            $ref: '#/components/schemas/GeographyWithHealth'
+        id:
+          type: string
+      description: ""
+    ServiceStatus:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/Status'
+    ServiceWithHealth:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/Service'
+    Status:
+      type: object
+      properties:
+        lastUpdated:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/StatusSummary'
+      description: ""
+    StatusImpact:
+      type: object
+      properties:
+        liveSiteEvents:
+          type: array
+          items:
+            $ref: '#/components/schemas/LiveSiteEvent'
+        serviceStatus:
+          $ref: '#/components/schemas/ServiceStatus'
+      description: Represents data for the impacted organization. Will be null if
+        org is not impacted
+    StatusSummary:
+      type: object
+      properties:
+        health:
+          type: string
+          enum:
+          - unknown
+          - unhealthy
+          - degraded
+          - advisory
+          - healthy
+          x-ms-enum:
+            name: ScopeHealth
+            values:
+            - value: unknown
+              description: ""
+            - value: unhealthy
+              description: ""
+            - value: degraded
+              description: ""
+            - value: advisory
+              description: ""
+            - value: healthy
+              description: ""
+        message:
+          type: string
+      description: ""
+    VssJsonCollectionWrapper:
+      description: This class is used to serialize collections as a single JSON object
+        on the wire.
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: The number of serialized items.
+          format: int32
+      description: ""
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.1-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+x-ms-vss-area: Status

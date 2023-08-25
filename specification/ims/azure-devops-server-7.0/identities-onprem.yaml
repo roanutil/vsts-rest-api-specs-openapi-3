@@ -1,0 +1,854 @@
+openapi: 3.0.1
+info:
+  title: Identity
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: "7.0"
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://https://fabrikam-fiber-inc:8080/DefaultCollection/
+security:
+- accessToken: []
+tags:
+- name: Identities
+paths:
+  /{collection}/_apis/identities:
+    get:
+      tags:
+      - Identities
+      description: Resolve legacy identity information for use with older APIs such
+        as the Security APIs
+      operationId: Identities_Read Identities
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: descriptors
+        in: query
+        description: A comma separated list of identity descriptors to resolve
+        schema:
+          type: string
+      - name: identityIds
+        in: query
+        description: A comma seperated list of storage keys to resolve
+        schema:
+          type: string
+      - name: subjectDescriptors
+        in: query
+        description: A comma seperated list of subject descriptors to resolve
+        schema:
+          type: string
+      - name: searchFilter
+        in: query
+        description: The type of search to perform. Values can be AccountName (domain\alias),
+          DisplayName, MailAddress, General (display name, account name, or unique
+          name), or LocalGroupName (only search Azure Devops groups).
+        schema:
+          type: string
+      - name: filterValue
+        in: query
+        description: The search value, as specified by the searchFilter.
+        schema:
+          type: string
+      - name: queryMembership
+        in: query
+        description: The membership information to include with the identities. Values
+          can be None for no membership data or Direct to include the groups that
+          the identity is a member of and the identities that are a member of this
+          identity (groups only)
+        schema:
+          type: string
+          enum:
+          - none
+          - direct
+          - expanded
+          - expandedUp
+          - expandedDown
+          x-ms-enum:
+            name: QueryMembership
+            values:
+            - value: none
+              description: Query will not return any membership data
+            - value: direct
+              description: Query will return only direct membership data
+            - value: expanded
+              description: Query will return expanded membership data
+            - value: expandedUp
+              description: Query will return expanded up membership data (parents
+                only)
+            - value: expandedDown
+              description: Query will return expanded down membership data (children
+                only)
+        x-ms-enum:
+          name: QueryMembership
+          values:
+          - value: none
+            description: Query will not return any membership data
+          - value: direct
+            description: Query will return only direct membership data
+          - value: expanded
+            description: Query will return expanded membership data
+          - value: expandedUp
+            description: Query will return expanded up membership data (parents only)
+          - value: expandedDown
+            description: Query will return expanded down membership data (children
+              only)
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Identity'
+      security:
+      - oauth2:
+        - vso.identity
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: identities
+      x-ms-vss-method: ReadIdentities
+      x-ms-examples:
+        By Name:
+          $ref: ./httpExamples/Identities/SearchPCVUByName-onprem.json
+        By Email:
+          $ref: ./httpExamples/Identities/SearchIdentityByEmail-onprem.json
+        By Ids:
+          $ref: ./httpExamples/Identities/SearchByIds-onprem.json
+        By IdentityDescriptors:
+          $ref: ./httpExamples/Identities/SearchByIdentityDescriptors-onprem.json
+        By Subject Descriptors:
+          $ref: ./httpExamples/Identities/SearchBySubjectDescriptors-onprem.json
+components:
+  schemas:
+    AccessTokenResult:
+      type: object
+      properties:
+        accessToken:
+          $ref: '#/components/schemas/JsonWebToken'
+        accessTokenError:
+          type: string
+          enum:
+          - none
+          - grantTypeRequired
+          - authorizationGrantRequired
+          - clientSecretRequired
+          - redirectUriRequired
+          - invalidAuthorizationGrant
+          - invalidAuthorizationScopes
+          - invalidRefreshToken
+          - authorizationNotFound
+          - authorizationGrantExpired
+          - accessAlreadyIssued
+          - invalidRedirectUri
+          - accessTokenNotFound
+          - invalidAccessToken
+          - accessTokenAlreadyRefreshed
+          - invalidClientSecret
+          - clientSecretExpired
+          - serverError
+          - accessDenied
+          - accessTokenKeyRequired
+          - invalidAccessTokenKey
+          - failedToGetAccessToken
+          - invalidClientId
+          - invalidClient
+          - invalidValidTo
+          - invalidUserId
+          - failedToIssueAccessToken
+          - authorizationGrantScopeMissing
+          - invalidPublicAccessTokenKey
+          - invalidPublicAccessToken
+          - publicFeatureFlagNotEnabled
+          - sshPolicyDisabled
+          - hostAuthorizationNotFound
+          - hostAuthorizationIsNotValid
+          - invalidScope
+          x-ms-enum:
+            name: TokenError
+            values:
+            - value: none
+              description: ""
+            - value: grantTypeRequired
+              description: ""
+            - value: authorizationGrantRequired
+              description: ""
+            - value: clientSecretRequired
+              description: ""
+            - value: redirectUriRequired
+              description: ""
+            - value: invalidAuthorizationGrant
+              description: ""
+            - value: invalidAuthorizationScopes
+              description: ""
+            - value: invalidRefreshToken
+              description: ""
+            - value: authorizationNotFound
+              description: ""
+            - value: authorizationGrantExpired
+              description: ""
+            - value: accessAlreadyIssued
+              description: ""
+            - value: invalidRedirectUri
+              description: ""
+            - value: accessTokenNotFound
+              description: ""
+            - value: invalidAccessToken
+              description: ""
+            - value: accessTokenAlreadyRefreshed
+              description: ""
+            - value: invalidClientSecret
+              description: ""
+            - value: clientSecretExpired
+              description: ""
+            - value: serverError
+              description: ""
+            - value: accessDenied
+              description: ""
+            - value: accessTokenKeyRequired
+              description: ""
+            - value: invalidAccessTokenKey
+              description: ""
+            - value: failedToGetAccessToken
+              description: ""
+            - value: invalidClientId
+              description: ""
+            - value: invalidClient
+              description: ""
+            - value: invalidValidTo
+              description: ""
+            - value: invalidUserId
+              description: ""
+            - value: failedToIssueAccessToken
+              description: ""
+            - value: authorizationGrantScopeMissing
+              description: ""
+            - value: invalidPublicAccessTokenKey
+              description: ""
+            - value: invalidPublicAccessToken
+              description: ""
+            - value: publicFeatureFlagNotEnabled
+              description: ""
+            - value: sshPolicyDisabled
+              description: ""
+            - value: hostAuthorizationNotFound
+              description: ""
+            - value: hostAuthorizationIsNotValid
+              description: ""
+            - value: invalidScope
+              description: ""
+        authorizationId:
+          type: string
+          format: uuid
+        errorDescription:
+          type: string
+        hasError:
+          type: boolean
+        isFirstPartyClient:
+          type: boolean
+        refreshToken:
+          $ref: '#/components/schemas/RefreshTokenGrant'
+        scope:
+          type: string
+        tokenType:
+          type: string
+        validTo:
+          type: string
+          format: date-time
+      description: ""
+    AuthorizationGrant:
+      type: object
+      properties:
+        grantType:
+          type: string
+          enum:
+          - none
+          - jwtBearer
+          - refreshToken
+          - implicit
+          - clientCredentials
+          x-ms-enum:
+            name: GrantType
+            values:
+            - value: none
+              description: ""
+            - value: jwtBearer
+              description: ""
+            - value: refreshToken
+              description: ""
+            - value: implicit
+              description: ""
+            - value: clientCredentials
+              description: ""
+      description: ""
+    ChangedIdentities:
+      type: object
+      properties:
+        identities:
+          type: array
+          description: Changed Identities
+          items:
+            $ref: '#/components/schemas/Identity'
+        moreData:
+          type: boolean
+          description: More data available, set to true if pagesize is specified.
+        sequenceContext:
+          $ref: '#/components/schemas/ChangedIdentitiesContext'
+      description: Container class for changed identities
+    ChangedIdentitiesContext:
+      type: object
+      properties:
+        groupSequenceId:
+          type: integer
+          description: Last Group SequenceId
+          format: int32
+        identitySequenceId:
+          type: integer
+          description: Last Identity SequenceId
+          format: int32
+        organizationIdentitySequenceId:
+          type: integer
+          description: Last Group OrganizationIdentitySequenceId
+          format: int32
+        pageSize:
+          type: integer
+          description: Page size
+          format: int32
+      description: Context class for changed identities
+    CreateScopeInfo:
+      type: object
+      properties:
+        adminGroupDescription:
+          type: string
+        adminGroupName:
+          type: string
+        creatorId:
+          type: string
+          format: uuid
+        parentScopeId:
+          type: string
+          format: uuid
+        scopeName:
+          type: string
+        scopeType:
+          type: string
+          enum:
+          - generic
+          - serviceHost
+          - teamProject
+          x-ms-enum:
+            name: GroupScopeType
+            values:
+            - value: generic
+              description: ""
+            - value: serviceHost
+              description: ""
+            - value: teamProject
+              description: ""
+      description: ""
+    FrameworkIdentityInfo:
+      type: object
+      properties:
+        displayName:
+          type: string
+        identifier:
+          type: string
+        identityType:
+          type: string
+          enum:
+          - none
+          - serviceIdentity
+          - aggregateIdentity
+          - importedIdentity
+          x-ms-enum:
+            name: FrameworkIdentityType
+            values:
+            - value: none
+              description: ""
+            - value: serviceIdentity
+              description: ""
+            - value: aggregateIdentity
+              description: ""
+            - value: importedIdentity
+              description: ""
+        role:
+          type: string
+      description: ""
+    GroupMembership:
+      type: object
+      properties:
+        active:
+          type: boolean
+        descriptor:
+          $ref: '#/components/schemas/IdentityDescriptor'
+        id:
+          type: string
+          format: uuid
+        queriedId:
+          type: string
+          format: uuid
+      description: ""
+    Identity:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/IdentityBase'
+    IdentityBase:
+      type: object
+      properties:
+        customDisplayName:
+          type: string
+          description: The custom display name for the identity (if any). Setting
+            this property to an empty string will clear the existing custom display
+            name. Setting this property to null will not affect the existing persisted
+            value (since null values do not get sent over the wire or to the database)
+        descriptor:
+          $ref: '#/components/schemas/IdentityDescriptor'
+        id:
+          type: string
+          description: Identity Identifier. Also called Storage Key, or VSID
+          format: uuid
+        isActive:
+          type: boolean
+          description: True if the identity has a membership in any Azure Devops group
+            in the collection.
+        isContainer:
+          type: boolean
+          description: True if the identity is a group.
+        masterId:
+          type: string
+          format: uuid
+        memberIds:
+          type: array
+          description: Id of the members of the identity (groups only).
+          items:
+            type: string
+            format: uuid
+        memberOf:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityDescriptor'
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityDescriptor'
+        metaTypeId:
+          type: integer
+          format: int32
+        properties:
+          $ref: '#/components/schemas/PropertiesCollection'
+        providerDisplayName:
+          type: string
+          description: The display name for the identity as specified by the source
+            identity provider.
+        resourceVersion:
+          type: integer
+          format: int32
+        socialDescriptor:
+          type: string
+        subjectDescriptor:
+          type: string
+          description: Subject descriptor of a Graph entity.
+        uniqueUserId:
+          type: integer
+          format: int32
+      description: Base Identity class to allow "trimmed" identity class in the GetConnectionData
+        API Makes sure that on-the-wire representations of the derived classes are
+        compatible with each other (e.g. Server responds with PublicIdentity object
+        while client deserializes it as Identity object) Derived classes should not
+        have additional [DataMember] properties
+    IdentityBatchInfo:
+      type: object
+      properties:
+        descriptors:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityDescriptor'
+        identityIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        includeRestrictedVisibility:
+          type: boolean
+        propertyNames:
+          type: array
+          items:
+            type: string
+        queryMembership:
+          type: string
+          enum:
+          - none
+          - direct
+          - expanded
+          - expandedUp
+          - expandedDown
+          x-ms-enum:
+            name: QueryMembership
+            values:
+            - value: none
+              description: Query will not return any membership data
+            - value: direct
+              description: Query will return only direct membership data
+            - value: expanded
+              description: Query will return expanded membership data
+            - value: expandedUp
+              description: Query will return expanded up membership data (parents
+                only)
+            - value: expandedDown
+              description: Query will return expanded down membership data (children
+                only)
+        socialDescriptors:
+          type: array
+          items:
+            type: string
+        subjectDescriptors:
+          type: array
+          items:
+            type: string
+      description: ""
+    IdentityDescriptor:
+      type: object
+      properties:
+        identifier:
+          type: string
+          description: The unique identifier for this identity, not exceeding 256
+            chars, which will be persisted.
+        identityType:
+          type: string
+          description: Type of descriptor (for example, Windows, Passport, etc.).
+      description: An Identity descriptor is a wrapper for the identity type (Windows
+        SID, Passport) along with a unique identifier such as the SID or PUID.
+    IdentityRightsTransferData:
+      type: object
+      properties:
+        userPrincipalNameMappings:
+          type: object
+          additionalProperties:
+            type: string
+      description: ""
+    IdentityScope:
+      type: object
+      properties:
+        administrators:
+          $ref: '#/components/schemas/IdentityDescriptor'
+        id:
+          type: string
+          format: uuid
+        isActive:
+          type: boolean
+        isGlobal:
+          type: boolean
+        localScopeId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        parentId:
+          type: string
+          format: uuid
+        scopeType:
+          type: string
+          enum:
+          - generic
+          - serviceHost
+          - teamProject
+          x-ms-enum:
+            name: GroupScopeType
+            values:
+            - value: generic
+              description: ""
+            - value: serviceHost
+              description: ""
+            - value: teamProject
+              description: ""
+        securingHostId:
+          type: string
+          format: uuid
+        subjectDescriptor:
+          type: string
+      description: ""
+    IdentitySelf:
+      type: object
+      properties:
+        accountName:
+          type: string
+          description: The UserPrincipalName (UPN) of the account. This value comes
+            from the source provider.
+        displayName:
+          type: string
+          description: The display name. For AAD accounts with multiple tenants this
+            is the display name of the profile in the home tenant.
+        domain:
+          type: string
+          description: This represents the name of the container of origin. For AAD
+            accounts this is the tenantID of the home tenant. For MSA accounts this
+            is the string "Windows Live ID".
+        id:
+          type: string
+          description: This is the VSID of the home tenant profile. If the profile
+            is signed into the home tenant or if the profile has no tenants then this
+            Id is the same as the Id returned by the profile/profiles/me endpoint.
+            Going forward it is recommended that you use the combined values of Origin,
+            OriginId and Domain to uniquely identify a user rather than this Id.
+          format: uuid
+        origin:
+          type: string
+          description: The type of source provider for the origin identifier. For
+            MSA accounts this is "msa". For AAD accounts this is "aad".
+        originId:
+          type: string
+          description: The unique identifier from the system of origin. If there are
+            multiple tenants this is the unique identifier of the account in the home
+            tenant. (For MSA this is the PUID in hex notation, for AAD this is the
+            object id.)
+        tenants:
+          type: array
+          description: For AAD accounts this is all of the tenants that this account
+            is a member of.
+          items:
+            $ref: '#/components/schemas/TenantInfo'
+      description: Identity information.
+    IdentitySnapshot:
+      type: object
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Identity'
+        identityIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        memberships:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupMembership'
+        scopeId:
+          type: string
+          format: uuid
+        scopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityScope'
+      description: ""
+    IdentityUpdateData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        index:
+          type: integer
+          format: int32
+        updated:
+          type: boolean
+      description: ""
+    IssuedToken:
+      type: object
+      properties:
+        isAuthenticated:
+          type: boolean
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+      description: ""
+    JObject:
+      type: object
+      properties:
+        item:
+          type: string
+          format: JToken
+        type:
+          type: string
+          description: Gets the node type for this JToken.
+          format: JTokenType
+      description: Represents a JSON object.
+    JsonPatchDocument:
+      description: The JSON model for JSON Patch Operations
+      allOf:
+      - type: array
+        items:
+          $ref: '#/components/schemas/JsonPatchOperation'
+    JsonPatchOperation:
+      type: object
+      properties:
+        from:
+          type: string
+          description: The path to copy from for the Move/Copy operation.
+        op:
+          type: string
+          description: The patch operation
+          enum:
+          - add
+          - remove
+          - replace
+          - move
+          - copy
+          - test
+          x-ms-enum:
+            name: Operation
+            values:
+            - value: add
+              description: ""
+            - value: remove
+              description: ""
+            - value: replace
+              description: ""
+            - value: move
+              description: ""
+            - value: copy
+              description: ""
+            - value: test
+              description: ""
+        path:
+          type: string
+          description: The path for the operation. In the case of an array, a zero
+            based index can be used to specify the position in the array (e.g. /biscuits/0/name).
+            The "-" character can be used instead of an index to insert at the end
+            of the array (e.g. /biscuits/-).
+        value:
+          type: object
+          properties: {}
+          description: The value for the operation. This is either a primitive or
+            a JToken.
+      description: The JSON model for a JSON Patch operation
+    JsonWebToken:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/IssuedToken'
+    PagedIdentities:
+      type: object
+      properties:
+        continuationToken:
+          type: array
+          items:
+            type: string
+        identities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Identity'
+      description: ""
+    PropertiesCollection:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: The count of properties in the collection.
+          format: int32
+        item:
+          type: object
+          properties: {}
+        keys:
+          type: array
+          description: The set of keys in the collection.
+          items:
+            type: string
+        values:
+          type: array
+          description: The set of values in the collection.
+          items:
+            type: string
+      description: The class represents a property bag as a collection of key-value
+        pairs. Values of all primitive types (any type with a `TypeCode != TypeCode.Object`)
+        except for `DBNull` are accepted. Values of type Byte[], Int32, Double, DateType
+        and String preserve their type, other primitives are retuned as a String.
+        Byte[] expected as base64 encoded string.
+    RefreshTokenGrant:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/AuthorizationGrant'
+    SwapIdentityInfo:
+      type: object
+      properties:
+        id1:
+          type: string
+          format: uuid
+        id2:
+          type: string
+          format: uuid
+      description: ""
+    TenantInfo:
+      type: object
+      properties:
+        homeTenant:
+          type: boolean
+        tenantId:
+          type: string
+          format: uuid
+        tenantName:
+          type: string
+        verifiedDomains:
+          type: array
+          items:
+            type: string
+      description: ""
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+  parameters:
+    api-Version:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0' to use
+        this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.identity_manage: Grants the ability to read, write, and manage identities
+              and groups.
+            vso.identity: Grants the ability to read identities and groups.
+x-ms-vss-area: Identities
+x-ms-vss-resource-area-id: 8a3d49b8-91f0-46ef-b33d-dda338c25db3
+x-ms-parameterized-host:
+  hostTemplate: '{instance}'
+  parameters:
+  - name: instance
+    description: TFS server name ({server:port})
+    required: true
+    type: string
+    in: path

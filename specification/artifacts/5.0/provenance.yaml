@@ -1,0 +1,114 @@
+openapi: 3.0.1
+info:
+  title: Provenance
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 5.0-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://pkgs.dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Provenance
+paths:
+  /{organization}/_apis/provenance/session/{protocol}:
+    post:
+      tags:
+      - Provenance
+      description: Creates a session, a wrapper around a feed that can store additional
+        metadata on the packages published to it.
+      operationId: CreateSession
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: protocol
+        in: path
+        description: The protocol that the session will target
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The feed and metadata for the session
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionRequest'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+      x-ms-docs-override-version: 5.0-preview.1
+      x-ms-vss-resource: session
+      x-ms-vss-method: CreateSession
+      x-ms-preview: true
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    SessionRequest:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            type: string
+          description: Generic property bag to store data about the session
+        feed:
+          type: string
+          description: The feed name or id for the session
+        source:
+          type: string
+          description: The type of session If a known value is provided, the Data
+            dictionary will be validated for the presence of properties required by
+            that type
+      description: ""
+    SessionResponse:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          description: The unique identifier for the session
+        sessionName:
+          type: string
+          description: The name for the session
+      description: ""
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '5.0-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+x-ms-vss-area: Provenance
+x-ms-vss-resource-area-id: b40c1171-807a-493a-8f3f-5c26d5e2f5aa

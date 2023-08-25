@@ -1,0 +1,309 @@
+openapi: 3.0.1
+info:
+  title: PipelinePermissions
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 7.0-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://https://fabrikam-fiber-inc:8080/DefaultCollection/
+security:
+- accessToken: []
+tags:
+- name: Pipeline Permissions
+paths:
+  /{collection}/{project}/_apis/pipelines/pipelinepermissions:
+    patch:
+      tags:
+      - Pipeline Permissions
+      description: Batch API to authorize/unauthorize a list of definitions for a
+        multiple resources.
+      operationId: Pipeline Permissions_Update Pipeline Permisions For Resources
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ResourcePipelinePermissions'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResourcePipelinePermissions'
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: pipelinePermissions
+      x-ms-vss-method: UpdatePipelinePermisionsForResources
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/pipelinePermissions/PATCH__UpdatePipelinePermissionsForResources-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/pipelines/pipelinepermissions/{resourceType}/{resourceId}:
+    get:
+      tags:
+      - Pipeline Permissions
+      description: Given a ResourceType and ResourceId, returns authorized definitions
+        for that resource.
+      operationId: Pipeline Permissions_Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: resourceType
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: resourceId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourcePipelinePermissions'
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: pipelinePermissions
+      x-ms-vss-method: GetPipelinePermissionsForResource
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/pipelinePermissions/GET__GetPipelinePermissionsForResource-onprem.json
+    patch:
+      tags:
+      - Pipeline Permissions
+      description: Authorizes/Unauthorizes a list of definitions for a given resource.
+      operationId: Pipeline Permissions_Update Pipeline Permisions For Resource
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: resourceType
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: resourceId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourcePipelinePermissions'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourcePipelinePermissions'
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: pipelinePermissions
+      x-ms-vss-method: UpdatePipelinePermisionsForResource
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/pipelinePermissions/PATCH__UpdatePipelinePermissionsForResource-onprem.json
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    GraphSubjectBase:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        descriptor:
+          type: string
+          description: The descriptor is the primary way to reference the graph subject
+            while the system is running. This field will uniquely identify the same
+            graph subject across both Accounts and Collections.
+        displayName:
+          type: string
+          description: This is the non-unique display name of the graph subject. To
+            change this field, you must alter its value in the source provider.
+        url:
+          type: string
+          description: This url is the full route to the source resource of this graph
+            subject.
+      description: ""
+    IdentityRef:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/GraphSubjectBase'
+    Permission:
+      type: object
+      properties:
+        authorized:
+          type: boolean
+        authorizedBy:
+          $ref: '#/components/schemas/IdentityRef'
+        authorizedOn:
+          type: string
+          format: date-time
+      description: ""
+    PipelinePermission:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/Permission'
+    PipelineProcessResources:
+      type: object
+      properties:
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/PipelineResourceReference'
+      description: ""
+    PipelineResourceReference:
+      type: object
+      properties:
+        authorized:
+          type: boolean
+        authorizedBy:
+          type: string
+          format: uuid
+        authorizedOn:
+          type: string
+          format: date-time
+        definitionId:
+          type: integer
+          format: int32
+        id:
+          type: string
+        type:
+          type: string
+      description: ""
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    Resource:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of the resource.
+        name:
+          type: string
+          description: Name of the resource.
+        type:
+          type: string
+          description: Type of the resource.
+      description: ""
+    ResourcePipelinePermissions:
+      type: object
+      properties:
+        allPipelines:
+          $ref: '#/components/schemas/Permission'
+        pipelines:
+          type: array
+          items:
+            $ref: '#/components/schemas/PipelinePermission'
+        resource:
+          $ref: '#/components/schemas/Resource'
+      description: ""
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+x-ms-vss-area: pipelinePermissions
+x-ms-vss-resource-area-id: a81a0441-de52-4000-aa15-ff0e07bfbbaa
+x-ms-parameterized-host:
+  hostTemplate: '{instance}'
+  parameters:
+  - name: instance
+    description: TFS server name ({server:port})
+    required: true
+    type: string
+    in: path

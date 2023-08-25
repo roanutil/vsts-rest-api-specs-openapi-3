@@ -1,0 +1,1815 @@
+openapi: 3.0.1
+info:
+  title: ExtensionManagement
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 7.0-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://extmgmt.dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Installed Extensions
+paths:
+  /{organization}/_apis/extensionmanagement/installedextensions:
+    get:
+      tags:
+      - Installed Extensions
+      description: List the installed extensions in the account / project collection.
+      operationId: Installed Extensions_List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: includeDisabledExtensions
+        in: query
+        description: If true (the default), include disabled extensions in the results.
+        schema:
+          type: boolean
+      - name: includeErrors
+        in: query
+        description: If true, include installed extensions with errors.
+        schema:
+          type: boolean
+      - name: assetTypes
+        in: query
+        description: Determines which files are returned in the files array.  Provide
+          the wildcard '*' to return all files, or a colon separated list to retrieve
+          files with specific asset types.
+        schema:
+          type: string
+          format: array (string)
+      - name: includeInstallationIssues
+        in: query
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InstalledExtension'
+      security:
+      - oauth2:
+        - vso.extension
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: installedExtensions
+      x-ms-vss-method: GetInstalledExtensions
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/InstalledExtensions/ListInstalledExtensions.json
+    patch:
+      tags:
+      - Installed Extensions
+      description: Update an installed extension. Typically this API is used to enable
+        or disable an extension.
+      operationId: Installed Extensions_Update
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstalledExtension'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstalledExtension'
+      security:
+      - oauth2:
+        - vso.extension_manage
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: installedExtensions
+      x-ms-vss-method: UpdateInstalledExtension
+      x-ms-preview: true
+      x-codegen-request-body-name: body
+  /{organization}/_apis/extensionmanagement/installedextensionsbyname/{publisherName}/{extensionName}:
+    get:
+      tags:
+      - Installed Extensions
+      description: Get an installed extension by its publisher and extension name.
+      operationId: Installed Extensions_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: publisherName
+        in: path
+        description: 'Name of the publisher. Example: "fabrikam".'
+        required: true
+        schema:
+          type: string
+      - name: extensionName
+        in: path
+        description: 'Name of the extension. Example: "ops-tools".'
+        required: true
+        schema:
+          type: string
+      - name: assetTypes
+        in: query
+        description: Determines which files are returned in the files array.  Provide
+          the wildcard '*' to return all files, or a colon separated list to retrieve
+          files with specific asset types.
+        schema:
+          type: string
+          format: array (string)
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstalledExtension'
+      security:
+      - oauth2:
+        - vso.extension_manage
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: installedExtensionsByName
+      x-ms-vss-method: GetInstalledExtensionByName
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/InstalledExtensionsByName/GetInstalledSampleExtension.json
+    delete:
+      tags:
+      - Installed Extensions
+      description: Uninstall the specified extension from the account / project collection.
+      operationId: Installed Extensions_Uninstall Extension By Name
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: publisherName
+        in: path
+        description: 'Name of the publisher. Example: "fabrikam".'
+        required: true
+        schema:
+          type: string
+      - name: extensionName
+        in: path
+        description: 'Name of the extension. Example: "ops-tools".'
+        required: true
+        schema:
+          type: string
+      - name: reason
+        in: query
+        schema:
+          type: string
+      - name: reasonCode
+        in: query
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.extension_manage
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: installedExtensionsByName
+      x-ms-vss-method: UninstallExtensionByName
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/InstalledExtensionsByName/UninstallSampleExtension.json
+  /{organization}/_apis/extensionmanagement/installedextensionsbyname/{publisherName}/{extensionName}/{version}:
+    post:
+      tags:
+      - Installed Extensions
+      description: Install the specified extension into the account / project collection.
+      operationId: Installed Extensions_Install Extension By Name
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: publisherName
+        in: path
+        description: 'Name of the publisher. Example: "fabrikam".'
+        required: true
+        schema:
+          type: string
+      - name: extensionName
+        in: path
+        description: 'Name of the extension. Example: "ops-tools".'
+        required: true
+        schema:
+          type: string
+      - name: version
+        in: path
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstalledExtension'
+      security:
+      - oauth2:
+        - vso.extension_manage
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: installedExtensionsByName
+      x-ms-vss-method: InstallExtensionByName
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/InstalledExtensionsByName/InstallSampleExtension.json
+components:
+  schemas:
+    AcquisitionOperation:
+      type: object
+      properties:
+        operationState:
+          type: string
+          description: State of the the AcquisitionOperation for the current user
+          enum:
+          - disallow
+          - allow
+          - completed
+          x-ms-enum:
+            name: AcquisitionOperationState
+            values:
+            - value: disallow
+              description: Not allowed to use this AcquisitionOperation
+            - value: allow
+              description: Allowed to use this AcquisitionOperation
+            - value: completed
+              description: Operation has already been completed and is no longer available
+        operationType:
+          type: string
+          description: 'AcquisitionOperationType: install, request, buy, etc...'
+          enum:
+          - get
+          - install
+          - buy
+          - try
+          - request
+          - none
+          - purchaseRequest
+          x-ms-enum:
+            name: AcquisitionOperationType
+            values:
+            - value: get
+              description: Not yet used
+            - value: install
+              description: Install this extension into the host provided
+            - value: buy
+              description: Buy licenses for this extension and install into the host
+                provided
+            - value: try
+              description: Try this extension
+            - value: request
+              description: Request this extension for installation
+            - value: none
+              description: No action found
+            - value: purchaseRequest
+              description: Request admins for purchasing extension
+        reason:
+          type: string
+          description: Optional reason to justify current state. Typically used with
+            Disallow state.
+        reasons:
+          type: array
+          description: List of reasons indicating why the operation is not allowed.
+          items:
+            $ref: '#/components/schemas/AcquisitionOperationDisallowReason'
+      description: ""
+    AcquisitionOperationDisallowReason:
+      type: object
+      properties:
+        message:
+          type: string
+          description: User-friendly message clarifying the reason for disallowance
+        type:
+          type: string
+          description: Type of reason for disallowance - AlreadyInstalled, UnresolvedDemand,
+            etc.
+      description: ""
+    AcquisitionOptions:
+      type: object
+      properties:
+        defaultOperation:
+          $ref: '#/components/schemas/AcquisitionOperation'
+        itemId:
+          type: string
+          description: The item id that this options refer to
+        operations:
+          type: array
+          description: Operations allowed for the ItemId in this target
+          items:
+            $ref: '#/components/schemas/AcquisitionOperation'
+        properties:
+          $ref: '#/components/schemas/JObject'
+        target:
+          type: string
+          description: The target that this options refer to
+      description: Market item acquisition options (install, buy, etc) for an installation
+        target.
+    ClientContribution:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the contribution/type
+        id:
+          type: string
+          description: Fully qualified identifier of the contribution/type
+        includes:
+          type: array
+          description: Includes is a set of contributions that should have this contribution
+            included in their targets list.
+          items:
+            type: string
+        properties:
+          $ref: '#/components/schemas/JObject'
+        targets:
+          type: array
+          description: The ids of the contribution(s) that this contribution targets.
+            (parent contributions)
+          items:
+            type: string
+        type:
+          type: string
+          description: Id of the Contribution Type
+      description: Representation of a ContributionNode that can be used for serialized
+        to clients.
+    ClientContributionNode:
+      type: object
+      properties:
+        children:
+          type: array
+          description: List of ids for contributions which are children to the current
+            contribution.
+          items:
+            type: string
+        contribution:
+          $ref: '#/components/schemas/ClientContribution'
+        parents:
+          type: array
+          description: List of ids for contributions which are parents to the current
+            contribution.
+          items:
+            type: string
+      description: Representation of a ContributionNode that can be used for serialized
+        to clients.
+    ClientContributionProviderDetails:
+      type: object
+      properties:
+        displayName:
+          type: string
+          description: Friendly name for the provider.
+        name:
+          type: string
+          description: Unique identifier for this provider. The provider name can
+            be used to cache the contribution data and refer back to it when looking
+            for changes
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+          description: Properties associated with the provider
+        version:
+          type: string
+          description: Version of contributions associated with this contribution
+            provider.
+      description: ""
+    ClientDataProviderQuery:
+      description: A client data provider are the details needed to make the data
+        provider request from the client.
+      allOf:
+      - $ref: '#/components/schemas/DataProviderQuery'
+    Contribution:
+      description: An individual contribution made by an extension
+      allOf:
+      - $ref: '#/components/schemas/ContributionBase'
+    ContributionBase:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the contribution/type
+        id:
+          type: string
+          description: Fully qualified identifier of the contribution/type
+        visibleTo:
+          type: array
+          description: 'VisibleTo can be used to restrict whom can reference a given
+            contribution/type. This value should be a list of publishers or extensions
+            access is restricted too.  Examples: "ms" - Means only the "ms" publisher
+            can reference this. "ms.vss-web" - Means only the "vss-web" extension
+            from the "ms" publisher can reference this.'
+          items:
+            type: string
+      description: Base class shared by contributions and contribution types
+    ContributionConstraint:
+      type: object
+      properties:
+        group:
+          type: integer
+          description: An optional property that can be specified to group constraints
+            together. All constraints within a group are AND'd together (all must
+            be evaluate to True in order for the contribution to be included). Different
+            groups of constraints are OR'd (only one group needs to evaluate to True
+            for the contribution to be included).
+          format: int32
+        id:
+          type: string
+          description: Fully qualified identifier of a shared constraint
+        inverse:
+          type: boolean
+          description: If true, negate the result of the filter (include the contribution
+            if the applied filter returns false instead of true)
+        name:
+          type: string
+          description: Name of the IContributionFilter plugin
+        properties:
+          $ref: '#/components/schemas/JObject'
+        relationships:
+          type: array
+          description: Constraints can be optionally be applied to one or more of
+            the relationships defined in the contribution. If no relationships are
+            defined then all relationships are associated with the constraint. This
+            means the default behaviour will eliminate the contribution from the tree
+            completely if the constraint is applied.
+          items:
+            type: string
+      description: Specifies a constraint that can be used to dynamically include/exclude
+        a given contribution
+    ContributionNodeQuery:
+      type: object
+      properties:
+        contributionIds:
+          type: array
+          description: The contribution ids of the nodes to find.
+          items:
+            type: string
+        dataProviderContext:
+          $ref: '#/components/schemas/DataProviderContext'
+        includeProviderDetails:
+          type: boolean
+          description: Indicator if contribution provider details should be included
+            in the result.
+        queryOptions:
+          type: string
+          description: Query options tpo be used when fetching ContributionNodes
+          enum:
+          - none
+          - includeSelf
+          - includeChildren
+          - includeSubTree
+          - includeAll
+          - ignoreConstraints
+          x-ms-enum:
+            name: ContributionQueryOptions
+            values:
+            - value: none
+              description: ""
+            - value: includeSelf
+              description: Include the direct contributions that have the ids queried.
+            - value: includeChildren
+              description: Include the contributions that directly target the contributions
+                queried.
+            - value: includeSubTree
+              description: Include the contributions from the entire sub-tree targeting
+                the contributions queried.
+            - value: includeAll
+              description: Include the contribution being queried as well as all contributions
+                that target them recursively.
+            - value: ignoreConstraints
+              description: Some callers may want the entire tree back without constraint
+                evaluation being performed.
+      description: A query that can be issued for contribution nodes
+    ContributionNodeQueryResult:
+      type: object
+      properties:
+        nodes:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ClientContributionNode'
+          description: Map of contribution ids to corresponding node.
+        providerDetails:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ClientContributionProviderDetails'
+          description: Map of provider ids to the corresponding provider details object.
+      description: Result of a contribution node query.  Wraps the resulting contribution
+        nodes and provider details.
+    ContributionPropertyDescription:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the property
+        name:
+          type: string
+          description: Name of the property
+        required:
+          type: boolean
+          description: True if this property is required
+        type:
+          type: string
+          description: The type of value used for this property
+          enum:
+          - unknown
+          - string
+          - uri
+          - guid
+          - boolean
+          - integer
+          - double
+          - dateTime
+          - dictionary
+          - array
+          - object
+          x-ms-enum:
+            name: ContributionPropertyType
+            values:
+            - value: unknown
+              description: Contribution type is unknown (value may be anything)
+            - value: string
+              description: Value is a string
+            - value: uri
+              description: Value is a Uri
+            - value: guid
+              description: Value is a GUID
+            - value: boolean
+              description: Value is True or False
+            - value: integer
+              description: Value is an integer
+            - value: double
+              description: Value is a double
+            - value: dateTime
+              description: Value is a DateTime object
+            - value: dictionary
+              description: Value is a generic Dictionary/JObject/property bag
+            - value: array
+              description: Value is an array
+            - value: object
+              description: Value is an arbitrary/custom object
+      description: Description about a property of a contribution type
+    ContributionProviderDetails:
+      type: object
+      properties:
+        displayName:
+          type: string
+          description: Friendly name for the provider.
+        name:
+          type: string
+          description: Unique identifier for this provider. The provider name can
+            be used to cache the contribution data and refer back to it when looking
+            for changes
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+          description: Properties associated with the provider
+        version:
+          type: string
+          description: Version of contributions associated with this contribution
+            provider.
+      description: ""
+    ContributionType:
+      description: A contribution type, given by a json schema
+      allOf:
+      - $ref: '#/components/schemas/ContributionBase'
+    DataProviderContext:
+      type: object
+      properties:
+        properties:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: Generic property bag that contains context-specific properties
+            that data providers can use when populating their data dictionary
+      description: Contextual information that data providers can examine when populating
+        their data
+    DataProviderExceptionDetails:
+      type: object
+      properties:
+        exceptionType:
+          type: string
+          description: The type of the exception that was thrown.
+        message:
+          type: string
+          description: Message that is associated with the exception.
+        stackTrace:
+          type: string
+          description: The StackTrace from the exception turned into a string.
+      description: ""
+    DataProviderQuery:
+      type: object
+      properties:
+        context:
+          $ref: '#/components/schemas/DataProviderContext'
+        contributionIds:
+          type: array
+          description: The contribution ids of the data providers to resolve
+          items:
+            type: string
+      description: A query that can be issued for data provider data
+    DataProviderResult:
+      type: object
+      properties:
+        clientProviders:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ClientDataProviderQuery'
+          description: This is the set of data providers that were requested, but
+            either they were defined as client providers, or as remote providers that
+            failed and may be retried by the client.
+        data:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: Property bag of data keyed off of the data provider contribution
+            id
+        exceptions:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DataProviderExceptionDetails'
+          description: Set of exceptions that occurred resolving the data providers.
+        resolvedProviders:
+          type: array
+          description: List of data providers resolved in the data-provider query
+          items:
+            $ref: '#/components/schemas/ResolvedDataProvider'
+        scopeName:
+          type: string
+          description: Scope name applied to this data provider result.
+        scopeValue:
+          type: string
+          description: Scope value applied to this data provider result.
+        sharedData:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: Property bag of shared data that was contributed to by any
+            of the individual data providers
+      description: Result structure from calls to GetDataProviderData
+    DataProviderSharedData:
+      description: Data bag that any data provider can contribute to. This shared
+        dictionary is returned in the data provider result.
+      allOf:
+      - type: object
+        additionalProperties:
+          type: object
+          properties: {}
+    ExtensionAcquisitionRequest:
+      type: object
+      properties:
+        assignmentType:
+          type: string
+          description: How the item is being assigned
+          enum:
+          - none
+          - me
+          - all
+          x-ms-enum:
+            name: AcquisitionAssignmentType
+            values:
+            - value: none
+              description: ""
+            - value: me
+              description: Just assign for me
+            - value: all
+              description: Assign for all users in the account
+        billingId:
+          type: string
+          description: The id of the subscription used for purchase
+        itemId:
+          type: string
+          description: The marketplace id (publisherName.extensionName) for the item
+        operationType:
+          type: string
+          description: The type of operation, such as install, request, purchase
+          enum:
+          - get
+          - install
+          - buy
+          - try
+          - request
+          - none
+          - purchaseRequest
+          x-ms-enum:
+            name: AcquisitionOperationType
+            values:
+            - value: get
+              description: Not yet used
+            - value: install
+              description: Install this extension into the host provided
+            - value: buy
+              description: Buy licenses for this extension and install into the host
+                provided
+            - value: try
+              description: Try this extension
+            - value: request
+              description: Request this extension for installation
+            - value: none
+              description: No action found
+            - value: purchaseRequest
+              description: Request admins for purchasing extension
+        properties:
+          $ref: '#/components/schemas/JObject'
+        quantity:
+          type: integer
+          description: How many licenses should be purchased
+          format: int32
+      description: Contract for handling the extension acquisition process
+    ExtensionAuditLog:
+      type: object
+      properties:
+        entries:
+          type: array
+          description: Collection of audit log entries
+          items:
+            $ref: '#/components/schemas/ExtensionAuditLogEntry'
+        extensionName:
+          type: string
+          description: Extension that the change was made for
+        publisherName:
+          type: string
+          description: Publisher that the extension is part of
+      description: Audit log for an extension
+    ExtensionAuditLogEntry:
+      type: object
+      properties:
+        auditAction:
+          type: string
+          description: Change that was made to extension
+        auditDate:
+          type: string
+          description: Date at which the change was made
+          format: date-time
+        comment:
+          type: string
+          description: Extra information about the change
+        updatedBy:
+          $ref: '#/components/schemas/IdentityRef'
+      description: An audit log entry for an extension
+    ExtensionAuthorization:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        scopes:
+          type: array
+          items:
+            type: string
+      description: ""
+    ExtensionBadge:
+      type: object
+      properties:
+        description:
+          type: string
+        imgUri:
+          type: string
+        link:
+          type: string
+      description: ""
+    ExtensionDataCollection:
+      type: object
+      properties:
+        collectionName:
+          type: string
+          description: The name of the collection
+        documents:
+          type: array
+          description: A list of documents belonging to the collection
+          items:
+            $ref: '#/components/schemas/JObject'
+        scopeType:
+          type: string
+          description: The type of the collection's scope, such as Default or User
+        scopeValue:
+          type: string
+          description: The value of the collection's scope, such as Current or Me
+      description: Represents a single collection for extension data documents
+    ExtensionDataCollectionQuery:
+      type: object
+      properties:
+        collections:
+          type: array
+          description: A list of collections to query
+          items:
+            $ref: '#/components/schemas/ExtensionDataCollection'
+      description: Represents a query to receive a set of extension data collections
+    ExtensionEvent:
+      type: object
+      properties:
+        extension:
+          $ref: '#/components/schemas/PublishedExtension'
+        extensionVersion:
+          type: string
+          description: The current version of the extension that was updated
+        host:
+          $ref: '#/components/schemas/ExtensionHost'
+        links:
+          $ref: '#/components/schemas/ExtensionEventUrls'
+        modifiedBy:
+          $ref: '#/components/schemas/IdentityRef'
+        updateType:
+          type: string
+          description: The type of update that was made
+          enum:
+          - installed
+          - uninstalled
+          - enabled
+          - disabled
+          - versionUpdated
+          - actionRequired
+          - actionResolved
+          x-ms-enum:
+            name: ExtensionUpdateType
+            values:
+            - value: installed
+              description: ""
+            - value: uninstalled
+              description: ""
+            - value: enabled
+              description: ""
+            - value: disabled
+              description: ""
+            - value: versionUpdated
+              description: ""
+            - value: actionRequired
+              description: ""
+            - value: actionResolved
+              description: ""
+      description: ""
+    ExtensionEventCallback:
+      type: object
+      properties:
+        uri:
+          type: string
+          description: The uri of the endpoint that is hit when an event occurs
+      description: Base class for an event callback for an extension
+    ExtensionEventCallbackCollection:
+      type: object
+      properties:
+        postDisable:
+          $ref: '#/components/schemas/ExtensionEventCallback'
+        postEnable:
+          $ref: '#/components/schemas/ExtensionEventCallback'
+        postInstall:
+          $ref: '#/components/schemas/ExtensionEventCallback'
+        postUninstall:
+          $ref: '#/components/schemas/ExtensionEventCallback'
+        postUpdate:
+          $ref: '#/components/schemas/ExtensionEventCallback'
+        preInstall:
+          $ref: '#/components/schemas/ExtensionEventCallback'
+        versionCheck:
+          $ref: '#/components/schemas/ExtensionEventCallback'
+      description: Collection of event callbacks - endpoints called when particular
+        extension events occur.
+    ExtensionEventUrls:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/ExtensionUrls'
+    ExtensionFile:
+      type: object
+      properties:
+        assetType:
+          type: string
+        language:
+          type: string
+        source:
+          type: string
+      description: ""
+    ExtensionHost:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+      description: ""
+    ExtensionIdentifier:
+      type: object
+      properties:
+        extensionName:
+          type: string
+          description: The ExtensionName component part of the fully qualified ExtensionIdentifier
+        publisherName:
+          type: string
+          description: The PublisherName component part of the fully qualified ExtensionIdentifier
+      description: Represents the component pieces of an extensions fully qualified
+        name, along with the fully qualified name.
+    ExtensionLicensing:
+      type: object
+      properties:
+        overrides:
+          type: array
+          description: A list of contributions which deviate from the default licensing
+            behavior
+          items:
+            $ref: '#/components/schemas/LicensingOverride'
+      description: How an extension should handle including contributions based on
+        licensing
+    ExtensionManifest:
+      type: object
+      properties:
+        baseUri:
+          type: string
+          description: Uri used as base for other relative uri's defined in extension
+        constraints:
+          type: array
+          description: List of shared constraints defined by this extension
+          items:
+            $ref: '#/components/schemas/ContributionConstraint'
+        contributions:
+          type: array
+          description: List of contributions made by this extension
+          items:
+            $ref: '#/components/schemas/Contribution'
+        contributionTypes:
+          type: array
+          description: List of contribution types defined by this extension
+          items:
+            $ref: '#/components/schemas/ContributionType'
+        demands:
+          type: array
+          description: List of explicit demands required by this extension
+          items:
+            type: string
+        eventCallbacks:
+          $ref: '#/components/schemas/ExtensionEventCallbackCollection'
+        fallbackBaseUri:
+          type: string
+          description: Secondary location that can be used as base for other relative
+            uri's defined in extension
+        language:
+          type: string
+          description: Language Culture Name set by the Gallery
+        licensing:
+          $ref: '#/components/schemas/ExtensionLicensing'
+        manifestVersion:
+          type: number
+          description: Version of the extension manifest format/content
+          format: double
+        restrictedTo:
+          type: array
+          description: Default user claims applied to all contributions (except the
+            ones which have been specified restrictedTo explicitly) to control the
+            visibility of a contribution.
+          items:
+            type: string
+        scopes:
+          type: array
+          description: List of all oauth scopes required by this extension
+          items:
+            type: string
+        serviceInstanceType:
+          type: string
+          description: The ServiceInstanceType(Guid) of the VSTS service that must
+            be available to an account in order for the extension to be installed
+          format: uuid
+      description: Base class for extension properties which are shared by the extension
+        manifest and the extension model
+    ExtensionPolicy:
+      type: object
+      properties:
+        install:
+          type: string
+          description: Permissions on 'Install' operation
+          enum:
+          - none
+          - private
+          - public
+          - preview
+          - released
+          - firstParty
+          - all
+          x-ms-enum:
+            name: ExtensionPolicyFlags
+            values:
+            - value: none
+              description: No permission
+            - value: private
+              description: Permission on private extensions
+            - value: public
+              description: Permission on public extensions
+            - value: preview
+              description: Permission in extensions that are in preview
+            - value: released
+              description: Permission in released extensions
+            - value: firstParty
+              description: Permission in 1st party extensions
+            - value: all
+              description: Mask that defines all permissions
+        request:
+          type: string
+          description: Permission on 'Request' operation
+          enum:
+          - none
+          - private
+          - public
+          - preview
+          - released
+          - firstParty
+          - all
+          x-ms-enum:
+            name: ExtensionPolicyFlags
+            values:
+            - value: none
+              description: No permission
+            - value: private
+              description: Permission on private extensions
+            - value: public
+              description: Permission on public extensions
+            - value: preview
+              description: Permission in extensions that are in preview
+            - value: released
+              description: Permission in released extensions
+            - value: firstParty
+              description: Permission in 1st party extensions
+            - value: all
+              description: Mask that defines all permissions
+      description: Policy with a set of permissions on extension operations
+    ExtensionRequest:
+      type: object
+      properties:
+        rejectMessage:
+          type: string
+          description: Required message supplied if the request is rejected
+        requestDate:
+          type: string
+          description: Date at which the request was made
+          format: date-time
+        requestedBy:
+          $ref: '#/components/schemas/IdentityRef'
+        requestMessage:
+          type: string
+          description: Optional message supplied by the requester justifying the request
+        requestState:
+          type: string
+          description: Represents the state of the request
+          enum:
+          - open
+          - accepted
+          - rejected
+          x-ms-enum:
+            name: ExtensionRequestState
+            values:
+            - value: open
+              description: The request has been opened, but not yet responded to
+            - value: accepted
+              description: The request was accepted (extension installed or license
+                assigned)
+            - value: rejected
+              description: The request was rejected (extension not installed or license
+                not assigned)
+        resolveDate:
+          type: string
+          description: Date at which the request was resolved
+          format: date-time
+        resolvedBy:
+          $ref: '#/components/schemas/IdentityRef'
+      description: A request for an extension (to be installed or have a license assigned)
+    ExtensionRequestEvent:
+      type: object
+      properties:
+        extension:
+          $ref: '#/components/schemas/PublishedExtension'
+        host:
+          $ref: '#/components/schemas/ExtensionHost'
+        hostName:
+          type: string
+          description: Name of the collection for which the extension was requested
+        links:
+          $ref: '#/components/schemas/ExtensionRequestUrls'
+        request:
+          $ref: '#/components/schemas/ExtensionRequest'
+        updateType:
+          type: string
+          description: The type of update that was made
+          enum:
+          - created
+          - approved
+          - rejected
+          - deleted
+          x-ms-enum:
+            name: ExtensionRequestUpdateType
+            values:
+            - value: created
+              description: ""
+            - value: approved
+              description: ""
+            - value: rejected
+              description: ""
+            - value: deleted
+              description: ""
+      description: ""
+    ExtensionRequestsEvent:
+      type: object
+      properties:
+        extension:
+          $ref: '#/components/schemas/PublishedExtension'
+        host:
+          $ref: '#/components/schemas/ExtensionHost'
+        links:
+          $ref: '#/components/schemas/ExtensionRequestUrls'
+        requests:
+          type: array
+          description: The extension request object
+          items:
+            $ref: '#/components/schemas/ExtensionRequest'
+        updateType:
+          type: string
+          description: The type of update that was made
+          enum:
+          - created
+          - approved
+          - rejected
+          - deleted
+          x-ms-enum:
+            name: ExtensionRequestUpdateType
+            values:
+            - value: created
+              description: ""
+            - value: approved
+              description: ""
+            - value: rejected
+              description: ""
+            - value: deleted
+              description: ""
+      description: ""
+    ExtensionRequestUrls:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/ExtensionUrls'
+    ExtensionShare:
+      type: object
+      properties:
+        id:
+          type: string
+        isOrg:
+          type: boolean
+        name:
+          type: string
+        type:
+          type: string
+      description: ""
+    ExtensionState:
+      description: The state of an extension
+      allOf:
+      - $ref: '#/components/schemas/InstalledExtensionState'
+    ExtensionStatistic:
+      type: object
+      properties:
+        statisticName:
+          type: string
+        value:
+          type: number
+          format: double
+      description: ""
+    ExtensionUrls:
+      type: object
+      properties:
+        extensionIcon:
+          type: string
+          description: Url of the extension icon
+        extensionPage:
+          type: string
+          description: Link to view the extension details page
+      description: ""
+    ExtensionVersion:
+      type: object
+      properties:
+        assetUri:
+          type: string
+        badges:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtensionBadge'
+        fallbackAssetUri:
+          type: string
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtensionFile'
+        flags:
+          type: string
+          enum:
+          - none
+          - validated
+          x-ms-enum:
+            name: ExtensionVersionFlags
+            values:
+            - value: none
+              description: No flags exist for this version.
+            - value: validated
+              description: The Validated flag for a version means the extension version
+                has passed validation and can be used..
+        lastUpdated:
+          type: string
+          format: date-time
+        properties:
+          type: array
+          items:
+            type: object
+            properties: {}
+        targetPlatform:
+          type: string
+        validationResultMessage:
+          type: string
+        version:
+          type: string
+        versionDescription:
+          type: string
+      description: ""
+    GraphSubjectBase:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        descriptor:
+          type: string
+          description: The descriptor is the primary way to reference the graph subject
+            while the system is running. This field will uniquely identify the same
+            graph subject across both Accounts and Organizations.
+        displayName:
+          type: string
+          description: This is the non-unique display name of the graph subject. To
+            change this field, you must alter its value in the source provider.
+        url:
+          type: string
+          description: This url is the full route to the source resource of this graph
+            subject.
+      description: ""
+    IdentityRef:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/GraphSubjectBase'
+    InstallationTarget:
+      type: object
+      properties:
+        extensionVersion:
+          type: string
+        productArchitecture:
+          type: string
+        target:
+          type: string
+        targetPlatform:
+          type: string
+        targetVersion:
+          type: string
+      description: ""
+    InstalledExtension:
+      description: Represents a VSTS extension along with its installation state
+      allOf:
+      - $ref: '#/components/schemas/ExtensionManifest'
+    InstalledExtensionQuery:
+      type: object
+      properties:
+        assetTypes:
+          type: array
+          items:
+            type: string
+        monikers:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtensionIdentifier'
+      description: ""
+    InstalledExtensionState:
+      type: object
+      properties:
+        flags:
+          type: string
+          description: States of an installed extension
+          enum:
+          - none
+          - disabled
+          - builtIn
+          - multiVersion
+          - unInstalled
+          - versionCheckError
+          - trusted
+          - error
+          - needsReauthorization
+          - autoUpgradeError
+          - warning
+          x-ms-enum:
+            name: ExtensionStateFlags
+            values:
+            - value: none
+              description: No flags set
+            - value: disabled
+              description: Extension is disabled
+            - value: builtIn
+              description: Extension is a built in
+            - value: multiVersion
+              description: Extension has multiple versions
+            - value: unInstalled
+              description: Extension is not installed.  This is for builtin extensions
+                only and can not otherwise be set.
+            - value: versionCheckError
+              description: Error performing version check
+            - value: trusted
+              description: 'Trusted extensions are ones that are given special capabilities.
+                These tend to come from Microsoft and can''t be published by the general
+                public.  Note: BuiltIn extensions are always trusted.'
+            - value: error
+              description: Extension is currently in an error state
+            - value: needsReauthorization
+              description: Extension scopes have changed and the extension requires
+                re-authorization
+            - value: autoUpgradeError
+              description: Error performing auto-upgrade. For example, if the new
+                version has demands not supported the extension cannot be auto-upgraded.
+            - value: warning
+              description: Extension is currently in a warning state, that can cause
+                a degraded experience. The degraded experience can be caused for example
+                by some installation issues detected such as implicit demands not
+                supported.
+        installationIssues:
+          type: array
+          description: List of installation issues
+          items:
+            $ref: '#/components/schemas/InstalledExtensionStateIssue'
+        lastUpdated:
+          type: string
+          description: The time at which this installation was last updated
+          format: date-time
+      description: The state of an installed extension
+    InstalledExtensionStateIssue:
+      type: object
+      properties:
+        message:
+          type: string
+          description: The error message
+        source:
+          type: string
+          description: Source of the installation issue, for example  "Demands"
+        type:
+          type: string
+          description: Installation issue type (Warning, Error)
+          enum:
+          - warning
+          - error
+          x-ms-enum:
+            name: InstalledExtensionStateIssueType
+            values:
+            - value: warning
+              description: Represents an installation warning, for example an implicit
+                demand not supported
+            - value: error
+              description: Represents an installation error, for example an explicit
+                demand not supported
+      description: Represents an installation issue
+    JObject:
+      type: object
+      properties:
+        item:
+          type: string
+          format: JToken
+        type:
+          type: string
+          description: Gets the node type for this JToken.
+          format: JTokenType
+      description: Represents a JSON object.
+    LicensingOverride:
+      type: object
+      properties:
+        behavior:
+          type: string
+          description: How the inclusion of this contribution should change based
+            on licensing
+          enum:
+          - onlyIfLicensed
+          - onlyIfUnlicensed
+          - alwaysInclude
+          x-ms-enum:
+            name: ContributionLicensingBehaviorType
+            values:
+            - value: onlyIfLicensed
+              description: Default value - only include the contribution if the user
+                is licensed for the extension
+            - value: onlyIfUnlicensed
+              description: Only include the contribution if the user is NOT licensed
+                for the extension
+            - value: alwaysInclude
+              description: Always include the contribution regardless of whether or
+                not the user is licensed for the extension
+        id:
+          type: string
+          description: Fully qualified contribution id which we want to define licensing
+            behavior for
+      description: Maps a contribution to a licensing behavior
+    PublishedExtension:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            type: string
+        deploymentType:
+          type: string
+          enum:
+          - exe
+          - msi
+          - vsix
+          - referralLink
+          x-ms-enum:
+            name: ExtensionDeploymentTechnology
+            values:
+            - value: exe
+              description: ""
+            - value: msi
+              description: ""
+            - value: vsix
+              description: ""
+            - value: referralLink
+              description: ""
+        displayName:
+          type: string
+        extensionId:
+          type: string
+          format: uuid
+        extensionName:
+          type: string
+        flags:
+          type: string
+          enum:
+          - none
+          - disabled
+          - builtIn
+          - validated
+          - trusted
+          - paid
+          - public
+          - multiVersion
+          - system
+          - preview
+          - unpublished
+          - trial
+          - locked
+          - hidden
+          x-ms-enum:
+            name: PublishedExtensionFlags
+            values:
+            - value: none
+              description: No flags exist for this extension.
+            - value: disabled
+              description: The Disabled flag for an extension means the extension
+                can't be changed and won't be used by consumers. The disabled flag
+                is managed by the service and can't be supplied by the Extension Developers.
+            - value: builtIn
+              description: BuiltIn Extension are available to all Tenants. An explicit
+                registration is not required. This attribute is reserved and can't
+                be supplied by Extension Developers.  BuiltIn extensions are by definition
+                Public. There is no need to set the public flag for extensions marked
+                BuiltIn.
+            - value: validated
+              description: This extension has been validated by the service. The extension
+                meets the requirements specified. This attribute is reserved and can't
+                be supplied by the Extension Developers. Validation is a process that
+                ensures that all contributions are well formed. They meet the requirements
+                defined by the contribution type they are extending. Note this attribute
+                will be updated asynchronously as the extension is validated by the
+                developer of the contribution type. There will be restricted access
+                to the extension while this process is performed.
+            - value: trusted
+              description: 'Trusted extensions are ones that are given special capabilities.
+                These tend to come from Microsoft and can''t be published by the general
+                public.  Note: BuiltIn extensions are always trusted.'
+            - value: paid
+              description: The Paid flag indicates that the commerce can be enabled
+                for this extension. Publisher needs to setup Offer/Pricing plan in
+                Azure. If Paid flag is set and a corresponding Offer is not available,
+                the extension will automatically be marked as Preview. If the publisher
+                intends to make the extension Paid in the future, it is mandatory
+                to set the Preview flag. This is currently available only for VSTS
+                extensions only.
+            - value: public
+              description: This extension registration is public, making its visibility
+                open to the public. This means all tenants have the ability to install
+                this extension. Without this flag the extension will be private and
+                will need to be shared with the tenants that can install it.
+            - value: multiVersion
+              description: 'This extension has multiple versions active at one time
+                and version discovery should be done using the defined "Version Discovery"
+                protocol to determine the version available to a specific user or
+                tenant.  @TODO: Link to Version Discovery Protocol.'
+            - value: system
+              description: The system flag is reserved, and cant be used by publishers.
+            - value: preview
+              description: The Preview flag indicates that the extension is still
+                under preview (not yet of "release" quality). These extensions may
+                be decorated differently in the gallery and may have different policies
+                applied to them.
+            - value: unpublished
+              description: The Unpublished flag indicates that the extension can't
+                be installed/downloaded. Users who have installed such an extension
+                can continue to use the extension.
+            - value: trial
+              description: The Trial flag indicates that the extension is in Trial
+                version. The flag is right now being used only with respect to Visual
+                Studio extensions.
+            - value: locked
+              description: The Locked flag indicates that extension has been locked
+                from Marketplace. Further updates/acquisitions are not allowed on
+                the extension until this is present. This should be used along with
+                making the extension private/unpublished.
+            - value: hidden
+              description: This flag is set for extensions we want to hide from Marketplace
+                home and search pages. This will be used to override the exposure
+                of builtIn flags.
+        installationTargets:
+          type: array
+          items:
+            $ref: '#/components/schemas/InstallationTarget'
+        lastUpdated:
+          type: string
+          format: date-time
+        longDescription:
+          type: string
+        presentInConflictList:
+          type: string
+          description: Check if Extension is in conflict list or not. Taking as String
+            and not as boolean because we don't want end customer to see this flag
+            and by making it Boolean it is coming as false for all the cases.
+        publishedDate:
+          type: string
+          description: Date on which the extension was first uploaded.
+          format: date-time
+        publisher:
+          $ref: '#/components/schemas/PublisherFacts'
+        releaseDate:
+          type: string
+          description: Date on which the extension first went public.
+          format: date-time
+        sharedWith:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtensionShare'
+        shortDescription:
+          type: string
+        statistics:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtensionStatistic'
+        tags:
+          type: array
+          items:
+            type: string
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtensionVersion'
+      description: ""
+    PublisherFacts:
+      type: object
+      properties:
+        displayName:
+          type: string
+        domain:
+          type: string
+        flags:
+          type: string
+          enum:
+          - unChanged
+          - none
+          - disabled
+          - verified
+          - certified
+          - serviceFlags
+          x-ms-enum:
+            name: PublisherFlags
+            values:
+            - value: unChanged
+              description: This should never be returned, it is used to represent
+                a publisher who's flags haven't changed during update calls.
+            - value: none
+              description: No flags exist for this publisher.
+            - value: disabled
+              description: The Disabled flag for a publisher means the publisher can't
+                be changed and won't be used by consumers, this extends to extensions
+                owned by the publisher as well. The disabled flag is managed by the
+                service and can't be supplied by the Extension Developers.
+            - value: verified
+              description: A verified publisher is one that Microsoft has done some
+                review of and ensured the publisher meets a set of requirements. The
+                requirements to become a verified publisher are not listed here.  They
+                can be found in public documentation (TBD).
+            - value: certified
+              description: A Certified publisher is one that is Microsoft verified
+                and in addition meets a set of requirements for its published extensions.
+                The requirements to become a certified publisher are not listed here.  They
+                can be found in public documentation (TBD).
+            - value: serviceFlags
+              description: This is the set of flags that can't be supplied by the
+                developer and is managed by the service itself.
+        isDomainVerified:
+          type: boolean
+        publisherId:
+          type: string
+          format: uuid
+        publisherName:
+          type: string
+      description: High-level information about the publisher, like id's and names
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    RequestedExtension:
+      type: object
+      properties:
+        extensionName:
+          type: string
+          description: The unique name of the extension
+        extensionRequests:
+          type: array
+          description: A list of each request for the extension
+          items:
+            $ref: '#/components/schemas/ExtensionRequest'
+        publisherDisplayName:
+          type: string
+          description: DisplayName of the publisher that owns the extension being
+            published.
+        publisherName:
+          type: string
+          description: Represents the Publisher of the requested extension
+        requestCount:
+          type: integer
+          description: The total number of requests for an extension
+          format: int32
+      description: A request for an extension (to be installed or have a license assigned)
+    ResolvedDataProvider:
+      type: object
+      properties:
+        duration:
+          type: number
+          description: The total time the data provider took to resolve its data (in
+            milliseconds)
+          format: float
+        error:
+          type: string
+        id:
+          type: string
+      description: Entry for a specific data provider's resulting data
+    Scope:
+      type: object
+      properties:
+        description:
+          type: string
+        title:
+          type: string
+        value:
+          type: string
+      description: ""
+    SupportedExtension:
+      type: object
+      properties:
+        extension:
+          type: string
+          description: Unique Identifier for this extension
+        publisher:
+          type: string
+          description: Unique Identifier for this publisher
+        version:
+          type: string
+          description: Supported version for this extension
+      description: Information about the extension
+    UserExtensionPolicy:
+      type: object
+      properties:
+        displayName:
+          type: string
+          description: User display name that this policy refers to
+        permissions:
+          $ref: '#/components/schemas/ExtensionPolicy'
+        userId:
+          type: string
+          description: User id that this policy refers to
+      description: Represents the extension policy applied to a given user
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.extension: Grants the ability to read installed extensions.
+            vso.extension_manage: Grants the ability to install, uninstall, and perform
+              other administrative actions on installed extensions.
+            vso.extension.data: Grants the ability to read data (settings and documents)
+              stored by installed extensions.
+            vso.extension.data_write: Grants the ability to read and write data (settings
+              and documents) stored by installed extensions.
+x-ms-vss-area: ExtensionManagement
+x-ms-vss-resource-area-id: 6c2b0933-3600-42ae-bf8b-93d4f7e83594

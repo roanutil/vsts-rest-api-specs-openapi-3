@@ -1,0 +1,836 @@
+openapi: 3.0.1
+info:
+  title: Maven
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 5.1-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://pkgs.dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Maven
+paths:
+  /{organization}/{project}/_apis/packaging/feeds/{feed}/maven/groups/{groupId}/artifacts/{artifactId}/versions/{version}:
+    get:
+      tags:
+      - Maven
+      description: |-
+        Get information about a package version.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Maven_Get Package Version
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feed
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Group ID of the package.
+        required: true
+        schema:
+          type: string
+      - name: artifactId
+        in: path
+        description: Artifact ID of the package.
+        required: true
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: Version of the package.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: showDeleted
+        in: query
+        description: True to show information for deleted packages.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Package'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: 5.1-preview.1
+      x-ms-vss-resource: versions
+      x-ms-vss-method: GetPackageVersion
+      x-ms-preview: true
+    delete:
+      tags:
+      - Maven
+      description: |-
+        Delete a package version from the feed and move it to the feed's recycle bin.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Maven_DeletePackageVersion
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feed
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Group ID of the package.
+        required: true
+        schema:
+          type: string
+      - name: artifactId
+        in: path
+        description: Artifact ID of the package.
+        required: true
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: Version of the package.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        202:
+          description: The package has been successfully marked for deletion.
+          content: {}
+      security:
+      - oauth2:
+        - vso.packaging_write
+      x-ms-docs-override-version: 5.1-preview.1
+      x-ms-vss-resource: versions
+      x-ms-vss-method: PackageDelete
+      x-ms-preview: true
+  ? /{organization}/{project}/_apis/packaging/feeds/{feed}/maven/RecycleBin/groups/{groupId}/artifacts/{artifactId}/versions/{version}
+  : get:
+      tags:
+      - Maven
+      description: |-
+        Get information about a package version in the recycle bin.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Maven_GetPackageVersionFromRecycleBin
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feed
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Group ID of the package.
+        required: true
+        schema:
+          type: string
+      - name: artifactId
+        in: path
+        description: Artifact ID of the package.
+        required: true
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: Version of the package.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MavenPackageVersionDeletionState'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: 5.1-preview.1
+      x-ms-vss-resource: recycleBinVersions
+      x-ms-vss-method: GetPackageVersionMetadataFromRecycleBin
+      x-ms-preview: true
+    delete:
+      tags:
+      - Maven
+      description: |-
+        Permanently delete a package from a feed's recycle bin.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Maven_DeletePackageVersionFromRecycleBin
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feed
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Group ID of the package.
+        required: true
+        schema:
+          type: string
+      - name: artifactId
+        in: path
+        description: Artifact ID of the package.
+        required: true
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: Version of the package.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: 5.1-preview.1
+      x-ms-vss-resource: recycleBinVersions
+      x-ms-vss-method: DeletePackageVersionFromRecycleBin
+      x-ms-preview: true
+    patch:
+      tags:
+      - Maven
+      description: |-
+        Restore a package version from the recycle bin to its associated feed.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Maven_Restore Package Version From Recycle Bin
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feed
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Group ID of the package.
+        required: true
+        schema:
+          type: string
+      - name: artifactId
+        in: path
+        description: Artifact ID of the package.
+        required: true
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: Version of the package.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Set the 'Deleted' property to false to restore the package.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MavenRecycleBinPackageVersionDetails'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: 5.1-preview.1
+      x-ms-vss-resource: recycleBinVersions
+      x-ms-vss-method: RestorePackageVersionFromRecycleBin
+      x-ms-preview: true
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/packaging/feeds/{feedId}/maven/{groupId}/{artifactId}/{version}/{fileName}/content:
+    get:
+      tags:
+      - Maven
+      description: |-
+        Fulfills Maven package file download requests by either returning the URL of the requested package file or, in the case of Azure DevOps Server (OnPrem), returning the content as a stream.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Maven_DownloadPackage
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: GroupId of the maven package
+        required: true
+        schema:
+          type: string
+      - name: artifactId
+        in: path
+        description: ArtifactId of the maven package
+        required: true
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: Version of the package
+        required: true
+        schema:
+          type: string
+      - name: fileName
+        in: path
+        description: File name to download
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                format: Stream
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: 5.1-preview.1
+      x-ms-vss-resource: content
+      x-ms-vss-method: DownloadPackage
+      x-ms-preview: true
+components:
+  schemas:
+    BatchOperationData:
+      type: object
+      description: Do not attempt to use this type to create a new BatchOperationData.
+        This type does not contain sufficient fields to create a new batch operation
+        data.
+    MavenDistributionManagement:
+      type: object
+      properties:
+        repository:
+          $ref: '#/components/schemas/MavenRepository'
+        snapshotRepository:
+          $ref: '#/components/schemas/MavenSnapshotRepository'
+      description: ""
+    MavenMinimalPackageDetails:
+      type: object
+      properties:
+        artifact:
+          type: string
+          description: Package artifact ID
+        group:
+          type: string
+          description: Package group ID
+        version:
+          type: string
+          description: Package version
+      description: Identifies a particular Maven package version
+    MavenPackage:
+      type: object
+      properties:
+        artifactId:
+          type: string
+        artifactIndex:
+          $ref: '#/components/schemas/ReferenceLink'
+        artifactMetadata:
+          $ref: '#/components/schemas/ReferenceLink'
+        deletedDate:
+          type: string
+          format: date-time
+        files:
+          $ref: '#/components/schemas/ReferenceLinks'
+        groupId:
+          type: string
+        pom:
+          $ref: '#/components/schemas/MavenPomMetadata'
+        requestedFile:
+          $ref: '#/components/schemas/ReferenceLink'
+        snapshotMetadata:
+          $ref: '#/components/schemas/ReferenceLink'
+        version:
+          type: string
+        versions:
+          $ref: '#/components/schemas/ReferenceLinks'
+        versionsIndex:
+          $ref: '#/components/schemas/ReferenceLink'
+      description: ""
+    MavenPackagesBatchRequest:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/BatchOperationData'
+        operation:
+          type: string
+          description: Type of operation that needs to be performed on packages.
+          enum:
+          - promote
+          - delete
+          - permanentDelete
+          - restoreToFeed
+          x-ms-enum:
+            name: MavenBatchOperationType
+            values:
+            - value: promote
+              description: Promote package versions to a release view. If constructing
+                a MavenPackagesBatchRequest object with this type, use BatchPromoteData
+                for its Data property. Not supported in the Recycle Bin.
+            - value: delete
+              description: Delete package versions. Not supported in the Recycle Bin.
+            - value: permanentDelete
+              description: Permanently delete package versions. Only supported in
+                the Recycle Bin.
+            - value: restoreToFeed
+              description: Restore unpublished package versions to the feed. Only
+                supported in the Recycle Bin.
+        packages:
+          type: array
+          description: The packages onto which the operation will be performed.
+          items:
+            $ref: '#/components/schemas/MavenMinimalPackageDetails'
+      description: A batch of operations to apply to package versions.
+    MavenPackageVersionDeletionState:
+      type: object
+      properties:
+        artifactId:
+          type: string
+          description: Artifact Id of the package.
+        deletedDate:
+          type: string
+          description: UTC date the package was deleted.
+          format: date-time
+        groupId:
+          type: string
+          description: Group Id of the package.
+        version:
+          type: string
+          description: Version of the package.
+      description: Deletion state of a maven package.
+    MavenPomBuild:
+      type: object
+      properties:
+        plugins:
+          type: array
+          items:
+            $ref: '#/components/schemas/Plugin'
+      description: ""
+    MavenPomCi:
+      type: object
+      properties:
+        notifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/MavenPomCiNotifier'
+        system:
+          type: string
+        url:
+          type: string
+      description: ""
+    MavenPomCiNotifier:
+      type: object
+      properties:
+        configuration:
+          type: array
+          items:
+            type: string
+        sendOnError:
+          type: string
+        sendOnFailure:
+          type: string
+        sendOnSuccess:
+          type: string
+        sendOnWarning:
+          type: string
+        type:
+          type: string
+      description: ""
+    MavenPomDependency:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/MavenPomGav'
+    MavenPomDependencyManagement:
+      type: object
+      properties:
+        dependencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/MavenPomDependency'
+      description: ""
+    MavenPomGav:
+      type: object
+      properties:
+        artifactId:
+          type: string
+        groupId:
+          type: string
+        version:
+          type: string
+      description: ""
+    MavenPomIssueManagement:
+      type: object
+      properties:
+        system:
+          type: string
+        url:
+          type: string
+      description: ""
+    MavenPomLicense:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/MavenPomOrganization'
+    MavenPomMailingList:
+      type: object
+      properties:
+        archive:
+          type: string
+        name:
+          type: string
+        otherArchives:
+          type: array
+          items:
+            type: string
+        post:
+          type: string
+        subscribe:
+          type: string
+        unsubscribe:
+          type: string
+      description: ""
+    MavenPomMetadata:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/MavenPomGav'
+    MavenPomOrganization:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+      description: ""
+    MavenPomParent:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/MavenPomGav'
+    MavenPomPerson:
+      type: object
+      properties:
+        email:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        organization:
+          type: string
+        organizationUrl:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        timezone:
+          type: string
+        url:
+          type: string
+      description: ""
+    MavenPomScm:
+      type: object
+      properties:
+        connection:
+          type: string
+        developerConnection:
+          type: string
+        tag:
+          type: string
+        url:
+          type: string
+      description: ""
+    MavenRecycleBinPackageVersionDetails:
+      type: object
+      properties:
+        deleted:
+          type: boolean
+          description: Setting to false will undo earlier deletion and restore the
+            package to feed.
+      description: ""
+    MavenRepository:
+      type: object
+      properties:
+        uniqueVersion:
+          type: boolean
+      description: ""
+    MavenSnapshotRepository:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/MavenRepository'
+    Package:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        deletedDate:
+          type: string
+          description: If and when the package was deleted.
+          format: date-time
+        id:
+          type: string
+          description: Package Id.
+        name:
+          type: string
+          description: The display name of the package.
+        permanentlyDeletedDate:
+          type: string
+          description: If and when the package was permanently deleted.
+          format: date-time
+        sourceChain:
+          type: array
+          description: The history of upstream sources for this package. The first
+            source in the list is the immediate source from which this package was
+            saved.
+          items:
+            $ref: '#/components/schemas/UpstreamSourceInfo'
+        version:
+          type: string
+          description: The version of the package.
+      description: Package version metadata for a Maven package
+    Plugin:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/MavenPomGav'
+    PluginConfiguration:
+      type: object
+      properties:
+        goalPrefix:
+          type: string
+      description: ""
+    ReferenceLink:
+      type: object
+      properties:
+        href:
+          type: string
+      description: 'The class to represent a REST reference link.  RFC: http://tools.ietf.org/html/draft-kelly-json-hal-06  The
+        RFC is not fully implemented, additional properties are allowed on the reference
+        link but as of yet we don''t have a need for them.'
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    UpstreamSourceInfo:
+      type: object
+      properties:
+        displayLocation:
+          type: string
+          description: Locator for connecting to the upstream source in a user friendly
+            format, that may potentially change over time
+        id:
+          type: string
+          description: Identity of the upstream source.
+          format: uuid
+        location:
+          type: string
+          description: Locator for connecting to the upstream source
+        name:
+          type: string
+          description: Display name.
+        sourceType:
+          type: string
+          description: Source type, such as Public or Internal.
+          enum:
+          - public
+          - internal
+          x-ms-enum:
+            name: PackagingSourceType
+            values:
+            - value: public
+              description: Publicly available source.
+            - value: internal
+              description: Azure DevOps upstream source.
+      description: Upstream source definition, including its Identity, package type,
+        and other associated information.
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '5.1-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.packaging_write: Grants the ability to create and read feeds and packages.
+            vso.packaging: Grants the ability to read feeds and packages. Also grants
+              the ability to search packages.
+            vso.packaging_manage: Grants the ability to create, read, update, and
+              delete feeds and packages.
+x-ms-vss-area: Maven
+x-ms-vss-resource-area-id: 6f7f8c07-ff36-473c-bcf3-bd6cc9b6c066

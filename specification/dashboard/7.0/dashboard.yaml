@@ -1,0 +1,1586 @@
+openapi: 3.0.1
+info:
+  title: Dashboard
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 7.0-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Dashboards
+  description: APIs for viewing and managing dashboards.
+- name: Widgets
+  description: APIs for viewing and managing widgets.
+- name: Widget Types
+  description: APIs for viewing widget type information.
+paths:
+  /{organization}/{project}/_apis/dashboard/widgettypes:
+    get:
+      tags:
+      - Widget Types
+      description: Get all available widget metadata in alphabetical order, including
+        widgets marked with isVisibleFromCatalog == false.
+      operationId: Widget Types_Get Widget Types
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: $scope
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - collection_User
+          - project_Team
+          x-ms-enum:
+            name: WidgetScope
+            values:
+            - value: collection_User
+              description: ""
+            - value: project_Team
+              description: ""
+        x-ms-enum:
+          name: WidgetScope
+          values:
+          - value: collection_User
+            description: ""
+          - value: project_Team
+            description: ""
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WidgetTypesResponse'
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: widgetTypes
+      x-ms-vss-method: GetWidgetTypes
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/WidgetTypes/GET__dashboard_WidgetTypes.json
+  /{organization}/{project}/_apis/dashboard/widgettypes/{contributionId}:
+    get:
+      tags:
+      - Widget Types
+      description: Get the widget metadata satisfying the specified contribution ID.
+      operationId: Widget Types_Get Widget Metadata
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: contributionId
+        in: path
+        description: The ID of Contribution for the Widget
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WidgetMetadataResponse'
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: widgetTypes
+      x-ms-vss-method: GetWidgetMetadata
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/WidgetTypes/GET__dashboard_WidgetTypes__widgetId_.json
+  /{organization}/{project}/{team}/_apis/dashboard/dashboards:
+    get:
+      tags:
+      - Dashboards
+      description: Get a list of dashboards under a project.
+      operationId: Dashboards_List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.3'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dashboard'
+      security:
+      - oauth2:
+        - vso.dashboards
+      x-ms-docs-override-version: 7.0-preview.3
+      x-ms-vss-resource: dashboards
+      x-ms-vss-method: GetDashboardsByProject
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Dashboards/GET_dashboards_by_project.json
+    put:
+      tags:
+      - Dashboards
+      description: Update the name and position of dashboards in the supplied group,
+        and remove omitted dashboards. Does not modify dashboard content.
+      operationId: Dashboards_Replace Dashboards
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.3'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DashboardGroup'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardGroup'
+      x-ms-docs-override-version: 7.0-preview.3
+      x-ms-vss-resource: dashboards
+      x-ms-vss-method: ReplaceDashboards
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Dashboards/PUT__dashboard_groups__groupId__dashboards__dashboardId__.json
+      x-codegen-request-body-name: body
+    post:
+      tags:
+      - Dashboards
+      description: Create the supplied dashboard.
+      operationId: Dashboards_Create
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.3'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The initial state of the dashboard
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dashboard'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+      security:
+      - oauth2:
+        - vso.dashboards_manage
+      x-ms-docs-override-version: 7.0-preview.3
+      x-ms-vss-resource: dashboards
+      x-ms-vss-method: CreateDashboard
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Dashboards/POST_dashboard.json
+      x-codegen-request-body-name: body
+  /{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}:
+    get:
+      tags:
+      - Dashboards
+      description: Get a dashboard by its ID.
+      operationId: Dashboards_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: dashboardId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.3'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+      security:
+      - oauth2:
+        - vso.dashboards
+      x-ms-docs-override-version: 7.0-preview.3
+      x-ms-vss-resource: dashboards
+      x-ms-vss-method: GetDashboard
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Dashboards/GET_dashboard.json
+    put:
+      tags:
+      - Dashboards
+      description: Replace configuration for the specified dashboard. Replaces Widget
+        list on Dashboard, only if property is supplied.
+      operationId: Dashboards_Replace Dashboard
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: dashboardId
+        in: path
+        description: ID of the dashboard to replace.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.3'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The Configuration of the dashboard to replace.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dashboard'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+      x-ms-docs-override-version: 7.0-preview.3
+      x-ms-vss-resource: dashboards
+      x-ms-vss-method: ReplaceDashboard
+      x-ms-preview: true
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Dashboards
+      description: Delete a dashboard given its ID. This also deletes the widgets
+        associated with this dashboard.
+      operationId: Dashboards_Delete
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: dashboardId
+        in: path
+        description: ID of the dashboard to delete.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.3'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.dashboards_manage
+      x-ms-docs-override-version: 7.0-preview.3
+      x-ms-vss-resource: dashboards
+      x-ms-vss-method: DeleteDashboard
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Dashboards/DELETE__dashboard_groups__groupId__dashboards__dashboardId_.json
+  /{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets:
+    get:
+      tags:
+      - Widgets
+      description: Get widgets contained on the specified dashboard.
+      operationId: Widgets_Get Widgets
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: dashboardId
+        in: path
+        description: ID of the dashboard to read.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: eTag
+        in: header
+        description: Dashboard Widgets Version
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.2'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Widget'
+      security:
+      - oauth2:
+        - vso.dashboards
+      x-ms-docs-override-version: 7.0-preview.2
+      x-ms-vss-resource: widgets
+      x-ms-vss-method: GetWidgets
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Widgets/GET_widgets.json
+    put:
+      tags:
+      - Widgets
+      description: Replace the widgets on specified dashboard with the supplied widgets.
+      operationId: Widgets_Replace Widgets
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: dashboardId
+        in: path
+        description: ID of the Dashboard to modify.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: eTag
+        in: header
+        description: Dashboard Widgets Version
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.2'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Revised state of widgets to store for the dashboard.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Widget'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Widget'
+      security:
+      - oauth2:
+        - vso.dashboards_manage
+      x-ms-docs-override-version: 7.0-preview.2
+      x-ms-vss-resource: widgets
+      x-ms-vss-method: ReplaceWidgets
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Widgets/PUT_widgets.json
+      x-codegen-request-body-name: body
+    post:
+      tags:
+      - Widgets
+      description: Create a widget on the specified dashboard.
+      operationId: Widgets_Create
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: dashboardId
+        in: path
+        description: ID of dashboard the widget will be added to.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.2'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: State of the widget to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Widget'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Widget'
+      security:
+      - oauth2:
+        - vso.dashboards_manage
+      x-ms-docs-override-version: 7.0-preview.2
+      x-ms-vss-resource: widgets
+      x-ms-vss-method: CreateWidget
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Widgets/POST_widgets.json
+      x-codegen-request-body-name: body
+    patch:
+      tags:
+      - Widgets
+      description: Update the supplied widgets on the dashboard using supplied state.
+        State of existing Widgets not passed in the widget list is preserved.
+      operationId: Widgets_Update Widgets
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: dashboardId
+        in: path
+        description: ID of the Dashboard to modify.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: eTag
+        in: header
+        description: Dashboard Widgets Version
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.2'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The set of widget states to update on the dashboard.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Widget'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Widget'
+      security:
+      - oauth2:
+        - vso.dashboards_manage
+      x-ms-docs-override-version: 7.0-preview.2
+      x-ms-vss-resource: widgets
+      x-ms-vss-method: UpdateWidgets
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Widgets/PATCH_widgets.json
+      x-codegen-request-body-name: body
+  /{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets/{widgetId}:
+    get:
+      tags:
+      - Widgets
+      description: Get the current state of the specified widget.
+      operationId: Widgets_Get Widget
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: dashboardId
+        in: path
+        description: ID of the dashboard containing the widget.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: widgetId
+        in: path
+        description: ID of the widget to read.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.2'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Widget'
+      security:
+      - oauth2:
+        - vso.dashboards
+      x-ms-docs-override-version: 7.0-preview.2
+      x-ms-vss-resource: widgets
+      x-ms-vss-method: GetWidget
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Widgets/GET_widgets_widgetid.json
+    put:
+      tags:
+      - Widgets
+      description: Override the  state of the specified widget.
+      operationId: Widgets_Replace Widget
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: dashboardId
+        in: path
+        description: ID of the dashboard containing the widget.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: widgetId
+        in: path
+        description: ID of the widget to update.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.2'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: State to be written for the widget.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Widget'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Widget'
+      security:
+      - oauth2:
+        - vso.dashboards_manage
+      x-ms-docs-override-version: 7.0-preview.2
+      x-ms-vss-resource: widgets
+      x-ms-vss-method: ReplaceWidget
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Widgets/PUT_widgets_widgetid.json
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Widgets
+      description: Delete the specified widget.
+      operationId: Widgets_Delete
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: dashboardId
+        in: path
+        description: ID of the dashboard containing the widget.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: widgetId
+        in: path
+        description: ID of the widget to update.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.2'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+      security:
+      - oauth2:
+        - vso.dashboards_manage
+      x-ms-docs-override-version: 7.0-preview.2
+      x-ms-vss-resource: widgets
+      x-ms-vss-method: DeleteWidget
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Widgets/DELETE__dashboard_groups__groupId__dashboards__dashboardId__widgets__widgetId_.json
+    patch:
+      tags:
+      - Widgets
+      description: Perform a partial update of the specified widget.
+      operationId: Widgets_Update Widget
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: dashboardId
+        in: path
+        description: ID of the dashboard containing the widget.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: widgetId
+        in: path
+        description: ID of the widget to update.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.2'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Description of the widget changes to apply. All non-null fields
+          will be replaced.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Widget'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Widget'
+      security:
+      - oauth2:
+        - vso.dashboards_manage
+      x-ms-docs-override-version: 7.0-preview.2
+      x-ms-vss-resource: widgets
+      x-ms-vss-method: UpdateWidget
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Widgets/PATCH_widgets_widgetid.json
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    CopyDashboardOptions:
+      type: object
+      properties:
+        copyDashboardScope:
+          type: string
+          description: Dashboard Scope. Can be either Project or Project_Team
+          enum:
+          - collection_User
+          - project_Team
+          - project
+          x-ms-enum:
+            name: DashboardScope
+            values:
+            - value: collection_User
+              description: '[DEPRECATED] Dashboard is scoped to the collection user.'
+            - value: project_Team
+              description: Dashboard is scoped to the team.
+            - value: project
+              description: Dashboard is scoped to the project.
+        copyQueriesFlag:
+          type: boolean
+          description: When this flag is set to true,option to select the folder to
+            copy Queries of copy dashboard will appear.
+        description:
+          type: string
+          description: Description of the dashboard
+        name:
+          type: string
+          description: Name of the dashboard
+        projectId:
+          type: string
+          description: ID of the project. Provided by service at creation time.
+          format: uuid
+        queryFolderPath:
+          type: string
+          description: Path to which the queries should be copied of copy dashboard
+          format: uuid
+        refreshInterval:
+          type: integer
+          description: Refresh interval of dashboard
+          format: int32
+        teamId:
+          type: string
+          description: ID of the team. Provided by service at creation time
+          format: uuid
+      description: Copy options of a Dashboard.
+    CopyDashboardResponse:
+      type: object
+      properties:
+        copiedDashboard:
+          $ref: '#/components/schemas/Dashboard'
+        copyDashboardOptions:
+          $ref: '#/components/schemas/CopyDashboardOptions'
+      description: ""
+    Dashboard:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        dashboardScope:
+          type: string
+          description: Entity to which the dashboard is scoped.
+          enum:
+          - collection_User
+          - project_Team
+          - project
+          x-ms-enum:
+            name: DashboardScope
+            values:
+            - value: collection_User
+              description: '[DEPRECATED] Dashboard is scoped to the collection user.'
+            - value: project_Team
+              description: Dashboard is scoped to the team.
+            - value: project
+              description: Dashboard is scoped to the project.
+        description:
+          type: string
+          description: Description of the dashboard.
+        eTag:
+          type: string
+          description: Server defined version tracking value, used for edit collision
+            detection.
+        groupId:
+          type: string
+          description: ID of the group for a dashboard. For team-scoped dashboards,
+            this is the unique identifier for the team associated with the dashboard.
+            For project-scoped dashboards this property is empty.
+          format: uuid
+        id:
+          type: string
+          description: ID of the Dashboard. Provided by service at creation time.
+          format: uuid
+        name:
+          type: string
+          description: Name of the Dashboard.
+        ownerId:
+          type: string
+          description: ID of the owner for a dashboard. For team-scoped dashboards,
+            this is the unique identifier for the team associated with the dashboard.
+            For project-scoped dashboards, this is the unique identifier for the user
+            identity associated with the dashboard.
+          format: uuid
+        position:
+          type: integer
+          description: Position of the dashboard, within a dashboard group. If unset
+            at creation time, position is decided by the service.
+          format: int32
+        refreshInterval:
+          type: integer
+          description: Interval for client to automatically refresh the dashboard.
+            Expressed in minutes.
+          format: int32
+        url:
+          type: string
+        widgets:
+          type: array
+          description: The set of Widgets on the dashboard.
+          items:
+            $ref: '#/components/schemas/Widget'
+      description: Model of a Dashboard.
+    DashboardGroup:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        dashboardEntries:
+          type: array
+          description: A list of Dashboards held by the Dashboard Group
+          items:
+            $ref: '#/components/schemas/DashboardGroupEntry'
+        permission:
+          type: string
+          description: 'Deprecated: The old permission model describing the level
+            of permissions for the current team. Pre-M125.'
+          enum:
+          - none
+          - edit
+          - manage
+          - managePermissions
+          x-ms-enum:
+            name: GroupMemberPermission
+            values:
+            - value: none
+              description: ""
+            - value: edit
+              description: ""
+            - value: manage
+              description: ""
+            - value: managePermissions
+              description: ""
+        teamDashboardPermission:
+          type: string
+          description: A permissions bit mask describing the security permissions
+            of the current team for dashboards. When this permission is the value
+            None, use GroupMemberPermission. Permissions are evaluated based on the
+            presence of a value other than None, else the GroupMemberPermission will
+            be saved.
+          enum:
+          - none
+          - read
+          - create
+          - edit
+          - delete
+          - managePermissions
+          x-ms-enum:
+            name: TeamDashboardPermission
+            values:
+            - value: none
+              description: ""
+            - value: read
+              description: ""
+            - value: create
+              description: ""
+            - value: edit
+              description: ""
+            - value: delete
+              description: ""
+            - value: managePermissions
+              description: ""
+        url:
+          type: string
+      description: Describes a list of dashboards associated to an owner. Currently,
+        teams own dashboard groups.
+    DashboardGroupEntry:
+      description: Dashboard group entry, wrapping around Dashboard (needed?)
+      allOf:
+      - $ref: '#/components/schemas/Dashboard'
+    DashboardGroupEntryResponse:
+      description: Response from RestAPI when saving and editing DashboardGroupEntry
+      allOf:
+      - $ref: '#/components/schemas/DashboardGroupEntry'
+    DashboardResponse:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/DashboardGroupEntry'
+    LightboxOptions:
+      type: object
+      properties:
+        height:
+          type: integer
+          description: Height of desired lightbox, in pixels
+          format: int32
+        resizable:
+          type: boolean
+          description: True to allow lightbox resizing, false to disallow lightbox
+            resizing, defaults to false.
+        width:
+          type: integer
+          description: Width of desired lightbox, in pixels
+          format: int32
+      description: Lightbox configuration
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    SemanticVersion:
+      type: object
+      properties:
+        major:
+          type: integer
+          description: Major version when you make incompatible API changes
+          format: int32
+        minor:
+          type: integer
+          description: Minor version when you add functionality in a backwards-compatible
+            manner
+          format: int32
+        patch:
+          type: integer
+          description: Patch version when you make backwards-compatible bug fixes
+          format: int32
+      description: 'versioning for an artifact as described at: http://semver.org/,
+        of the form major.minor.patch.'
+    TeamContext:
+      type: object
+      properties:
+        project:
+          type: string
+          description: The team project Id or name.  Ignored if ProjectId is set.
+        projectId:
+          type: string
+          description: The Team Project ID.  Required if Project is not set.
+          format: uuid
+        team:
+          type: string
+          description: The Team Id or name.  Ignored if TeamId is set.
+        teamId:
+          type: string
+          description: The Team Id
+          format: uuid
+      description: The Team Context for an operation.
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+    Widget:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        allowedSizes:
+          type: array
+          description: Refers to the allowed sizes for the widget. This gets populated
+            when user wants to configure the widget
+          items:
+            $ref: '#/components/schemas/WidgetSize'
+        areSettingsBlockedForUser:
+          type: boolean
+          description: Read-Only Property from Dashboard Service. Indicates if settings
+            are blocked for the current user.
+        artifactId:
+          type: string
+          description: Refers to unique identifier of a feature artifact. Used for
+            pinning+unpinning a specific artifact.
+        configurationContributionId:
+          type: string
+        configurationContributionRelativeId:
+          type: string
+        contentUri:
+          type: string
+        contributionId:
+          type: string
+          description: The id of the underlying contribution defining the supplied
+            Widget Configuration.
+        dashboard:
+          $ref: '#/components/schemas/Dashboard'
+        eTag:
+          type: string
+        id:
+          type: string
+          format: uuid
+        isEnabled:
+          type: boolean
+        isNameConfigurable:
+          type: boolean
+        lightboxOptions:
+          $ref: '#/components/schemas/LightboxOptions'
+        loadingImageUrl:
+          type: string
+        name:
+          type: string
+        position:
+          $ref: '#/components/schemas/WidgetPosition'
+        settings:
+          type: string
+        settingsVersion:
+          $ref: '#/components/schemas/SemanticVersion'
+        size:
+          $ref: '#/components/schemas/WidgetSize'
+        typeId:
+          type: string
+        url:
+          type: string
+      description: Widget data
+    WidgetMetadata:
+      type: object
+      properties:
+        allowedSizes:
+          type: array
+          description: Sizes supported by the Widget.
+          items:
+            $ref: '#/components/schemas/WidgetSize'
+        analyticsServiceRequired:
+          type: boolean
+          description: Opt-in boolean that indicates if the widget requires the Analytics
+            Service to function. Widgets requiring the analytics service are hidden
+            from the catalog if the Analytics Service is not available.
+        catalogIconUrl:
+          type: string
+          description: Resource for an icon in the widget catalog.
+        catalogInfoUrl:
+          type: string
+          description: Opt-in URL string pointing at widget information. Defaults
+            to extension marketplace URL if omitted
+        configurationContributionId:
+          type: string
+          description: The id of the underlying contribution defining the supplied
+            Widget custom configuration UI. Null if custom configuration UI is not
+            available.
+        configurationContributionRelativeId:
+          type: string
+          description: The relative id of the underlying contribution defining the
+            supplied Widget custom configuration UI. Null if custom configuration
+            UI is not available.
+        configurationRequired:
+          type: boolean
+          description: Indicates if the widget requires configuration before being
+            added to dashboard.
+        contentUri:
+          type: string
+          description: Uri for the widget content to be loaded from .
+        contributionId:
+          type: string
+          description: The id of the underlying contribution defining the supplied
+            Widget.
+        defaultSettings:
+          type: string
+          description: Optional default settings to be copied into widget settings.
+        description:
+          type: string
+          description: Summary information describing the widget.
+        isEnabled:
+          type: boolean
+          description: 'Widgets can be disabled by the app store.  We''ll need to
+            gracefully handle for: - persistence (Allow) - Requests (Tag as disabled,
+            and provide context)'
+        isNameConfigurable:
+          type: boolean
+          description: Opt-out boolean that indicates if the widget supports widget
+            name/title configuration. Widgets ignoring the name should set it to false
+            in the manifest.
+        isVisibleFromCatalog:
+          type: boolean
+          description: Opt-out boolean indicating if the widget is hidden from the
+            catalog. Commonly, this is used to allow developers to disable creation
+            of a deprecated widget. A widget must have a functional default state,
+            or have a configuration experience, in order to be visible from the catalog.
+        keywords:
+          type: array
+          description: Keywords associated with this widget, non-filterable and invisible
+          items:
+            type: string
+        lightboxOptions:
+          $ref: '#/components/schemas/LightboxOptions'
+        loadingImageUrl:
+          type: string
+          description: Resource for a loading placeholder image on dashboard
+        name:
+          type: string
+          description: User facing name of the widget type. Each widget must use a
+            unique value here.
+        publisherName:
+          type: string
+          description: Publisher Name of this kind of widget.
+        supportedScopes:
+          type: array
+          description: Data contract required for the widget to function and to work
+            in its container.
+          items:
+            type: object
+            x-ms-enum:
+              name: WidgetScope
+              values:
+              - value: collection_User
+                description: ""
+              - value: project_Team
+                description: ""
+        tags:
+          type: array
+          description: Tags associated with this widget, visible on each widget and
+            filterable.
+          items:
+            type: string
+        targets:
+          type: array
+          description: Contribution target IDs
+          items:
+            type: string
+        typeId:
+          type: string
+          description: 'Deprecated: locally unique developer-facing id of this kind
+            of widget. ContributionId provides a globally unique identifier for widget
+            types.'
+      description: Contribution based information describing Dashboard Widgets.
+    WidgetMetadataResponse:
+      type: object
+      properties:
+        uri:
+          type: string
+        widgetMetadata:
+          $ref: '#/components/schemas/WidgetMetadata'
+      description: ""
+    WidgetPosition:
+      type: object
+      properties:
+        column:
+          type: integer
+          format: int32
+        row:
+          type: integer
+          format: int32
+      description: ""
+    WidgetResponse:
+      description: Response from RestAPI when saving and editing Widget
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+    WidgetSize:
+      type: object
+      properties:
+        columnSpan:
+          type: integer
+          description: The Width of the widget, expressed in dashboard grid columns.
+          format: int32
+        rowSpan:
+          type: integer
+          description: The height of the widget, expressed in dashboard grid rows.
+          format: int32
+      description: ""
+    WidgetsVersionedList:
+      type: object
+      properties:
+        eTag:
+          type: array
+          items:
+            type: string
+        widgets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Widget'
+      description: Wrapper class to support HTTP header generation using CreateResponse,
+        ClientHeaderParameter and ClientResponseType in WidgetV2Controller
+    WidgetTypesResponse:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        uri:
+          type: string
+        widgetTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/WidgetMetadata'
+      description: ""
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+    api-Version-preview.2:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0-preview.2'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+    api-Version-preview.3:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0-preview.3'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.dashboards: Grants the ability to read team dashboard information
+            vso.dashboards_manage: Grants the ability to manage team dashboard information
+x-ms-vss-area: Dashboard
+x-ms-vss-resource-area-id: 31c84e0a-3ece-48fd-a29d-100849af99ba

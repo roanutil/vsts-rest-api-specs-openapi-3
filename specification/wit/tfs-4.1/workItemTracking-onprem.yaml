@@ -1,0 +1,5057 @@
+openapi: 3.0.1
+info:
+  title: WorkItemTracking
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: "4.1"
+externalDocs:
+  description: Team Foundation Server REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://https://fabrikam-fiber-inc:8080/DefaultCollection/
+security:
+- accessToken: []
+tags:
+- name: Artifact Link Types
+- name: Artifact Uri Query
+- name: Attachments
+  description: Project specific Work Item attachments API
+- name: Classification Nodes
+- name: Comments
+- name: Fields
+- name: Queries
+  description: |-
+    The queries in a team project are organized in folders.
+
+    A sample structure of queries and folders might appear as shown here.
+
+    * **My Queries**
+    * **Shared Queries**
+      * Feedback (Query)
+        * **Current Sprint**
+          * Blocked Tasks (Query)
+          * Open Impediments (Query)
+          * Test Cases (Query)
+          * Unfinished Work (Query)
+          * Work in Progress (Query)
+- name: Recyclebin
+  description: The controller that services request for Recycle bin
+- name: Reporting Work Item Links
+  description: |-
+    This API provides access to all work item links in your project or collection and allows you to build a warehouse.
+
+    The response of the API contains a batch of work item links ("values"), a URL to the next batch of work item links ("nextLink") and a boolean that tells you whether you have read all currently available work item links ("isLastBatch").
+
+    The workflow for building your warehouse is as follows:
+      1. Make a request to the API without providing a watermark parameter
+      2. Process the work item links returned by the API
+      3. Persist "nextLink" and check "isLastBatch"
+        * If "isLastBatch" is true, pause for a period of time (varies depending on your target latency)
+      4. Make the next request using the URL from "nextLink"
+      5. Go to step 2
+- name: Reporting Work Item Revisions
+  description: |-
+    This API provides access to all work item revisions in your project or collection and allows you to build a warehouse.
+
+    The response of the API contains a batch of work item revisions("values"), a URL to the next batch of work item revisions("nextLink") and a boolean that tells you whether you have read all currently available work item revisions("isLastBatch").
+
+    The workflow for building your warehouse is as follows:
+    1. Make a request to the API without providing a continuationToken parameter
+    2. Process the work item revisions returned by the API
+    3. Persist "nextLink" and check "isLastBatch"
+        * If "isLastBatch" is true, pause for a period of time(varies depending on your target latency)
+    4. Make the next request using the URL from "nextLink"
+    5. Go to step 2
+
+    ## Note
+    The results of this API are impacted when using Move Work Item and/or Change Work Item Type features in conjunction with "project" in the url and/or "types" in the query string.<br />
+     - Project-scoped requests will only return work item revisions from the specified project.
+     - Types-scoped requests will only return work item revisions of the specified type(s)
+
+    ## Sample Projects
+    [C# Example](https://github.com/sferg-msft/vsts-wit-reporting-example)
+- name: Revisions
+  description: This controller version exists to support returning identity values
+    for work items
+- name: Templates
+- name: Updates
+  description: This controller version exists to support returning identity values
+    for work items
+- name: Wiql
+  description: The WIQL API is used to run a query given the WIQL text or a saved
+    query ID.
+- name: Work Item Icons
+  description: Discover the list of work item icons and view individual icons.
+- name: Work Item Relation Types
+- name: Work Items
+  description: This controller version exists to support returning identity values
+    for work items
+- name: Work Item Transitions
+  description: Currently only for the single GetWorkItemNextStatesOnCheckinAction
+    that returns the next state if the work item is checked in.
+- name: Work Item Type Categories
+  description: The controller that services the requests for Work Item Type Categories.
+- name: Work Item Types
+  description: The controller that services the requests for Work Item Types
+- name: Work Item Types Field
+  description: Project specific field definition API.
+- name: Work Item Type States
+  description: The controller that services the requests for states of Work Item Types.
+paths:
+  /{collection}/_apis/wit/artifactlinktypes:
+    get:
+      tags:
+      - Artifact Link Types
+      description: Get the list of work item tracking outbound artifact link types.
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkArtifactLink'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: artifactLinkTypes
+      x-ms-vss-method: GetWorkArtifactLinkTypes
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/artifactLinkTypes/GET_wit_artifactlinktypes-onprem.json
+  /{collection}/_apis/wit/workitemicons:
+    get:
+      tags:
+      - Work Item Icons
+      description: Get a list of all work item icons.
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemIcon'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemIcons
+      x-ms-vss-method: GetWorkItemIcons
+      x-ms-preview: true
+      x-ms-examples:
+        Get work item icons:
+          $ref: ./httpExamples/workItemIcons/GET__workitem_icons-onprem.json
+  /{collection}/_apis/wit/workitemicons/{icon}:
+    get:
+      tags:
+      - Work Item Icons
+      description: Get a work item icon given the friendly name and icon color.
+      operationId: Get
+      parameters:
+      - name: icon
+        in: path
+        description: The name of the icon
+        required: true
+        schema:
+          type: string
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: color
+        in: query
+        description: The 6-digit hex color for the icon
+        schema:
+          type: string
+      - name: v
+        in: query
+        description: The version of the icon (used only for cache invalidation)
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            image/svg+xml:
+              schema:
+                $ref: '#/components/schemas/WorkItemIcon'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemIcon'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemIcons
+      x-ms-vss-method: GetWorkItemIcon
+      x-ms-preview: true
+      x-ms-examples:
+        Get work item icon:
+          $ref: ./httpExamples/workItemIcons/GET__workitem_icon-onprem.json
+  /{collection}/_apis/wit/workitemrelationtypes:
+    get:
+      tags:
+      - Work Item Relation Types
+      description: Gets the work item relation types.
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemRelationType'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItemRelationTypes
+      x-ms-vss-method: GetRelationTypes
+      x-ms-examples:
+        Get the work item relation types:
+          $ref: ./httpExamples/workItemRelationTypes/GET__relation_types-onprem.json
+  /{collection}/_apis/wit/workitemrelationtypes/{relation}:
+    get:
+      tags:
+      - Work Item Relation Types
+      description: Gets the work item relation type definition.
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: relation
+        in: path
+        description: The relation name
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemRelationType'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItemRelationTypes
+      x-ms-vss-method: GetRelationType
+      x-ms-examples:
+        Get the work item relation type:
+          $ref: ./httpExamples/workItemRelationTypes/GET__relation_type-onprem.json
+  /{collection}/_apis/wit/workItems/{id}/revisions:
+    get:
+      tags:
+      - Revisions
+      description: Returns the list of fully hydrated work item revisions, paged.
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: $top
+        in: query
+        schema:
+          type: integer
+          format: int32
+      - name: $skip
+        in: query
+        schema:
+          type: integer
+          format: int32
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - relations
+          - fields
+          - links
+          - all
+          x-ms-enum:
+            name: WorkItemExpand
+            values:
+            - value: none
+              description: ""
+            - value: relations
+              description: ""
+            - value: fields
+              description: ""
+            - value: links
+              description: ""
+            - value: all
+              description: ""
+        x-ms-enum:
+          name: WorkItemExpand
+          values:
+          - value: none
+            description: ""
+          - value: relations
+            description: ""
+          - value: fields
+            description: ""
+          - value: links
+            description: ""
+          - value: all
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItem'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: revisions
+      x-ms-vss-method: GetRevisions
+      x-ms-examples:
+        List work item revisions:
+          $ref: ./httpExamples/revisions/GET__list_workitem_revisions-onprem.json
+        List work item revisions with paging:
+          $ref: ./httpExamples/revisions/GET__list_workitem_revisions_paged-onprem.json
+  /{collection}/_apis/wit/workItems/{id}/revisions/{revisionNumber}:
+    get:
+      tags:
+      - Revisions
+      description: Returns a fully hydrated work item for the requested revision
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: revisionNumber
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - relations
+          - fields
+          - links
+          - all
+          x-ms-enum:
+            name: WorkItemExpand
+            values:
+            - value: none
+              description: ""
+            - value: relations
+              description: ""
+            - value: fields
+              description: ""
+            - value: links
+              description: ""
+            - value: all
+              description: ""
+        x-ms-enum:
+          name: WorkItemExpand
+          values:
+          - value: none
+            description: ""
+          - value: relations
+            description: ""
+          - value: fields
+            description: ""
+          - value: links
+            description: ""
+          - value: all
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItem'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: revisions
+      x-ms-vss-method: GetRevision
+      x-ms-examples:
+        Get work item revision:
+          $ref: ./httpExamples/revisions/GET__workitem_revision-onprem.json
+  /{collection}/_apis/wit/workItems/{id}/updates:
+    get:
+      tags:
+      - Updates
+      description: Returns a the deltas between work item revisions
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: $top
+        in: query
+        schema:
+          type: integer
+          format: int32
+      - name: $skip
+        in: query
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemUpdate'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: updates
+      x-ms-vss-method: GetUpdates
+      x-ms-examples:
+        List of work item updates:
+          $ref: ./httpExamples/updates/GET__list_of_workitem_updates-onprem.json
+        Paged list of work item updates:
+          $ref: ./httpExamples/updates/GET__list_of_workitem_updates_paged-onprem.json
+  /{collection}/_apis/wit/workItems/{id}/updates/{updateNumber}:
+    get:
+      tags:
+      - Updates
+      description: Returns a single update for a work item
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: updateNumber
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemUpdate'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: updates
+      x-ms-vss-method: GetUpdate
+      x-ms-examples:
+        work item update:
+          $ref: ./httpExamples/updates/GET__work_item_update-onprem.json
+  /{collection}/_apis/wit/workitemtransitions:
+    get:
+      tags:
+      - Work Item Transitions
+      description: Returns the next state on the given work item IDs.
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: ids
+        in: query
+        description: list of work item ids
+        required: true
+        schema:
+          type: string
+          format: array (int32)
+      - name: action
+        in: query
+        description: possible actions. Currently only supports checkin
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemNextStateOnTransition'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTransitions
+      x-ms-vss-method: GetWorkItemNextStatesOnCheckinAction
+      x-ms-preview: true
+      x-ms-examples:
+        Get next state on a work item:
+          $ref: ./httpExamples/workItemTransitions/GET_wit_workItemTransitions-onprem.json
+  /{collection}/{project}/_apis/wit/artifacturiquery:
+    post:
+      tags:
+      - Artifact Uri Query
+      description: Queries work items linked to a given list of artifact URI.
+      operationId: Query
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Defines a list of artifact URI for querying work items.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArtifactUriQuery'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtifactUriQueryResult'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: artifactUriQuery
+      x-ms-vss-method: QueryWorkItemsForArtifactUris
+      x-ms-preview: true
+      x-ms-examples:
+        Query work items for artifacts:
+          $ref: ./httpExamples/artifactUriQuery/POST__wit_artifacturiquery-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/wit/attachments:
+    post:
+      tags:
+      - Attachments
+      description: Uploads an attachment.
+      operationId: Create
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: fileName
+        in: query
+        description: The name of the file
+        schema:
+          type: string
+      - name: uploadType
+        in: query
+        description: 'Attachment upload type: Simple or Chunked'
+        schema:
+          type: string
+      - name: areaPath
+        in: query
+        description: Target project Area Path
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Stream to upload
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: Stream
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttachmentReference'
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: attachments
+      x-ms-vss-method: CreateAttachment
+      x-ms-examples:
+        Upload a text file:
+          $ref: ./httpExamples/attachments/POST__wit_attachments_fileName-_textFile_-onprem.json
+        Upload a binary file:
+          $ref: ./httpExamples/attachments/POST__wit_attachments_fileName-_binaryFile_-onprem.json
+        'Chunked Upload Step #1':
+          $ref: ./httpExamples/attachments/POST_wit_attachments_fileName_chunked_register-onprem.json
+        'Chunked Upload Step #2':
+          $ref: ./httpExamples/attachments/POST_wit_attachments_fileName_chunked_content1-onprem.json
+        'Chunked Upload Step #3':
+          $ref: ./httpExamples/attachments/POST_wit_attachments_fileName_chunked_content2-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/wit/attachments/{id}:
+    get:
+      tags:
+      - Attachments
+      description: Downloads an attachment.
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: Attachment ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: fileName
+        in: query
+        description: Name of the file
+        schema:
+          type: string
+      - name: download
+        in: query
+        description: If set to <c>true</c> always download attachment
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: Stream
+            application/zip:
+              schema:
+                type: string
+                format: Stream
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: attachments
+      x-ms-vss-method: GetAttachment
+      x-ms-examples:
+        Get Attachment Content:
+          $ref: ./httpExamples/attachments/GET__wit_attachments_get_attachment_content-onprem.json
+        Get Project Attachment Content:
+          $ref: ./httpExamples/attachments/GET__wit_attachments_get_project_attachment_content-onprem.json
+        Download Attachment:
+          $ref: ./httpExamples/attachments/GET__wit_attachments_download_attachment-onprem.json
+  /{collection}/{project}/_apis/wit/classificationnodes:
+    get:
+      tags:
+      - Classification Nodes
+      description: Gets root classification nodes under the project.
+      operationId: Get Root Nodes
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: $depth
+        in: query
+        description: Depth of children to fetch.
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemClassificationNode'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: classificationNodes
+      x-ms-vss-method: GetRootNodes
+  /{collection}/{project}/_apis/wit/classificationnodes/{structureGroup}/{path}:
+    get:
+      tags:
+      - Classification Nodes
+      description: Gets the classification node for a given node path.
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: structureGroup
+        in: path
+        description: Structure group of the classification node, area or iteration.
+        required: true
+        schema:
+          type: string
+          enum:
+          - areas
+          - iterations
+          x-ms-enum:
+            name: TreeStructureGroup
+            values:
+            - value: areas
+              description: ""
+            - value: iterations
+              description: ""
+        x-ms-enum:
+          name: TreeStructureGroup
+          values:
+          - value: areas
+            description: ""
+          - value: iterations
+            description: ""
+      - name: path
+        in: path
+        description: Path of the classification node.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: $depth
+        in: query
+        description: Depth of children to fetch.
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemClassificationNode'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: classificationNodes
+      x-ms-vss-method: GetClassificationNode
+      x-ms-examples:
+        Get an area:
+          $ref: ./httpExamples/classificationNodes/GET__wit_classificationNodes_areas__areaPath_-onprem.json
+        Get an iteration:
+          $ref: ./httpExamples/classificationNodes/GET__wit_classificationNodes_iterations__iterationPath_-onprem.json
+    post:
+      tags:
+      - Classification Nodes
+      description: Create new or update an existing classification node.
+      operationId: Create Or Update
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: structureGroup
+        in: path
+        description: Structure group of the classification node, area or iteration.
+        required: true
+        schema:
+          type: string
+          enum:
+          - areas
+          - iterations
+          x-ms-enum:
+            name: TreeStructureGroup
+            values:
+            - value: areas
+              description: ""
+            - value: iterations
+              description: ""
+        x-ms-enum:
+          name: TreeStructureGroup
+          values:
+          - value: areas
+            description: ""
+          - value: iterations
+            description: ""
+      - name: path
+        in: path
+        description: Path of the classification node.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Node to create or update.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkItemClassificationNode'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemClassificationNode'
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: classificationNodes
+      x-ms-vss-method: CreateOrUpdateClassificationNode
+      x-ms-examples:
+        Create an area:
+          $ref: ./httpExamples/classificationNodes/POST__wit_classificationNodes_areas-onprem.json
+        Move an area node:
+          $ref: ./httpExamples/classificationNodes/POST__wit_classificationNodes_areas__areaParent_-onprem.json
+        Create an iteration:
+          $ref: ./httpExamples/classificationNodes/POST__wit_classificationNodes_iterations-onprem.json
+        Move an iteration node:
+          $ref: ./httpExamples/classificationNodes/POST__wit_classificationNodes_iterations__iterationParent_-onprem.json
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Classification Nodes
+      description: Delete an existing classification node.
+      operationId: Delete
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: structureGroup
+        in: path
+        description: Structure group of the classification node, area or iteration.
+        required: true
+        schema:
+          type: string
+          enum:
+          - areas
+          - iterations
+          x-ms-enum:
+            name: TreeStructureGroup
+            values:
+            - value: areas
+              description: ""
+            - value: iterations
+              description: ""
+        x-ms-enum:
+          name: TreeStructureGroup
+          values:
+          - value: areas
+            description: ""
+          - value: iterations
+            description: ""
+      - name: path
+        in: path
+        description: Path of the classification node.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: $reclassifyId
+        in: query
+        description: Id of the target classification node for reclassification.
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: classificationNodes
+      x-ms-vss-method: DeleteClassificationNode
+      x-ms-examples:
+        Delete an area node:
+          $ref: ./httpExamples/classificationNodes/DELETE__wit_classificationNodes_areas__areaParent___reclassifyId-_rootAreaId_-onprem.json
+        Delete an iteration node:
+          $ref: ./httpExamples/classificationNodes/DELETE__wit_classificationNodes_iterations__iterationParent___reclassifyId-_rootIterationId_-onprem.json
+    patch:
+      tags:
+      - Classification Nodes
+      description: Update an existing classification node.
+      operationId: Update
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: structureGroup
+        in: path
+        description: Structure group of the classification node, area or iteration.
+        required: true
+        schema:
+          type: string
+          enum:
+          - areas
+          - iterations
+          x-ms-enum:
+            name: TreeStructureGroup
+            values:
+            - value: areas
+              description: ""
+            - value: iterations
+              description: ""
+        x-ms-enum:
+          name: TreeStructureGroup
+          values:
+          - value: areas
+            description: ""
+          - value: iterations
+            description: ""
+      - name: path
+        in: path
+        description: Path of the classification node.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Node to create or update.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkItemClassificationNode'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemClassificationNode'
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: classificationNodes
+      x-ms-vss-method: UpdateClassificationNode
+      x-ms-examples:
+        Rename an area:
+          $ref: ./httpExamples/classificationNodes/PATCH__wit_classificationNodes_areas__areaPath_-onprem.json
+        Rename an iteration:
+          $ref: ./httpExamples/classificationNodes/PATCH__wit_classificationNodes_iterations__iterationPath_-onprem.json
+        Change an iteration's dates:
+          $ref: ./httpExamples/classificationNodes/PATCH__wit_classificationNodes_iterations__iterationPathNew_-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/wit/fields:
+    get:
+      tags:
+      - Fields
+      description: Returns information for all fields.
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: $expand
+        in: query
+        description: Use ExtensionFields to include extension fields, otherwise exclude
+          them. Unless the feature flag for this parameter is enabled, extension fields
+          are always included.
+        schema:
+          type: string
+          enum:
+          - none
+          - extensionFields
+          x-ms-enum:
+            name: GetFieldsExpand
+            values:
+            - value: none
+              description: Default behavior.
+            - value: extensionFields
+              description: Adds extension fields to the response.
+        x-ms-enum:
+          name: GetFieldsExpand
+          values:
+          - value: none
+            description: Default behavior.
+          - value: extensionFields
+            description: Adds extension fields to the response.
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemField'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: fields
+      x-ms-vss-method: GetFields
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/fields/GET__wit_fields-onprem.json
+  /{collection}/{project}/_apis/wit/fields/{fieldNameOrRefName}:
+    get:
+      tags:
+      - Fields
+      description: Gets information on a specific field.
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: fieldNameOrRefName
+        in: path
+        description: Field simple name or reference name
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemField'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: fields
+      x-ms-vss-method: GetField
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/fields/GET__wit_fields__fieldName_-onprem.json
+    delete:
+      tags:
+      - Fields
+      description: Deletes the field.
+      operationId: Delete
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: fieldNameOrRefName
+        in: path
+        description: Field simple name or reference name
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: fields
+      x-ms-vss-method: DeleteField
+    patch:
+      tags:
+      - Fields
+      description: Updates the field.
+      operationId: Update
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: fieldNameOrRefName
+        in: path
+        description: Field simple name or reference name
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: New field definition
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkItemField'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: fields
+      x-ms-vss-method: UpdateField
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/wit/queries:
+    get:
+      tags:
+      - Queries
+      description: Gets the root queries and their children
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: $expand
+        in: query
+        description: Include the query string (wiql), clauses, query result columns,
+          and sort options in the results.
+        schema:
+          type: string
+          enum:
+          - none
+          - wiql
+          - clauses
+          - all
+          - minimal
+          x-ms-enum:
+            name: QueryExpand
+            values:
+            - value: none
+              description: Expands Columns, Links and ChangeInfo
+            - value: wiql
+              description: Expands Columns, Links,  ChangeInfo and WIQL text
+            - value: clauses
+              description: Expands Columns, Links, ChangeInfo, WIQL text and clauses
+            - value: all
+              description: Expands all properties
+            - value: minimal
+              description: Displays minimal properties and the WIQL text
+        x-ms-enum:
+          name: QueryExpand
+          values:
+          - value: none
+            description: Expands Columns, Links and ChangeInfo
+          - value: wiql
+            description: Expands Columns, Links,  ChangeInfo and WIQL text
+          - value: clauses
+            description: Expands Columns, Links, ChangeInfo, WIQL text and clauses
+          - value: all
+            description: Expands all properties
+          - value: minimal
+            description: Displays minimal properties and the WIQL text
+      - name: $depth
+        in: query
+        description: In the folder of queries, return child queries and folders to
+          this depth.
+        schema:
+          type: integer
+          format: int32
+      - name: $includeDeleted
+        in: query
+        description: Include deleted queries and folders
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QueryHierarchyItem'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: queries
+      x-ms-vss-method: GetQueries
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/queries/GET__wit_queries__depth-1-onprem.json
+        Just the root query folders:
+          $ref: ./httpExamples/queries/GET__wit_queries-onprem.json
+        With the query string and columns and sort options:
+          $ref: ./httpExamples/queries/GET__wit_queries__depth-1__expand-all-onprem.json
+        Including deleted queries:
+          $ref: ./httpExamples/queries/GET__wit_queries__depth-2__includeDeleted-true-onprem.json
+  /{collection}/{project}/_apis/wit/queries/{query}:
+    get:
+      tags:
+      - Queries
+      description: Retrieves an individual query and its children
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: query
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: $expand
+        in: query
+        description: Include the query string (wiql), clauses, query result columns,
+          and sort options in the results.
+        schema:
+          type: string
+          enum:
+          - none
+          - wiql
+          - clauses
+          - all
+          - minimal
+          x-ms-enum:
+            name: QueryExpand
+            values:
+            - value: none
+              description: Expands Columns, Links and ChangeInfo
+            - value: wiql
+              description: Expands Columns, Links,  ChangeInfo and WIQL text
+            - value: clauses
+              description: Expands Columns, Links, ChangeInfo, WIQL text and clauses
+            - value: all
+              description: Expands all properties
+            - value: minimal
+              description: Displays minimal properties and the WIQL text
+        x-ms-enum:
+          name: QueryExpand
+          values:
+          - value: none
+            description: Expands Columns, Links and ChangeInfo
+          - value: wiql
+            description: Expands Columns, Links,  ChangeInfo and WIQL text
+          - value: clauses
+            description: Expands Columns, Links, ChangeInfo, WIQL text and clauses
+          - value: all
+            description: Expands all properties
+          - value: minimal
+            description: Displays minimal properties and the WIQL text
+      - name: $depth
+        in: query
+        description: In the folder of queries, return child queries and folders to
+          this depth.
+        schema:
+          type: integer
+          format: int32
+      - name: $includeDeleted
+        in: query
+        description: Include deleted queries and folders
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryHierarchyItem'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: queries
+      x-ms-vss-method: GetQuery
+      x-ms-examples:
+        Query by ID:
+          $ref: ./httpExamples/queries/GET__wit_queries__queryId_-onprem.json
+        Query by Name:
+          $ref: ./httpExamples/queries/GET__wit_queries_Shared Queries__folderName___queryName_-onprem.json
+        Folder by ID:
+          $ref: ./httpExamples/queries/GET__wit_queries__folderId_-onprem.json
+        Folder by Name:
+          $ref: ./httpExamples/queries/GET__wit_queries_Shared Queries__folderName_-onprem.json
+        Deleted query by ID:
+          $ref: ./httpExamples/queries/GET__wit_queries__queryId___includeDeleted-true-onprem.json
+        Flat query with expanded clauses:
+          $ref: ./httpExamples/queries/GET__wit_queries__queryId___expand-clauses-onprem.json
+        Hierarchical query with expanded clauses:
+          $ref: ./httpExamples/queries/GET__wit_queries__hierarchicalQueryId___expand-clauses-onprem.json
+    post:
+      tags:
+      - Queries
+      description: Creates a query, or moves a query.
+      operationId: Create
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: query
+        in: path
+        description: The parent path for the query to create.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The query to create.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryHierarchyItem'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryHierarchyItem'
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: queries
+      x-ms-vss-method: CreateQuery
+      x-ms-examples:
+        Create a query:
+          $ref: ./httpExamples/queries/POST__wit_queries_Shared Queries__folderName_-onprem.json
+        Create a folder:
+          $ref: ./httpExamples/queries/POST__wit_queries_Shared Queries-onprem.json
+        Move a query or folder:
+          $ref: ./httpExamples/queries/POST__wit_queries_My Queries-onprem.json
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Queries
+      description: Delete a query or a folder. This deletes any permission change
+        on the deleted query or folder and any of its descendants if it is a folder.
+        It is important to note that the deleted permission changes cannot be recovered
+        upon undeleting the query or folder.
+      operationId: Delete
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: query
+        in: path
+        description: ID or path of the query or folder to delete.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: queries
+      x-ms-vss-method: DeleteQuery
+      x-ms-examples:
+        By ID:
+          $ref: ./httpExamples/queries/DELETE__wit_queries__queryId_-onprem.json
+        By folder path:
+          $ref: ./httpExamples/queries/DELETE__wit_queries_My Queries__folderNameNew_-onprem.json
+        Undelete a query or folder:
+          $ref: ./httpExamples/queries/PATCH__wit_queries__folderId___undeleteDescendants-true-onprem.json
+    patch:
+      tags:
+      - Queries
+      description: Update a query or a folder. This allows you to update, rename and
+        move queries and folders.
+      operationId: Update
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: query
+        in: path
+        description: The path for the query to update.
+        required: true
+        schema:
+          type: string
+      - name: $undeleteDescendants
+        in: query
+        description: Undelete the children of this folder. It is important to note
+          that this will not bring back the permission changes that were previously
+          applied to the descendants.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The query to update.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryHierarchyItem'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryHierarchyItem'
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: queries
+      x-ms-vss-method: UpdateQuery
+      x-ms-examples:
+        Update a query:
+          $ref: ./httpExamples/queries/PATCH__wit_queries_Shared Queries__folderName___queryNameNew_-onprem.json
+        Rename a query:
+          $ref: ./httpExamples/queries/PATCH__wit_queries_Shared Queries__folderName_-onprem.json
+        Rename a folder:
+          $ref: ./httpExamples/queries/PATCH__wit_queries_Shared Queries__folderName_-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/wit/recyclebin:
+    get:
+      tags:
+      - Recyclebin
+      description: Gets a list of the IDs and the URLs of the deleted the work items
+        in the Recycle Bin.
+      operationId: Get Deleted Work Item Shallow References
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemDeleteShallowReference'
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: recyclebin
+      x-ms-vss-method: GetDeletedWorkItemShallowReferences
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/recyclebin/GET__wit_recyclebin-onprem.json
+  /{collection}/{project}/_apis/wit/recyclebin/{id}:
+    get:
+      tags:
+      - Recyclebin
+      description: Gets a deleted work item from Recycle Bin.
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: ID of the work item to be returned
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemDelete'
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: recyclebin
+      x-ms-vss-method: GetDeletedWorkItem
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/recyclebin/GET__wit_recyclebin__id_-onprem.json
+    delete:
+      tags:
+      - Recyclebin
+      description: Destroys the specified work item permanently from the Recycle Bin.
+        This action can not be undone.
+      operationId: Destroy Work Item
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: ID of the work item to be destroyed permanently
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: recyclebin
+      x-ms-vss-method: DestroyWorkItem
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/recyclebin/DELETE__wit_recyclebin__id_-onprem.json
+    patch:
+      tags:
+      - Recyclebin
+      description: Restores the deleted work item from Recycle Bin.
+      operationId: Restore Work Item
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: ID of the work item to be restored
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Paylod with instructions to update the IsDeleted flag to false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkItemDeleteUpdate'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemDelete'
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: recyclebin
+      x-ms-vss-method: RestoreWorkItem
+      x-ms-examples:
+        Restore a work item:
+          $ref: ./httpExamples/recyclebin/PATCH__wit_recyclebin_restore-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/wit/reporting/workitemlinks:
+    get:
+      tags:
+      - Reporting Work Item Links
+      description: Get a batch of work item links
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: linkTypes
+        in: query
+        description: A list of types to filter the results to specific link types.
+          Omit this parameter to get work item links of all link types.
+        schema:
+          type: string
+          format: array (string)
+      - name: types
+        in: query
+        description: A list of types to filter the results to specific work item types.
+          Omit this parameter to get work item links of all work item types.
+        schema:
+          type: string
+          format: array (string)
+      - name: continuationToken
+        in: query
+        description: Specifies the continuationToken to start the batch from. Omit
+          this parameter to get the first batch of links.
+        schema:
+          type: string
+      - name: startDateTime
+        in: query
+        description: Date/time to use as a starting point for link changes. Only link
+          changes that occurred after that date/time will be returned. Cannot be used
+          in conjunction with 'watermark' parameter.
+        schema:
+          type: string
+          format: date-time
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportingWorkItemLinksBatch'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItemLinks
+      x-ms-vss-method: GetReportingLinksByLinkType
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/workItemLinks/GET__wit_reporting_workItemLinks-onprem.json
+  /{collection}/{project}/_apis/wit/reporting/workitemrevisions:
+    get:
+      tags:
+      - Reporting Work Item Revisions
+      description: Get a batch of work item revisions with the option of including
+        deleted items
+      operationId: Read Reporting Revisions Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: fields
+        in: query
+        description: A list of fields to return in work item revisions. Omit this
+          parameter to get all reportable fields.
+        schema:
+          type: string
+          format: array (string)
+      - name: types
+        in: query
+        description: A list of types to filter the results to specific work item types.
+          Omit this parameter to get work item revisions of all work item types.
+        schema:
+          type: string
+          format: array (string)
+      - name: continuationToken
+        in: query
+        description: Specifies the watermark to start the batch from. Omit this parameter
+          to get the first batch of revisions.
+        schema:
+          type: string
+      - name: startDateTime
+        in: query
+        description: Date/time to use as a starting point for revisions, all revisions
+          will occur after this date/time. Cannot be used in conjunction with 'watermark'
+          parameter.
+        schema:
+          type: string
+          format: date-time
+      - name: includeIdentityRef
+        in: query
+        description: Return an identity reference instead of a string value for identity
+          fields.
+        schema:
+          type: boolean
+      - name: includeDeleted
+        in: query
+        description: Specify if the deleted item should be returned.
+        schema:
+          type: boolean
+      - name: includeTagRef
+        in: query
+        description: Specify if the tag objects should be returned for System.Tags
+          field.
+        schema:
+          type: boolean
+      - name: includeLatestOnly
+        in: query
+        description: Return only the latest revisions of work items, skipping all
+          historical revisions
+        schema:
+          type: boolean
+      - name: $expand
+        in: query
+        description: Return all the fields in work item revisions, including long
+          text fields which are not returned by default
+        schema:
+          type: string
+          enum:
+          - none
+          - fields
+          x-ms-enum:
+            name: ReportingRevisionsExpand
+            values:
+            - value: none
+              description: ""
+            - value: fields
+              description: ""
+        x-ms-enum:
+          name: ReportingRevisionsExpand
+          values:
+          - value: none
+            description: ""
+          - value: fields
+            description: ""
+      - name: includeDiscussionChangesOnly
+        in: query
+        description: Return only the those revisions of work items, where only history
+          field was changed
+        schema:
+          type: boolean
+      - name: $maxPageSize
+        in: query
+        description: The maximum number of results to return in this batch
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportingWorkItemRevisionsBatch'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItemRevisions
+      x-ms-vss-method: ReadReportingRevisionsGet
+      x-ms-examples:
+        Get the first batch of work item revisions:
+          $ref: ./httpExamples/workItemRevisions/GET__wit_reporting_workItemRevisions-onprem.json
+        Get a batch of work item revisions with identity references:
+          $ref: ./httpExamples/workItemRevisions/GET__wit_reporting_workItemRevisions_includeIdentityRef-true_watermark-794-onprem.json
+    post:
+      tags:
+      - Reporting Work Item Revisions
+      description: Get a batch of work item revisions. This request may be used if
+        your list of fields is large enough that it may run the URL over the length
+        limit.
+      operationId: Read Reporting Revisions Post
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: continuationToken
+        in: query
+        description: Specifies the watermark to start the batch from. Omit this parameter
+          to get the first batch of revisions.
+        schema:
+          type: string
+      - name: startDateTime
+        in: query
+        description: Date/time to use as a starting point for revisions, all revisions
+          will occur after this date/time. Cannot be used in conjunction with 'watermark'
+          parameter.
+        schema:
+          type: string
+          format: date-time
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - fields
+          x-ms-enum:
+            name: ReportingRevisionsExpand
+            values:
+            - value: none
+              description: ""
+            - value: fields
+              description: ""
+        x-ms-enum:
+          name: ReportingRevisionsExpand
+          values:
+          - value: none
+            description: ""
+          - value: fields
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: 'An object that contains request settings: field filter, type
+          filter, identity format'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportingWorkItemRevisionsFilter'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportingWorkItemRevisionsBatch'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItemRevisions
+      x-ms-vss-method: ReadReportingRevisionsPost
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/workItemRevisions/POST__wit_reporting_workItemRevisions_watermark-794-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/wit/workitems:
+    get:
+      tags:
+      - Work Items
+      description: Returns a list of work items.
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: ids
+        in: query
+        description: The comma-separated list of requested work item ids
+        required: true
+        schema:
+          type: string
+          format: array (int32)
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: fields
+        in: query
+        description: Comma-separated list of requested fields
+        schema:
+          type: string
+          format: array (string)
+      - name: asOf
+        in: query
+        description: AsOf UTC date time string
+        schema:
+          type: string
+          format: date-time
+      - name: $expand
+        in: query
+        description: The expand parameters for work item attributes. Possible options
+          are { None, Relations, Fields, Links, All }.
+        schema:
+          type: string
+          enum:
+          - none
+          - relations
+          - fields
+          - links
+          - all
+          x-ms-enum:
+            name: WorkItemExpand
+            values:
+            - value: none
+              description: ""
+            - value: relations
+              description: ""
+            - value: fields
+              description: ""
+            - value: links
+              description: ""
+            - value: all
+              description: ""
+        x-ms-enum:
+          name: WorkItemExpand
+          values:
+          - value: none
+            description: ""
+          - value: relations
+            description: ""
+          - value: fields
+            description: ""
+          - value: links
+            description: ""
+          - value: all
+            description: ""
+      - name: errorPolicy
+        in: query
+        description: The flag to control error policy in a bulk get work items request.
+          Possible options are {Fail, Omit}.
+        schema:
+          type: string
+          enum:
+          - fail
+          - omit
+          x-ms-enum:
+            name: WorkItemErrorPolicy
+            values:
+            - value: fail
+              description: ""
+            - value: omit
+              description: ""
+        x-ms-enum:
+          name: WorkItemErrorPolicy
+          values:
+          - value: fail
+            description: ""
+          - value: omit
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItem'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItems
+      x-ms-vss-method: GetWorkItems
+      x-ms-examples:
+        Get list of work items:
+          $ref: ./httpExamples/workItems/GET__wit_WorkItems_ids-_ids_-onprem.json
+        Get list of work items, all expanded:
+          $ref: ./httpExamples/workItems/GET__wit_WorkItems_ids-_ids___expand-all-onprem.json
+        Get list of work items for specific fields:
+          $ref: ./httpExamples/workItems/GET__wit_WorkItems_ids-_ids__fields-_columns_-onprem.json
+        'Get list of work items as of specific datetime #1':
+          $ref: ./httpExamples/workItems/GET__wit_WorkItems_ids-_ids__fields-_columns__asOf-_asof_-onprem.json
+        'Get list of work items as of specific datetime #2':
+          $ref: ./httpExamples/workItems/GET__wit_WorkItems_ids-_ids__fields-_columns__asOf-_asof_2-onprem.json
+        'Get list of work items as of specific datetime #3':
+          $ref: ./httpExamples/workItems/GET__wit_WorkItems_ids-_ids__fields-_columns__asOf-_asof_3-onprem.json
+        'Get list of work items as of specific datetime #4':
+          $ref: ./httpExamples/workItems/GET__wit_WorkItems_ids-_ids__fields-_columns__asOf-_asof_4-onprem.json
+  /{collection}/{project}/_apis/wit/workitems/${type}:
+    get:
+      tags:
+      - Work Items
+      description: Returns a single work item from a template.
+      operationId: Get Work Item Template
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: path
+        description: The work item type name
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated list of requested fields
+        schema:
+          type: string
+      - name: asOf
+        in: query
+        description: AsOf UTC date time string
+        schema:
+          type: string
+          format: date-time
+      - name: $expand
+        in: query
+        description: The expand parameters for work item attributes. Possible options
+          are { None, Relations, Fields, Links, All }.
+        schema:
+          type: string
+          enum:
+          - none
+          - relations
+          - fields
+          - links
+          - all
+          x-ms-enum:
+            name: WorkItemExpand
+            values:
+            - value: none
+              description: ""
+            - value: relations
+              description: ""
+            - value: fields
+              description: ""
+            - value: links
+              description: ""
+            - value: all
+              description: ""
+        x-ms-enum:
+          name: WorkItemExpand
+          values:
+          - value: none
+            description: ""
+          - value: relations
+            description: ""
+          - value: fields
+            description: ""
+          - value: links
+            description: ""
+          - value: all
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItem'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItems
+      x-ms-vss-method: GetWorkItemTemplate
+    post:
+      tags:
+      - Work Items
+      description: Creates a single work item.
+      operationId: Create
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: path
+        description: The work item type of the work item to create
+        required: true
+        schema:
+          type: string
+      - name: validateOnly
+        in: query
+        description: Indicate if you only want to validate the changes without saving
+          the work item
+        schema:
+          type: boolean
+      - name: bypassRules
+        in: query
+        description: Do not enforce the work item type rules on this update
+        schema:
+          type: boolean
+      - name: suppressNotifications
+        in: query
+        description: Do not fire any notifications for this change
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The JSON Patch document representing the work item
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/JsonPatchDocument'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItem'
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItems
+      x-ms-vss-method: CreateWorkItem
+      x-ms-examples:
+        Create work item:
+          $ref: ./httpExamples/workItems/POST__wit_workitems_create-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/wit/workitems/{id}:
+    get:
+      tags:
+      - Work Items
+      description: Returns a single work item.
+      operationId: Get Work Item
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: The work item id
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: fields
+        in: query
+        description: Comma-separated list of requested fields
+        schema:
+          type: string
+          format: array (string)
+      - name: asOf
+        in: query
+        description: AsOf UTC date time string
+        schema:
+          type: string
+          format: date-time
+      - name: $expand
+        in: query
+        description: The expand parameters for work item attributes. Possible options
+          are { None, Relations, Fields, Links, All }.
+        schema:
+          type: string
+          enum:
+          - none
+          - relations
+          - fields
+          - links
+          - all
+          x-ms-enum:
+            name: WorkItemExpand
+            values:
+            - value: none
+              description: ""
+            - value: relations
+              description: ""
+            - value: fields
+              description: ""
+            - value: links
+              description: ""
+            - value: all
+              description: ""
+        x-ms-enum:
+          name: WorkItemExpand
+          values:
+          - value: none
+            description: ""
+          - value: relations
+            description: ""
+          - value: fields
+            description: ""
+          - value: links
+            description: ""
+          - value: all
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItem'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItems
+      x-ms-vss-method: GetWorkItem
+      x-ms-examples:
+        Get work item:
+          $ref: ./httpExamples/workItems/GET__wit_WorkItems_id-onprem.json
+        Get work item with asOf parameter:
+          $ref: ./httpExamples/workItems/GET__wit_WorkItems_id _asOf-onprem.json
+    delete:
+      tags:
+      - Work Items
+      description: Deletes the specified work item and sends it to the Recycle Bin,
+        so that it can be restored back, if required. Optionally, if the destroy parameter
+        has been set to true, it destroys the work item permanently.
+      operationId: Delete
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: ID of the work item to be deleted
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: destroy
+        in: query
+        description: Optional parameter, if set to true, the work item is deleted
+          permanently
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemDelete'
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItems
+      x-ms-vss-method: DeleteWorkItem
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/workItems/DELETE__wit_workitems_id_-onprem.json
+    patch:
+      tags:
+      - Work Items
+      description: Updates a single work item.
+      operationId: Update
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: The id of the work item to update
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: validateOnly
+        in: query
+        description: Indicate if you only want to validate the changes without saving
+          the work item
+        schema:
+          type: boolean
+      - name: bypassRules
+        in: query
+        description: Do not enforce the work item type rules on this update
+        schema:
+          type: boolean
+      - name: suppressNotifications
+        in: query
+        description: Do not fire any notifications for this change
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The JSON Patch document representing the update
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/JsonPatchDocument'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItem'
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItems
+      x-ms-vss-method: UpdateWorkItem
+      x-ms-examples:
+        Update a field:
+          $ref: ./httpExamples/workItems/PATCH__wit_workitems__taskId_-onprem.json
+        'Move work items (API Availability: Team Services only (not TFS))':
+          $ref: ./httpExamples/workItems/PATCH__wit_workitems__bug1Id_-onprem.json
+        'Change work item type (API Availability: Team Services only (not TFS))':
+          $ref: ./httpExamples/workItems/PATCH__wit_workitems__bug1Id_2-onprem.json
+        Add a tag:
+          $ref: ./httpExamples/workItems/PATCH__wit_workitems__taskId_9-onprem.json
+        Add a link:
+          $ref: ./httpExamples/workItems/PATCH__wit_workitems__taskId_3-onprem.json
+        Update a link:
+          $ref: ./httpExamples/workItems/PATCH__wit_workitems__taskId_4-onprem.json
+        Remove a link:
+          $ref: ./httpExamples/workItems/PATCH__wit_workitems__taskId_5-onprem.json
+        Add an attachment:
+          $ref: ./httpExamples/workItems/PATCH__wit_workitems__taskId_6-onprem.json
+        Remove an attachment:
+          $ref: ./httpExamples/workItems/PATCH__wit_workitems__taskId_7-onprem.json
+        Add a hyperlink:
+          $ref: ./httpExamples/workItems/PATCH__wit_workitems__taskId_8-onprem.json
+        Make an update bypassing rules:
+          $ref: ./httpExamples/workItems/PATCH__wit_workitems__taskId__bypassRules-true-onprem.json
+        Validate only update:
+          $ref: ./httpExamples/workItems/PATCH__wit_workitems__taskId_validate_only-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/wit/workItems/{id}/comments:
+    get:
+      tags:
+      - Comments
+      description: Gets the specified number of comments for a work item from the
+        specified revision.
+      operationId: Get Comments
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: Work item id
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: fromRevision
+        in: query
+        description: Revision from which comments are to be fetched (default is 1)
+        schema:
+          type: integer
+          format: int32
+      - name: $top
+        in: query
+        description: The number of comments to return (default is 200)
+        schema:
+          type: integer
+          format: int32
+      - name: order
+        in: query
+        description: Ascending or descending by revision id (default is ascending)
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          x-ms-enum:
+            name: CommentSortOrder
+            values:
+            - value: asc
+              description: ""
+            - value: desc
+              description: ""
+        x-ms-enum:
+          name: CommentSortOrder
+          values:
+          - value: asc
+            description: ""
+          - value: desc
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.2'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemComments'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: 4.1-preview.2
+      x-ms-vss-resource: comments
+      x-ms-vss-method: GetComments
+      x-ms-preview: true
+      x-ms-examples:
+        Get a page of comments:
+          $ref: ./httpExamples/comments/GET__wit_workitems__taskId__comments_2-onprem.json
+  /{collection}/{project}/_apis/wit/workItems/{id}/comments/{revision}:
+    get:
+      tags:
+      - Comments
+      description: Gets a comment for a work item at the specified revision.
+      operationId: Get Comment
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: Work item id
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: revision
+        in: path
+        description: Revision for which the comment need to be fetched
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.2'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemComment'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: 4.1-preview.2
+      x-ms-vss-resource: comments
+      x-ms-vss-method: GetComment
+      x-ms-preview: true
+      x-ms-examples:
+        Get a single comment:
+          $ref: ./httpExamples/comments/GET__wit_workitems__taskId__comments_1-onprem.json
+  /{collection}/{project}/_apis/wit/workitemtypecategories:
+    get:
+      tags:
+      - Work Item Type Categories
+      description: Get all work item type categories.
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemTypeCategory'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItemTypeCategories
+      x-ms-vss-method: GetWorkItemTypeCategories
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/workItemTypeCategories/GET__wit_workItemTypeCategories-onprem.json
+  /{collection}/{project}/_apis/wit/workitemtypecategories/{category}:
+    get:
+      tags:
+      - Work Item Type Categories
+      description: Get specific work item type category by name.
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: category
+        in: path
+        description: The category name
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemTypeCategory'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItemTypeCategories
+      x-ms-vss-method: GetWorkItemTypeCategory
+      x-ms-examples:
+        Get category by name:
+          $ref: ./httpExamples/workItemTypeCategories/GET__wit_workItemTypeCategories__categoryName_-onprem.json
+  /{collection}/{project}/_apis/wit/workitemtypes:
+    get:
+      tags:
+      - Work Item Types
+      description: Returns the list of work item types
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemType'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItemTypes
+      x-ms-vss-method: GetWorkItemTypes
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/workItemTypes/GET__wit_workItemTypes-onprem.json
+  /{collection}/{project}/_apis/wit/workitemtypes/{type}:
+    get:
+      tags:
+      - Work Item Types
+      description: Returns a work item type definition.
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: path
+        description: Work item type name
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemType'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItemTypes
+      x-ms-vss-method: GetWorkItemType
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/workItemTypes/GET__wit_workItemTypes_Bug-onprem.json
+  /{collection}/{project}/_apis/wit/workitemtypes/{type}/fields:
+    get:
+      tags:
+      - Work Item Types Field
+      description: Get a list of fields for a work item type with detailed references.
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: path
+        description: Work item type.
+        required: true
+        schema:
+          type: string
+      - name: $expand
+        in: query
+        description: 'Expand level for the API response. Properties: to include allowedvalues,
+          default value, isRequired etc. as a part of response; None: to skip these
+          properties.'
+        schema:
+          type: string
+          enum:
+          - none
+          - allowedValues
+          - dependentFields
+          - all
+          x-ms-enum:
+            name: WorkItemTypeFieldsExpandLevel
+            values:
+            - value: none
+              description: Includes only basic properties of the field.
+            - value: allowedValues
+              description: Includes allowed values for the field.
+            - value: dependentFields
+              description: Includes dependent fields of the field.
+            - value: all
+              description: Includes allowed values and dependent fields of the field.
+        x-ms-enum:
+          name: WorkItemTypeFieldsExpandLevel
+          values:
+          - value: none
+            description: Includes only basic properties of the field.
+          - value: allowedValues
+            description: Includes allowed values for the field.
+          - value: dependentFields
+            description: Includes dependent fields of the field.
+          - value: all
+            description: Includes allowed values and dependent fields of the field.
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemTypeFieldWithReferences'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItemTypesField
+      x-ms-vss-method: GetWorkItemTypeFieldsWithReferences
+      x-ms-examples:
+        1. Get list of project scoped work item type fields data:
+          $ref: ./httpExamples/workItemTypesField/GET__workItemType_fields-onprem.json
+        2. Get list of project scoped work item type fields data with expand option:
+          $ref: ./httpExamples/workItemTypesField/GET__workItemType_fields_expand-onprem.json
+  /{collection}/{project}/_apis/wit/workitemtypes/{type}/fields/{field}:
+    get:
+      tags:
+      - Work Item Types Field
+      description: Get a field for a work item type with detailed references.
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: path
+        description: Work item type.
+        required: true
+        schema:
+          type: string
+      - name: field
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: $expand
+        in: query
+        description: 'Expand level for the API response. Properties: to include allowedvalues,
+          default value, isRequired etc. as a part of response; None: to skip these
+          properties.'
+        schema:
+          type: string
+          enum:
+          - none
+          - allowedValues
+          - dependentFields
+          - all
+          x-ms-enum:
+            name: WorkItemTypeFieldsExpandLevel
+            values:
+            - value: none
+              description: Includes only basic properties of the field.
+            - value: allowedValues
+              description: Includes allowed values for the field.
+            - value: dependentFields
+              description: Includes dependent fields of the field.
+            - value: all
+              description: Includes allowed values and dependent fields of the field.
+        x-ms-enum:
+          name: WorkItemTypeFieldsExpandLevel
+          values:
+          - value: none
+            description: Includes only basic properties of the field.
+          - value: allowedValues
+            description: Includes allowed values for the field.
+          - value: dependentFields
+            description: Includes dependent fields of the field.
+          - value: all
+            description: Includes allowed values and dependent fields of the field.
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemTypeFieldWithReferences'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: workItemTypesField
+      x-ms-vss-method: GetWorkItemTypeFieldWithReferences
+      x-ms-examples:
+        Get project scoped work item type field data:
+          $ref: ./httpExamples/workItemTypesField/GET__workItemType_field-onprem.json
+        Get project scoped work item type field data with expand option:
+          $ref: ./httpExamples/workItemTypesField/GET__workItemType_field_expand-onprem.json
+  /{collection}/{project}/_apis/wit/workitemtypes/{type}/states:
+    get:
+      tags:
+      - Work Item Type States
+      description: Returns the state names and colors for a work item type.
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: path
+        description: The state name
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemStateColor'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypeStates
+      x-ms-vss-method: GetWorkItemTypeStates
+      x-ms-preview: true
+      x-ms-examples:
+        Get work item type states:
+          $ref: ./httpExamples/workItemTypeStates/GET__workitem_type_states-onprem.json
+  /{collection}/{project}/{team}/_apis/wit/templates:
+    get:
+      tags:
+      - Templates
+      description: Gets template
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+      - name: workitemtypename
+        in: query
+        description: Optional, When specified returns templates for given Work item
+          type.
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemTemplateReference'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: templates
+      x-ms-vss-method: GetTemplates
+      x-ms-preview: true
+    post:
+      tags:
+      - Templates
+      description: Creates a template
+      operationId: Create
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Template contents
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkItemTemplate'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemTemplate'
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: templates
+      x-ms-vss-method: CreateTemplate
+      x-ms-preview: true
+      x-codegen-request-body-name: body
+  /{collection}/{project}/{team}/_apis/wit/templates/{templateId}:
+    get:
+      tags:
+      - Templates
+      description: Gets the template with specified id
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+      - name: templateId
+        in: path
+        description: Template Id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemTemplate'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: templates
+      x-ms-vss-method: GetTemplate
+      x-ms-preview: true
+    put:
+      tags:
+      - Templates
+      description: Replace template contents
+      operationId: Replace Template
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+      - name: templateId
+        in: path
+        description: Template id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Template contents to replace with
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkItemTemplate'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemTemplate'
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: templates
+      x-ms-vss-method: ReplaceTemplate
+      x-ms-preview: true
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Templates
+      description: Deletes the template with given id
+      operationId: Delete
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+      - name: templateId
+        in: path
+        description: Template id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: templates
+      x-ms-vss-method: DeleteTemplate
+      x-ms-preview: true
+  /{collection}/{project}/{team}/_apis/wit/wiql:
+    post:
+      tags:
+      - Wiql
+      description: Gets the results of the query given its WIQL.
+      operationId: Query By Wiql
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: timePrecision
+        in: query
+        description: Whether or not to use time precision.
+        schema:
+          type: boolean
+      - name: $top
+        in: query
+        description: The max number of results to return.
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The query containing the WIQL.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Wiql'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemQueryResult'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: wiql
+      x-ms-vss-method: QueryByWiql
+      x-ms-examples:
+        Get results of a flat work item query.:
+          $ref: ./httpExamples/wiql/GET__wit_get_id_workitems-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/{project}/{team}/_apis/wit/wiql/{id}:
+    get:
+      tags:
+      - Wiql
+      description: Gets the results of the query given the query ID.
+      operationId: Query By Id
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: The query ID.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: timePrecision
+        in: query
+        description: Whether or not to use time precision.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemQueryResult'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: wiql
+      x-ms-vss-method: QueryById
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/wiql/GET__wit_wiql__queryId_-onprem.json
+    head:
+      tags:
+      - Wiql
+      description: Gets the results of the query given the query ID.
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: The query ID.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: team
+        in: path
+        description: Team ID or team name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: timePrecision
+        in: query
+        description: Whether or not to use time precision.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: wiql
+      x-ms-vss-method: QueryById
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/wiql/GET__wit_wiql__queryId_-onprem.json
+components:
+  schemas:
+    AccountMyWorkResult:
+      type: object
+      properties:
+        querySizeLimitExceeded:
+          type: boolean
+          description: True, when length of WorkItemDetails is same as the limit
+        workItemDetails:
+          type: array
+          description: WorkItem Details
+          items:
+            $ref: '#/components/schemas/AccountWorkWorkItemModel'
+      description: ""
+    AccountRecentActivityWorkItemModel:
+      type: object
+      properties:
+        activityDate:
+          type: string
+          description: Date of the last Activity by the user
+          format: date-time
+        activityType:
+          type: string
+          description: Type of the activity
+          enum:
+          - visited
+          - edited
+          - deleted
+          - restored
+          x-ms-enum:
+            name: WorkItemRecentActivityType
+            values:
+            - value: visited
+              description: ""
+            - value: edited
+              description: ""
+            - value: deleted
+              description: ""
+            - value: restored
+              description: ""
+        assignedTo:
+          type: string
+          description: Assigned To
+        changedDate:
+          type: string
+          description: Last changed date of the work item
+          format: date-time
+        id:
+          type: integer
+          description: Work Item Id
+          format: int32
+        identityId:
+          type: string
+          description: TeamFoundationId of the user this activity belongs to
+          format: uuid
+        state:
+          type: string
+          description: State of the work item
+        teamProject:
+          type: string
+          description: Team project the work item belongs to
+        title:
+          type: string
+          description: Title of the work item
+        workItemType:
+          type: string
+          description: Type of Work Item
+      description: Represents Work Item Recent Activity
+    AccountRecentMentionWorkItemModel:
+      type: object
+      properties:
+        assignedTo:
+          type: string
+          description: Assigned To
+        id:
+          type: integer
+          description: Work Item Id
+          format: int32
+        mentionedDateField:
+          type: string
+          description: Lastest date that the user were mentioned
+          format: date-time
+        state:
+          type: string
+          description: State of the work item
+        teamProject:
+          type: string
+          description: Team project the work item belongs to
+        title:
+          type: string
+          description: Title of the work item
+        workItemType:
+          type: string
+          description: Type of Work Item
+      description: Represents Recent Mention Work Item
+    AccountWorkWorkItemModel:
+      type: object
+      properties:
+        assignedTo:
+          type: string
+        changedDate:
+          type: string
+          format: date-time
+        id:
+          type: integer
+          format: int32
+        state:
+          type: string
+        teamProject:
+          type: string
+        title:
+          type: string
+        workItemType:
+          type: string
+      description: ""
+    ArtifactUriQuery:
+      type: object
+      properties:
+        artifactUris:
+          type: array
+          description: List of artifact URIs to use for querying work items.
+          items:
+            type: string
+      description: Contains criteria for querying work items based on artifact URI.
+    ArtifactUriQueryResult:
+      type: object
+      properties:
+        artifactUrisQueryResult:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/WorkItemReference'
+          description: A Dictionary that maps a list of work item references to the
+            given list of artifact URI.
+      description: Defines result of artifact URI query on work items. Contains mapping
+        of work item IDs to artifact URI.
+    AttachmentReference:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string
+      description: ""
+    FieldDependentRule:
+      description: Describes a list of dependent fields for a rule.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTrackingResource'
+    FieldsToEvaluate:
+      type: object
+      properties:
+        fields:
+          type: array
+          description: List of fields to evaluate.
+          items:
+            type: string
+        fieldUpdates:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: Updated field values to evaluate.
+        fieldValues:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: Initial field values.
+        rulesFrom:
+          type: array
+          description: URL of the work item type for which the rules need to be executed.
+          items:
+            type: string
+      description: Describes a set fields for rule evaluation.
+    GraphSubjectBase:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        descriptor:
+          type: string
+          description: The descriptor is the primary way to reference the graph subject
+            while the system is running. This field will uniquely identify the same
+            graph subject across both Accounts and Collections.
+        displayName:
+          type: string
+          description: This is the non-unique display name of the graph subject. To
+            change this field, you must alter its value in the source provider.
+        url:
+          type: string
+          description: This url is the full route to the source resource of this graph
+            subject.
+      description: ""
+    IdentityRef:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/GraphSubjectBase'
+    IdentityReference:
+      description: Describes a reference to an identity.
+      allOf:
+      - $ref: '#/components/schemas/IdentityRef'
+    JsonPatchDocument:
+      description: The JSON model for JSON Patch Operations
+      allOf:
+      - type: array
+        items:
+          $ref: '#/components/schemas/JsonPatchOperation'
+    JsonPatchOperation:
+      type: object
+      properties:
+        from:
+          type: string
+          description: The path to copy from for the Move/Copy operation.
+        op:
+          type: string
+          description: The patch operation
+          enum:
+          - add
+          - remove
+          - replace
+          - move
+          - copy
+          - test
+          x-ms-enum:
+            name: Operation
+            values:
+            - value: add
+              description: ""
+            - value: remove
+              description: ""
+            - value: replace
+              description: ""
+            - value: move
+              description: ""
+            - value: copy
+              description: ""
+            - value: test
+              description: ""
+        path:
+          type: string
+          description: The path for the operation
+        value:
+          type: object
+          properties: {}
+          description: The value for the operation. This is either a primitive or
+            a JToken.
+      description: The JSON model for a JSON Patch operation
+    Link:
+      type: object
+      properties:
+        attributes:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: Collection of link attributes.
+        rel:
+          type: string
+          description: Relation type.
+        url:
+          type: string
+          description: Link url.
+      description: Link description.
+    ProjectWorkItemStateColors:
+      type: object
+      properties:
+        projectName:
+          type: string
+          description: Project name
+        workItemTypeStateColors:
+          type: array
+          description: State colors for all work item type in a project
+          items:
+            $ref: '#/components/schemas/WorkItemTypeStateColors'
+      description: Project work item type state colors
+    ProvisioningResult:
+      type: object
+      properties:
+        provisioningImportEvents:
+          type: array
+          description: Details about of the provisioning import events.
+          items:
+            type: string
+      description: Result of an update work item type XML update operation.
+    QueryHierarchyItem:
+      description: Represents an item in the work item query hierarchy. This can be
+        either a query or a folder.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTrackingResource'
+    QueryHierarchyItemsResult:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: The count of items.
+          format: int32
+        hasMore:
+          type: boolean
+          description: Indicates if the max return limit was hit but there are still
+            more items
+        value:
+          type: array
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/QueryHierarchyItem'
+      description: ""
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    ReportingWorkItemLink:
+      type: object
+      properties:
+        changedBy:
+          $ref: '#/components/schemas/IdentityRef'
+        changedDate:
+          type: string
+          format: date-time
+        changedOperation:
+          type: string
+          enum:
+          - create
+          - remove
+          x-ms-enum:
+            name: LinkChangeType
+            values:
+            - value: create
+              description: ""
+            - value: remove
+              description: ""
+        comment:
+          type: string
+        isActive:
+          type: boolean
+        linkType:
+          type: string
+        rel:
+          type: string
+        sourceId:
+          type: integer
+          format: int32
+        targetId:
+          type: integer
+          format: int32
+      description: ""
+    ReportingWorkItemLinksBatch:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/StreamedBatch'
+    ReportingWorkItemRevisionsBatch:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/StreamedBatch'
+    ReportingWorkItemRevisionsFilter:
+      type: object
+      properties:
+        fields:
+          type: array
+          description: A list of fields to return in work item revisions. Omit this
+            parameter to get all reportable fields.
+          items:
+            type: string
+        includeDeleted:
+          type: boolean
+          description: Include deleted work item in the result.
+        includeIdentityRef:
+          type: boolean
+          description: Return an identity reference instead of a string value for
+            identity fields.
+        includeLatestOnly:
+          type: boolean
+          description: Include only the latest version of a work item, skipping over
+            all previous revisions of the work item.
+        includeTagRef:
+          type: boolean
+          description: Include tag reference instead of string value for System.Tags
+            field
+        types:
+          type: array
+          description: A list of types to filter the results to specific work item
+            types. Omit this parameter to get work item revisions of all work item
+            types.
+          items:
+            type: string
+      description: ""
+    StreamedBatch:
+      type: object
+      properties:
+        continuationToken:
+          type: string
+        isLastBatch:
+          type: boolean
+        nextLink:
+          type: string
+        values:
+          type: array
+          items:
+            type: string
+            format: T
+      description: ""
+    TeamContext:
+      type: object
+      properties:
+        project:
+          type: string
+          description: The team project Id or name.  Ignored if ProjectId is set.
+        projectId:
+          type: string
+          description: The Team Project ID.  Required if Project is not set.
+          format: uuid
+        team:
+          type: string
+          description: The Team Id or name.  Ignored if TeamId is set.
+        teamId:
+          type: string
+          description: The Team Id
+          format: uuid
+      description: The Team Context for an operation.
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+    Wiql:
+      type: object
+      properties:
+        query:
+          type: string
+          description: The text of the WIQL query
+      description: A WIQL query
+    WorkArtifactLink:
+      type: object
+      properties:
+        artifactType:
+          type: string
+          description: Target artifact type.
+        linkType:
+          type: string
+          description: Outbound link type.
+        toolType:
+          type: string
+          description: Target tool type.
+      description: A work artifact link describes an outbound artifact link type.
+    WorkItem:
+      description: Describes a work item.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTrackingResource'
+    WorkItemClassificationNode:
+      description: Defines a classification node for work item tracking.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTrackingResource'
+    WorkItemComment:
+      description: Comment on Work Item
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTrackingResource'
+    WorkItemComments:
+      description: Collection of comments
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTrackingResource'
+    WorkItemDelete:
+      description: Full deleted work item object. Includes the work item itself.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemDeleteReference'
+    WorkItemDeleteReference:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: The HTTP status code for work item operation in a batch request.
+          format: int32
+        deletedBy:
+          type: string
+          description: The user who deleted the work item type.
+        deletedDate:
+          type: string
+          description: The work item deletion date.
+        id:
+          type: integer
+          description: Work item ID.
+          format: int32
+        message:
+          type: string
+          description: The exception message for work item operation in a batch request.
+        name:
+          type: string
+          description: Name or title of the work item.
+        project:
+          type: string
+          description: Parent project of the deleted work item.
+        type:
+          type: string
+          description: Type of work item.
+        url:
+          type: string
+          description: REST API URL of the resource
+      description: Reference to a deleted work item.
+    WorkItemDeleteShallowReference:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Work item ID.
+          format: int32
+        url:
+          type: string
+          description: REST API URL of the resource
+      description: Shallow Reference to a deleted work item.
+    WorkItemDeleteUpdate:
+      type: object
+      properties:
+        isDeleted:
+          type: boolean
+          description: Sets a value indicating whether this work item is deleted.
+      description: Describes an update request for a deleted work item.
+    WorkItemField:
+      description: Describes a field on a work item and it's properties specific to
+        that work item type.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTrackingResource'
+    WorkItemFieldOperation:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the operation.
+        referenceName:
+          type: string
+          description: Reference name of the operation.
+      description: Describes a work item field operation.
+    WorkItemFieldReference:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the field.
+        referenceName:
+          type: string
+          description: The reference name of the field.
+        url:
+          type: string
+          description: The REST URL of the resource.
+      description: Reference to a field in a work item
+    WorkItemFieldUpdate:
+      type: object
+      properties:
+        newValue:
+          type: object
+          properties: {}
+          description: The new value of the field.
+        oldValue:
+          type: object
+          properties: {}
+          description: The old value of the field.
+      description: Describes an update to a work item field.
+    WorkItemHistory:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTrackingResource'
+    WorkItemIcon:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The identifier of the icon.
+        url:
+          type: string
+          description: The REST URL of the resource.
+      description: Reference to a work item icon.
+    WorkItemLink:
+      type: object
+      properties:
+        rel:
+          type: string
+          description: The type of link.
+        source:
+          $ref: '#/components/schemas/WorkItemReference'
+        target:
+          $ref: '#/components/schemas/WorkItemReference'
+      description: A link between two work items.
+    WorkItemNextStateOnTransition:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          description: Error code if there is no next state transition possible.
+        id:
+          type: integer
+          description: Work item ID.
+          format: int32
+        message:
+          type: string
+          description: Error message if there is no next state transition possible.
+        stateOnTransition:
+          type: string
+          description: Name of the next state on transition.
+      description: Describes the next state for a work item.
+    WorkItemQueryClause:
+      type: object
+      properties:
+        clauses:
+          type: array
+          description: Child clauses if the current clause is a logical operator
+          items:
+            $ref: '#/components/schemas/WorkItemQueryClause'
+        field:
+          $ref: '#/components/schemas/WorkItemFieldReference'
+        fieldValue:
+          $ref: '#/components/schemas/WorkItemFieldReference'
+        isFieldValue:
+          type: boolean
+          description: Determines if this is a field to field comparison
+        logicalOperator:
+          type: string
+          description: Logical operator separating the condition clause
+          enum:
+          - nONE
+          - aND
+          - oR
+          x-ms-enum:
+            name: LogicalOperation
+            values:
+            - value: nONE
+              description: ""
+            - value: aND
+              description: ""
+            - value: oR
+              description: ""
+        operator:
+          $ref: '#/components/schemas/WorkItemFieldOperation'
+        value:
+          type: string
+          description: Right side of the condition when a field to value comparison
+      description: Represents a clause in a work item query. This shows the structure
+        of a work item query.
+    WorkItemQueryResult:
+      type: object
+      properties:
+        asOf:
+          type: string
+          description: The date the query was run in the context of.
+          format: date-time
+        columns:
+          type: array
+          description: The columns of the query.
+          items:
+            $ref: '#/components/schemas/WorkItemFieldReference'
+        queryResultType:
+          type: string
+          description: The result type
+          enum:
+          - workItem
+          - workItemLink
+          x-ms-enum:
+            name: QueryResultType
+            values:
+            - value: workItem
+              description: A list of work items (for flat queries).
+            - value: workItemLink
+              description: A list of work item links (for OneHop and Tree queries).
+        queryType:
+          type: string
+          description: The type of the query
+          enum:
+          - flat
+          - tree
+          - oneHop
+          x-ms-enum:
+            name: QueryType
+            values:
+            - value: flat
+              description: Gets a flat list of work items.
+            - value: tree
+              description: Gets a tree of work items showing their link hierarchy.
+            - value: oneHop
+              description: Gets a list of work items and their direct links.
+        sortColumns:
+          type: array
+          description: The sort columns of the query.
+          items:
+            $ref: '#/components/schemas/WorkItemQuerySortColumn'
+        workItemRelations:
+          type: array
+          description: The work item links returned by the query.
+          items:
+            $ref: '#/components/schemas/WorkItemLink'
+        workItems:
+          type: array
+          description: The work items returned by the query.
+          items:
+            $ref: '#/components/schemas/WorkItemReference'
+      description: The result of a work item query.
+    WorkItemQuerySortColumn:
+      type: object
+      properties:
+        descending:
+          type: boolean
+          description: The direction to sort by.
+        field:
+          $ref: '#/components/schemas/WorkItemFieldReference'
+      description: A sort column.
+    WorkItemReference:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Work item ID.
+          format: int32
+        url:
+          type: string
+          description: REST API URL of the resource
+      description: Contains reference to a work item.
+    WorkItemRelation:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/Link'
+    WorkItemRelationType:
+      description: Represents the work item type relatiion type.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTrackingReference'
+    WorkItemRelationUpdates:
+      type: object
+      properties:
+        added:
+          type: array
+          description: List of newly added relations.
+          items:
+            $ref: '#/components/schemas/WorkItemRelation'
+        removed:
+          type: array
+          description: List of removed relations.
+          items:
+            $ref: '#/components/schemas/WorkItemRelation'
+        updated:
+          type: array
+          description: List of updated relations.
+          items:
+            $ref: '#/components/schemas/WorkItemRelation'
+      description: Descrives updates to a work item's relations.
+    WorkItemStateColor:
+      type: object
+      properties:
+        category:
+          type: string
+          description: Category of state
+        color:
+          type: string
+          description: Color value
+        name:
+          type: string
+          description: Work item type state name
+      description: Work item type state name, color and state category
+    WorkItemStateTransition:
+      type: object
+      properties:
+        actions:
+          type: array
+          description: Gets a list of actions needed to transition to that state.
+          items:
+            type: string
+        to:
+          type: string
+          description: Name of the next state.
+      description: Describes a state transition in a work item.
+    WorkItemTemplate:
+      description: Describes a work item template.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTemplateReference'
+    WorkItemTemplateReference:
+      description: Describes a shallow reference to a work item template.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTrackingResource'
+    WorkItemTrackingReference:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTrackingResource'
+    WorkItemTrackingResource:
+      description: Base class for WIT REST resources.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTrackingResourceReference'
+    WorkItemTrackingResourceReference:
+      type: object
+      properties:
+        url:
+          type: string
+      description: Base class for work item tracking resource references.
+    WorkItemType:
+      description: Describes a work item type.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTrackingResource'
+    WorkItemTypeCategory:
+      description: Describes a work item type category.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTrackingResource'
+    WorkItemTypeColor:
+      type: object
+      properties:
+        primaryColor:
+          type: string
+          description: Gets or sets the color of the primary.
+        secondaryColor:
+          type: string
+          description: Gets or sets the color of the secondary.
+        workItemTypeName:
+          type: string
+          description: The name of the work item type.
+      description: Describes a work item type's colors.
+    WorkItemTypeColorAndIcon:
+      type: object
+      properties:
+        color:
+          type: string
+          description: The color of the work item type in hex format.
+        icon:
+          type: string
+          description: Tthe work item type icon.
+        workItemTypeName:
+          type: string
+          description: The name of the work item type.
+      description: Describes work item type nam, its icon and color.
+    WorkItemTypeFieldInstance:
+      description: Field instance of a work item type.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTypeFieldInstanceBase'
+    WorkItemTypeFieldInstanceBase:
+      description: Base field instance for workItemType fields.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemFieldReference'
+    WorkItemTypeFieldWithReferences:
+      description: Field Instance of a workItemype with detailed references.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTypeFieldInstanceBase'
+    WorkItemTypeReference:
+      description: Reference to a work item type.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTrackingResourceReference'
+    WorkItemTypeStateColors:
+      type: object
+      properties:
+        stateColors:
+          type: array
+          description: Work item type state colors
+          items:
+            $ref: '#/components/schemas/WorkItemStateColor'
+        workItemTypeName:
+          type: string
+          description: Work item type name
+      description: State colors for a work item type
+    WorkItemTypeTemplate:
+      type: object
+      properties:
+        template:
+          type: string
+          description: XML template in string format.
+      description: Describes a work item type template.
+    WorkItemTypeTemplateUpdateModel:
+      type: object
+      properties:
+        actionType:
+          type: string
+          description: Describes the type of the action for the update request.
+          enum:
+          - import
+          - validate
+          x-ms-enum:
+            name: ProvisioningActionType
+            values:
+            - value: import
+              description: ""
+            - value: validate
+              description: ""
+        methodology:
+          type: string
+          description: Methodology to which the template belongs, eg. Agile, Scrum,
+            CMMI.
+        template:
+          type: string
+          description: String representation of the work item type template.
+        templateType:
+          type: string
+          description: The type of the template described in the request body.
+          enum:
+          - workItemType
+          - globalWorkflow
+          x-ms-enum:
+            name: TemplateType
+            values:
+            - value: workItemType
+              description: ""
+            - value: globalWorkflow
+              description: ""
+      description: Describes a update work item type template request body.
+    WorkItemUpdate:
+      description: Describes an update to a work item.
+      allOf:
+      - $ref: '#/components/schemas/WorkItemTrackingResource'
+  parameters:
+    api-Version:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '4.1' to use
+        this version of the api.
+      required: true
+      schema:
+        type: string
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '4.1-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+    api-Version-preview.2:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '4.1-preview.2'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.work: Grants the ability to read work items, queries, boards, area
+              and iterations paths, and other work item tracking related metadata.
+              Also grants the ability to execute queries and to receive notifications
+              about work item events via service hooks.
+            vso.work_write: Grants the ability to read, create, and update work items
+              and queries, update board metadata, read area and iterations paths other
+              work item tracking related metadata, execute queries, and to receive
+              notifications about work item events via service hooks.
+x-ms-parameterized-host:
+  hostTemplate: '{instance}'
+  parameters:
+  - name: instance
+    description: TFS server name ({server:port})
+    required: true
+    type: string
+    in: path
+x-ms-vss-area: WorkItemTracking
+x-ms-vss-resource-area-id: 5264459e-e5e0-4bd8-b118-0985e68a4ec5
+x-ms-paths:
+  /{collection}/{project}/_apis/wit/classificationnodes?ids={ids}:
+    get:
+      tags:
+      - Classification Nodes
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: classificationNodes
+      x-ms-vss-method: GetClassificationNodes
+      description: Gets root classification nodes or list of classification nodes
+        for a given list of nodes ids, for a given project. In case ids parameter
+        is supplied you will  get list of classification nodes for those ids. Otherwise
+        you will get root classification nodes for this project.
+      operationId: Get Classification Nodes
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: collection
+        description: The name of the Team Foundation Server collection.
+        required: true
+        type: string
+      - in: path
+        name: project
+        description: Project ID or project name
+        required: true
+        type: string
+      - in: query
+        name: ids
+        description: Comma seperated integer classification nodes ids. It's not required,
+          if you want root nodes.
+        required: true
+        type: string
+        format: array (int32)
+      - in: query
+        name: $depth
+        description: Depth of children to fetch.
+        required: false
+        type: integer
+        format: int32
+      - in: query
+        name: errorPolicy
+        description: Flag to handle errors in getting some nodes. Possible options
+          are Fail and Omit.
+        required: false
+        type: string
+        enum:
+        - fail
+        - omit
+        x-ms-enum:
+          name: ClassificationNodesErrorPolicy
+          values:
+          - value: fail
+            description: ""
+          - value: omit
+            description: ""
+      - $ref: '#/parameters/api-Version'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/WorkItemClassificationNode'
+      security:
+      - oauth2:
+        - vso.work
+      x-ms-examples:
+        Get classification nodes from list of ids.:
+          $ref: ./httpExamples/classificationNodes/GET__wit_classificationNodes_From_Ids-onprem.json
+        Get classification nodes with errorPolicy parameter.:
+          $ref: ./httpExamples/classificationNodes/GET__wit_classificationNodes_From_Ids_ErrorPolicy-onprem.json
+        Get the root area tree:
+          $ref: ./httpExamples/classificationNodes/GET__wit_classificationNodes_areas-onprem.json
+        Get the area tree with 2 levels of children:
+          $ref: ./httpExamples/classificationNodes/GET__wit_classificationNodes_areas__depth-2-onprem.json
+        Get the root iteration tree:
+          $ref: ./httpExamples/classificationNodes/GET__wit_classificationNodes_iterations-onprem.json
+        Get the iteration tree with 2 levels of children:
+          $ref: ./httpExamples/classificationNodes/GET__wit_classificationNodes_iterations__depth-2-onprem.json
+  /{collection}/{project}/_apis/wit/queries?$filter={$filter}:
+    get:
+      tags:
+      - Queries
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: queries
+      x-ms-vss-method: SearchQueries
+      description: Searches all queries the user has access to in the current project
+      operationId: Search Queries
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: collection
+        description: The name of the Team Foundation Server collection.
+        required: true
+        type: string
+      - in: path
+        name: project
+        description: Project ID or project name
+        required: true
+        type: string
+      - in: query
+        name: $filter
+        description: The text to filter the queries with.
+        required: true
+        type: string
+      - in: query
+        name: $top
+        description: The number of queries to return (Default is 50 and maximum is
+          200).
+        required: false
+        type: integer
+        format: int32
+      - in: query
+        name: $expand
+        description: ""
+        required: false
+        type: string
+        enum:
+        - none
+        - wiql
+        - clauses
+        - all
+        - minimal
+        x-ms-enum:
+          name: QueryExpand
+          values:
+          - value: none
+            description: Expands Columns, Links and ChangeInfo
+          - value: wiql
+            description: Expands Columns, Links,  ChangeInfo and WIQL text
+          - value: clauses
+            description: Expands Columns, Links, ChangeInfo, WIQL text and clauses
+          - value: all
+            description: Expands all properties
+          - value: minimal
+            description: Displays minimal properties and the WIQL text
+      - in: query
+        name: $includeDeleted
+        description: Include deleted queries and folders
+        required: false
+        type: boolean
+      - $ref: '#/parameters/api-Version'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/QueryHierarchyItemsResult'
+      security:
+      - oauth2:
+        - vso.work
+  /{collection}/{project}/_apis/wit/recyclebin?ids={ids}:
+    get:
+      tags:
+      - Recyclebin
+      x-ms-docs-override-version: "4.1"
+      x-ms-vss-resource: recyclebin
+      x-ms-vss-method: GetDeletedWorkItems
+      description: Gets the work items from the recycle bin, whose IDs have been specified
+        in the parameters
+      operationId: Get Deleted Work Items
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: collection
+        description: The name of the Team Foundation Server collection.
+        required: true
+        type: string
+      - in: query
+        name: ids
+        description: Comma separated list of IDs of the deleted work items to be returned
+        required: true
+        type: string
+        format: array (int32)
+      - in: path
+        name: project
+        description: Project ID or project name
+        required: true
+        x-ms-required: false
+        type: string
+      - $ref: '#/parameters/api-Version'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/WorkItemDeleteReference'
+      security:
+      - oauth2:
+        - vso.work_write
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/recyclebin/GET__wit_recyclebin__ids_-onprem.json

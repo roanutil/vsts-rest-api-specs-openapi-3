@@ -1,0 +1,979 @@
+openapi: 3.0.1
+info:
+  title: NuGet
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: "7.0"
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://pkgs.dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: NuGet
+paths:
+  /{organization}/{project}/_apis/packaging/feeds/{feedId}/nuget/packages/{packageName}/upstreaming:
+    get:
+      tags:
+      - NuGet
+      description: Get the upstreaming behavior of a package within the context of
+        a feed
+      operationId: NuGet_Get Upstreaming Behavior
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: The name or id of the feed
+        required: true
+        schema:
+          type: string
+      - name: packageName
+        in: path
+        description: The name of the package
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpstreamingBehavior'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: upstreaming
+      x-ms-vss-method: GetUpstreamingBehavior
+    patch:
+      tags:
+      - NuGet
+      description: |-
+        Set the upstreaming behavior of a package within the context of a feed
+
+        The package does not need to necessarily exist in the feed prior to setting the behavior.
+        This assists with packages that are not yet ingested from an upstream, yet the feed owner wants
+        to apply a specific behavior on the first ingestion.
+      operationId: NuGet_Set Upstreaming Behavior
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: The name or id of the feed
+        required: true
+        schema:
+          type: string
+      - name: packageName
+        in: path
+        description: The name of the package
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The behavior to apply to the package within the scope of the
+          feed
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpstreamingBehavior'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: upstreaming
+      x-ms-vss-method: SetUpstreamingBehavior
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/packaging/feeds/{feedId}/nuget/packages/{packageName}/versions/{packageVersion}:
+    get:
+      tags:
+      - NuGet
+      description: |-
+        Get information about a package version.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: NuGet_Get Package Version
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: packageName
+        in: path
+        description: Name of the package.
+        required: true
+        schema:
+          type: string
+      - name: packageVersion
+        in: path
+        description: Version of the package.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: showDeleted
+        in: query
+        description: True to include deleted packages in the response.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Package'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: versions
+      x-ms-vss-method: GetPackageVersion
+    delete:
+      tags:
+      - NuGet
+      description: |-
+        Send a package version from the feed to its paired recycle bin.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: NuGet_Delete Package Version
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: packageName
+        in: path
+        description: Name of the package to delete.
+        required: true
+        schema:
+          type: string
+      - name: packageVersion
+        in: path
+        description: Version of the package to delete.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Package'
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: versions
+      x-ms-vss-method: DeletePackageVersion
+    patch:
+      tags:
+      - NuGet
+      description: |-
+        Set mutable state on a package version.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: NuGet_Update Package Version
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: packageName
+        in: path
+        description: Name of the package to update.
+        required: true
+        schema:
+          type: string
+      - name: packageVersion
+        in: path
+        description: Version of the package to update.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: New state to apply to the referenced package.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PackageVersionDetails'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: versions
+      x-ms-vss-method: UpdatePackageVersion
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/packaging/feeds/{feedId}/nuget/packages/{packageName}/versions/{packageVersion}/content:
+    get:
+      tags:
+      - NuGet
+      description: |-
+        Download a package version directly.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: NuGet_Download Package
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: packageName
+        in: path
+        description: Name of the package.
+        required: true
+        schema:
+          type: string
+      - name: packageVersion
+        in: path
+        description: Version of the package.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: sourceProtocolVersion
+        in: query
+        description: Unused
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: Stream
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: content
+      x-ms-vss-method: DownloadPackage
+      x-ms-preview: true
+  /{organization}/{project}/_apis/packaging/feeds/{feedId}/nuget/packagesbatch:
+    post:
+      tags:
+      - NuGet
+      description: |-
+        Update several packages from a single feed in a single request. The updates to the packages do not happen atomically.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: NuGet_Update Package Versions
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Information about the packages to update, the operation to perform,
+          and its associated data.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NuGetPackagesBatchRequest'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.packaging_write
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: packagesBatch
+      x-ms-vss-method: UpdatePackageVersions
+      x-ms-preview: true
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/packaging/feeds/{feedId}/nuget/RecycleBin/packages/{packageName}/versions/{packageVersion}:
+    get:
+      tags:
+      - NuGet
+      description: |-
+        View a package version's deletion/recycled status
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: NuGet_GetPackageVersionFromRecycleBin
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: packageName
+        in: path
+        description: Name of the package.
+        required: true
+        schema:
+          type: string
+      - name: packageVersion
+        in: path
+        description: Version of the package.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NuGetPackageVersionDeletionState'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: recycleBinVersions
+      x-ms-vss-method: GetPackageVersionMetadataFromRecycleBin
+      x-ms-preview: true
+    delete:
+      tags:
+      - NuGet
+      description: |-
+        Delete a package version from a feed's recycle bin.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: NuGet_Delete Package Version From Recycle Bin
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: packageName
+        in: path
+        description: Name of the package.
+        required: true
+        schema:
+          type: string
+      - name: packageVersion
+        in: path
+        description: Version of the package.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: recycleBinVersions
+      x-ms-vss-method: DeletePackageVersionFromRecycleBin
+      x-ms-preview: true
+    patch:
+      tags:
+      - NuGet
+      description: |-
+        Restore a package version from a feed's recycle bin back into the active feed.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: NuGet_Restore Package Version From Recycle Bin
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: packageName
+        in: path
+        description: Name of the package.
+        required: true
+        schema:
+          type: string
+      - name: packageVersion
+        in: path
+        description: Version of the package.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Set the 'Deleted' member to 'false' to apply the restore operation
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NuGetRecycleBinPackageVersionDetails'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: recycleBinVersions
+      x-ms-vss-method: RestorePackageVersionFromRecycleBin
+      x-ms-preview: true
+      x-codegen-request-body-name: body
+  /{organization}/{project}/_apis/packaging/feeds/{feedId}/nuget/RecycleBin/packagesBatch:
+    post:
+      tags:
+      - NuGet
+      description: |-
+        Delete or restore several package versions from the recycle bin.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: NuGet_Update Recycle Bin Package Versions
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Information about the packages to update, the operation to perform,
+          and its associated data. <c>Operation</c> must be <c>PermanentDelete</c>
+          or <c>RestoreToFeed</c>
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NuGetPackagesBatchRequest'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.packaging_write
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: recycleBinPackagesBatch
+      x-ms-vss-method: UpdateRecycleBinPackageVersions
+      x-ms-preview: true
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    BatchListData:
+      description: Data required to unlist or relist multiple package versions. Pass
+        this while performing NuGetBatchOperationTypes.List batch operation.
+      allOf:
+      - $ref: '#/components/schemas/BatchOperationData'
+    BatchOperationData:
+      type: object
+      description: Do not attempt to use this type to create a new BatchOperationData.
+        This type does not contain sufficient fields to create a new batch operation
+        data.
+    JsonPatchOperation:
+      type: object
+      properties:
+        from:
+          type: string
+          description: The path to copy from for the Move/Copy operation.
+        op:
+          type: string
+          description: The patch operation
+          enum:
+          - add
+          - remove
+          - replace
+          - move
+          - copy
+          - test
+          x-ms-enum:
+            name: Operation
+            values:
+            - value: add
+              description: ""
+            - value: remove
+              description: ""
+            - value: replace
+              description: ""
+            - value: move
+              description: ""
+            - value: copy
+              description: ""
+            - value: test
+              description: ""
+        path:
+          type: string
+          description: The path for the operation. In the case of an array, a zero
+            based index can be used to specify the position in the array (e.g. /biscuits/0/name).
+            The "-" character can be used instead of an index to insert at the end
+            of the array (e.g. /biscuits/-).
+        value:
+          type: object
+          properties: {}
+          description: The value for the operation. This is either a primitive or
+            a JToken.
+      description: The JSON model for a JSON Patch operation
+    MinimalPackageDetails:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Package name.
+        version:
+          type: string
+          description: Package version.
+      description: Minimal package details required to identify a package within a
+        protocol.
+    NuGetPackagesBatchRequest:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/BatchOperationData'
+        operation:
+          type: string
+          description: Type of operation that needs to be performed on packages.
+          enum:
+          - promote
+          - list
+          - delete
+          - permanentDelete
+          - restoreToFeed
+          x-ms-enum:
+            name: NuGetBatchOperationType
+            values:
+            - value: promote
+              description: Promote package versions to a release view. If constructing
+                a NuGetPackagesBatchRequest object with this type, use BatchPromoteData
+                for its Data property. Not supported in the Recycle Bin.
+            - value: list
+              description: Unlist or relist package versions. Not supported in the
+                Recycle Bin.
+            - value: delete
+              description: Move package versions to the feed's Recycle Bin. Not supported
+                in the Recycle Bin.
+            - value: permanentDelete
+              description: Permanently delete package versions. Only supported in
+                the Recycle Bin.
+            - value: restoreToFeed
+              description: Restore deleted package versions to the feed. Only supported
+                in the Recycle Bin.
+        packages:
+          type: array
+          description: The packages onto which the operation will be performed.
+          items:
+            $ref: '#/components/schemas/MinimalPackageDetails'
+      description: A batch of operations to apply to package versions.
+    NuGetPackageVersionDeletionState:
+      type: object
+      properties:
+        deletedDate:
+          type: string
+          description: Utc date the package was deleted.
+          format: date-time
+        name:
+          type: string
+          description: Name of the package.
+        version:
+          type: string
+          description: Version of the package.
+      description: Deletion state of a NuGet package.
+    NuGetRecycleBinPackageVersionDetails:
+      type: object
+      properties:
+        deleted:
+          type: boolean
+          description: Setting to false will undo earlier deletion and restore the
+            package to feed.
+      description: ""
+    Package:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        deletedDate:
+          type: string
+          description: If and when the package was deleted.
+          format: date-time
+        id:
+          type: string
+          description: Package Id.
+        name:
+          type: string
+          description: The display name of the package.
+        permanentlyDeletedDate:
+          type: string
+          description: If and when the package was permanently deleted.
+          format: date-time
+        sourceChain:
+          type: array
+          description: The history of upstream sources for this package. The first
+            source in the list is the immediate source from which this package was
+            saved.
+          items:
+            $ref: '#/components/schemas/UpstreamSourceInfo'
+        version:
+          type: string
+          description: The version of the package.
+      description: Package version metadata for a NuGet package
+    PackageVersionDetails:
+      type: object
+      properties:
+        listed:
+          type: boolean
+          description: Indicates the listing state of a package
+        views:
+          $ref: '#/components/schemas/JsonPatchOperation'
+      description: ""
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    UpstreamingBehavior:
+      type: object
+      properties:
+        versionsFromExternalUpstreams:
+          type: string
+          description: Indicates whether external upstream versions should be considered
+            for this package
+          enum:
+          - auto
+          - allowExternalVersions
+          x-ms-enum:
+            name: UpstreamVersionVisibility
+            values:
+            - value: auto
+              description: ""
+            - value: allowExternalVersions
+              description: ""
+      description: Describes upstreaming behavior for a given feed/protocol/package
+    UpstreamSourceInfo:
+      type: object
+      properties:
+        displayLocation:
+          type: string
+          description: Locator for connecting to the upstream source in a user friendly
+            format, that may potentially change over time
+        id:
+          type: string
+          description: Identity of the upstream source.
+          format: uuid
+        location:
+          type: string
+          description: Locator for connecting to the upstream source
+        name:
+          type: string
+          description: Display name.
+        sourceType:
+          type: string
+          description: Source type, such as Public or Internal.
+          enum:
+          - public
+          - internal
+          x-ms-enum:
+            name: PackagingSourceType
+            values:
+            - value: public
+              description: Publicly available source.
+            - value: internal
+              description: Azure DevOps upstream source.
+      description: Upstream source definition, including its Identity, package type,
+        and other associated information.
+  parameters:
+    api-Version:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0' to use
+        this version of the api.
+      required: true
+      schema:
+        type: string
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.packaging: Grants the ability to read feeds and packages. Also grants
+              the ability to search packages.
+            vso.packaging_manage: Grants the ability to create, read, update, and
+              delete feeds and packages.
+            vso.packaging_write: Grants the ability to create and read feeds and packages.
+x-ms-vss-area: NuGet
+x-ms-vss-resource-area-id: b3be7473-68ea-4a81-bfc7-9530baaa19ad

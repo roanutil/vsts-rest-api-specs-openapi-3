@@ -1,0 +1,87 @@
+openapi: 3.0.1
+info:
+  title: SBOM
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 6.1-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://pkgs.dev.azure.com/
+security:
+- accessToken: []
+tags: []
+paths: {}
+components:
+  schemas:
+    FileHash:
+      type: object
+      properties:
+        fileName:
+          type: string
+          description: The filename of the SBOM.
+        hash:
+          type: string
+          description: The string hash of the SBOM file.
+        hashAlgorithmName:
+          type: string
+          description: The HashAlgorithmName used to generate the hash of the file.
+          format: HashAlgorithmName
+      description: Used to provide the filename and hash of the SBOM file to be added
+        to the catalog file.
+    SignResponseBase:
+      type: object
+      properties:
+        customerCorrelationId:
+          type: string
+          description: The customer correlation id that is sent to ESRP for correlating
+            the current request to ESRP.
+        errorInfo:
+          type: string
+          description: If this is an error response, it will have more information
+            about the error.
+        result:
+          type: string
+          description: The result of the response.
+          enum:
+          - success
+          - failure
+          - inProgress
+          x-ms-enum:
+            name: Result
+            values:
+            - value: success
+              description: ""
+            - value: failure
+              description: ""
+            - value: inProgress
+              description: ""
+      description: The base reponse object for all responses from the signing api.
+    SignStatusResponse:
+      description: The response returned by the sign status api.
+      allOf:
+      - $ref: '#/components/schemas/SignResponseBase'
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '6.1-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+x-ms-vss-area: SBOM
+x-ms-vss-resource-area-id: 2e504d18-2c0c-46f8-af8f-322d2af0068a

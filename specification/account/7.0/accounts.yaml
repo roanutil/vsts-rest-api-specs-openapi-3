@@ -1,0 +1,260 @@
+openapi: 3.0.1
+info:
+  title: Account
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: "7.0"
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://app.vssps.visualstudio.com/
+security:
+- accessToken: []
+tags:
+- name: Accounts
+paths:
+  /_apis/accounts:
+    get:
+      tags:
+      - Accounts
+      description: 'Get a list of accounts for a specific owner or a specific member.
+        One of the following parameters is required: ownerId, memberId.'
+      operationId: Accounts_List
+      parameters:
+      - name: ownerId
+        in: query
+        description: ID for the owner of the accounts.
+        schema:
+          type: string
+          format: uuid
+      - name: memberId
+        in: query
+        description: ID for a member of the accounts.
+        schema:
+          type: string
+          format: uuid
+      - name: properties
+        in: query
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+      security:
+      - oauth2:
+        - vso.profile
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: accounts
+      x-ms-vss-method: GetAccounts
+      x-ms-examples:
+        By owner:
+          $ref: ./httpExamples/Accounts/GET__Accounts_ownerId-_userId_.json
+        By member:
+          $ref: ./httpExamples/Accounts/GET__Accounts_memberId-_userId_.json
+components:
+  schemas:
+    Account:
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: Identifier for an Account
+          format: uuid
+        accountName:
+          type: string
+          description: Name for an account
+        accountOwner:
+          type: string
+          description: Owner of account
+          format: uuid
+        accountStatus:
+          type: string
+          description: Current account status
+          enum:
+          - none
+          - enabled
+          - disabled
+          - deleted
+          - moved
+          x-ms-enum:
+            name: AccountStatus
+            values:
+            - value: none
+              description: ""
+            - value: enabled
+              description: This hosting account is active and assigned to a customer.
+            - value: disabled
+              description: This hosting account is disabled.
+            - value: deleted
+              description: This account is part of deletion batch and scheduled for
+                deletion.
+            - value: moved
+              description: This account is not mastered locally and has physically
+                moved.
+        accountType:
+          type: string
+          description: 'Type of account: Personal, Organization'
+          enum:
+          - personal
+          - organization
+          x-ms-enum:
+            name: AccountType
+            values:
+            - value: personal
+              description: ""
+            - value: organization
+              description: ""
+        accountUri:
+          type: string
+          description: Uri for an account
+        createdBy:
+          type: string
+          description: Who created the account
+          format: uuid
+        createdDate:
+          type: string
+          description: Date account was created
+          format: date-time
+        hasMoved:
+          type: boolean
+        lastUpdatedBy:
+          type: string
+          description: Identity of last person to update the account
+          format: uuid
+        lastUpdatedDate:
+          type: string
+          description: Date account was last updated
+          format: date-time
+        namespaceId:
+          type: string
+          description: Namespace for an account
+          format: uuid
+        newCollectionId:
+          type: string
+          format: uuid
+        organizationName:
+          type: string
+          description: Organization that created the account
+        properties:
+          $ref: '#/components/schemas/PropertiesCollection'
+        statusReason:
+          type: string
+          description: Reason for current status
+      description: ""
+    AccountCreateInfoInternal:
+      type: object
+      properties:
+        accountName:
+          type: string
+        creator:
+          type: string
+          format: uuid
+        organization:
+          type: string
+        preferences:
+          $ref: '#/components/schemas/AccountPreferencesInternal'
+        properties:
+          $ref: '#/components/schemas/PropertiesCollection'
+        serviceDefinitions:
+          type: array
+          items:
+            type: object
+            properties: {}
+      description: ""
+    AccountPreferencesInternal:
+      type: object
+      properties:
+        culture:
+          type: string
+          format: CultureInfo
+        language:
+          type: string
+          format: CultureInfo
+        timeZone:
+          type: string
+          format: TimeZoneInfo
+      description: ""
+    PropertiesCollection:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: The count of properties in the collection.
+          format: int32
+        item:
+          type: object
+          properties: {}
+        keys:
+          type: array
+          description: The set of keys in the collection.
+          items:
+            type: string
+        values:
+          type: array
+          description: The set of values in the collection.
+          items:
+            type: string
+      description: The class represents a property bag as a collection of key-value
+        pairs. Values of all primitive types (any type with a `TypeCode != TypeCode.Object`)
+        except for `DBNull` are accepted. Values of type Byte[], Int32, Double, DateType
+        and String preserve their type, other primitives are retuned as a String.
+        Byte[] expected as base64 encoded string.
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+  parameters:
+    api-Version:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0' to use
+        this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.profile: Grants the ability to read your profile, accounts, collections,
+              projects, teams, and other top-level organizational artifacts.
+x-ms-vss-area: Accounts
+x-ms-vss-resource-area-id: 0d55247a-1c47-4462-9b1f-5e2125590ee6

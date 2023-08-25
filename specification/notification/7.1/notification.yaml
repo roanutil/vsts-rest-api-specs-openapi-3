@@ -1,0 +1,3045 @@
+openapi: 3.0.1
+info:
+  title: Notification
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 7.1-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://{service}dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Diagnostic Logs
+- name: Diagnostics
+- name: Event Types
+  description: Discover notification event types, filterable fields, and related metadata.
+- name: Settings
+- name: Subscribers
+- name: Subscriptions
+  description: Manage and query notification subscriptions. A subscription defines
+    the conditions by which a user or team should be notified when an event occurs
+    and where notifications should be sent. A user or group can be the subscriber
+    for a subscription.
+paths:
+  /{organization}/_apis/notification/diagnosticlogs/{source}/entries/{entryId}:
+    get:
+      tags:
+      - Diagnostic Logs
+      description: Get a list of diagnostic logs for this service.
+      operationId: Diagnostic Logs_List
+      parameters:
+      - name: source
+        in: path
+        description: ID specifying which type of logs to check diagnostics for.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: entryId
+        in: path
+        description: The ID of the specific log to query for.
+        required: true
+        schema:
+          type: string
+          format: uuid
+          x-ms-required: false
+        x-ms-required: false
+      - name: startTime
+        in: query
+        description: Start time for the time range to query in.
+        schema:
+          type: string
+          format: date-time
+      - name: endTime
+        in: query
+        description: End time for the time range to query in.
+        schema:
+          type: string
+          format: date-time
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/INotificationDiagnosticLog'
+      security:
+      - oauth2:
+        - vso.notification_diagnostics
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: diagnosticLogs
+      x-ms-vss-method: ListLogs
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/DiagnosticLogs/GET__notification_diagnosticLogs.json
+  /{organization}/_apis/notification/eventtypes:
+    get:
+      tags:
+      - Event Types
+      description: List available event types for this service. Optionally filter
+        by only event types for the specified publisher.
+      operationId: Event Types_List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: publisherId
+        in: query
+        description: Limit to event types for this publisher
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationEventType'
+      security:
+      - oauth2:
+        - vso.notification
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: eventTypes
+      x-ms-vss-method: ListEventTypes
+      x-ms-preview: true
+      x-ms-examples:
+        All:
+          $ref: ./httpExamples/EventTypes/GET__notification_eventTypes.json
+        By publisher:
+          $ref: ./httpExamples/EventTypes/GET__notification_eventTypes_publisherId-_publisherId_.json
+  /{organization}/_apis/notification/eventtypes/{eventType}:
+    get:
+      tags:
+      - Event Types
+      description: Get a specific event type.
+      operationId: Event Types_Get
+      parameters:
+      - name: eventType
+        in: path
+        description: The ID of the event type.
+        required: true
+        schema:
+          type: string
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationEventType'
+      security:
+      - oauth2:
+        - vso.notification
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: eventTypes
+      x-ms-vss-method: GetEventType
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/EventTypes/GET__notification_eventTypes__eventTypeId_.json
+  /{organization}/_apis/notification/settings:
+    get:
+      tags:
+      - Settings
+      operationId: Settings_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationAdminSettings'
+      security:
+      - oauth2:
+        - vso.notification
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: settings
+      x-ms-vss-method: GetSettings
+      x-ms-preview: true
+    patch:
+      tags:
+      - Settings
+      operationId: Settings_Update
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationAdminSettingsUpdateParameters'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationAdminSettings'
+      security:
+      - oauth2:
+        - vso.notification_write
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: settings
+      x-ms-vss-method: UpdateSettings
+      x-ms-preview: true
+      x-codegen-request-body-name: body
+  /{organization}/_apis/notification/subscribers/{subscriberId}:
+    get:
+      tags:
+      - Subscribers
+      description: Get delivery preferences of a notifications subscriber.
+      operationId: Subscribers_Get
+      parameters:
+      - name: subscriberId
+        in: path
+        description: ID of the user or group.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSubscriber'
+      security:
+      - oauth2:
+        - vso.notification
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: subscribers
+      x-ms-vss-method: GetSubscriber
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Subscribers/GET__notification_subscriber.json
+    patch:
+      tags:
+      - Subscribers
+      description: Update delivery preferences of a notifications subscriber.
+      operationId: Subscribers_Update
+      parameters:
+      - name: subscriberId
+        in: path
+        description: ID of the user or group.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationSubscriberUpdateParameters'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSubscriber'
+      security:
+      - oauth2:
+        - vso.notification_write
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: subscribers
+      x-ms-vss-method: UpdateSubscriber
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Subscribers/PATCH__notification_subscriber.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/notification/subscriptionquery:
+    post:
+      tags:
+      - Subscriptions
+      description: Query for subscriptions. A subscription is returned if it matches
+        one or more of the specified conditions.
+      operationId: Subscriptions_Query
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionQuery'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationSubscription'
+      security:
+      - oauth2:
+        - vso.notification
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: subscriptionQuery
+      x-ms-vss-method: QuerySubscriptions
+      x-ms-preview: true
+      x-ms-examples:
+        By subscriber:
+          $ref: ./httpExamples/SubscriptionQuery/POST__notification_subscriptionQuery.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/notification/subscriptions:
+    get:
+      tags:
+      - Subscriptions
+      description: Get a list of notification subscriptions, either by subscription
+        IDs or by all subscriptions for a given user or group.
+      operationId: Subscriptions_List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: targetId
+        in: query
+        description: User or Group ID
+        schema:
+          type: string
+          format: uuid
+      - name: ids
+        in: query
+        description: List of subscription IDs
+        schema:
+          type: string
+          format: array (string)
+      - name: queryFlags
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - includeInvalidSubscriptions
+          - includeDeletedSubscriptions
+          - includeFilterDetails
+          - alwaysReturnBasicInformation
+          - includeSystemSubscriptions
+          x-ms-enum:
+            name: SubscriptionQueryFlags
+            values:
+            - value: none
+              description: ""
+            - value: includeInvalidSubscriptions
+              description: Include subscriptions with invalid subscribers.
+            - value: includeDeletedSubscriptions
+              description: Include subscriptions marked for deletion.
+            - value: includeFilterDetails
+              description: Include the full filter details with each subscription.
+            - value: alwaysReturnBasicInformation
+              description: For a subscription the caller does not have permission
+                to view, return basic (non-confidential) information.
+            - value: includeSystemSubscriptions
+              description: Include system subscriptions.
+        x-ms-enum:
+          name: SubscriptionQueryFlags
+          values:
+          - value: none
+            description: ""
+          - value: includeInvalidSubscriptions
+            description: Include subscriptions with invalid subscribers.
+          - value: includeDeletedSubscriptions
+            description: Include subscriptions marked for deletion.
+          - value: includeFilterDetails
+            description: Include the full filter details with each subscription.
+          - value: alwaysReturnBasicInformation
+            description: For a subscription the caller does not have permission to
+              view, return basic (non-confidential) information.
+          - value: includeSystemSubscriptions
+            description: Include system subscriptions.
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationSubscription'
+      security:
+      - oauth2:
+        - vso.notification
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: subscriptions
+      x-ms-vss-method: ListSubscriptions
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Subscriptions/GET__notification_subscriptions.json
+    post:
+      tags:
+      - Subscriptions
+      description: Create a new subscription.
+      operationId: Subscriptions_Create
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationSubscriptionCreateParameters'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSubscription'
+      security:
+      - oauth2:
+        - vso.notification_write
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: subscriptions
+      x-ms-vss-method: CreateSubscription
+      x-ms-preview: true
+      x-ms-examples:
+        Create a personal subscription:
+          $ref: ./httpExamples/Subscriptions/POST__notification_subscriptions.json
+        Create a team subscription:
+          $ref: ./httpExamples/Subscriptions/POST__notification_subscriptions2.json
+        Subscribe to work item changes:
+          $ref: ./httpExamples/Subscriptions/POST__notification_subscriptions__work_item.json
+        Subscribe to pull request changes:
+          $ref: ./httpExamples/Subscriptions/POST__notification_subscriptions__pull_request.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/notification/subscriptions/{subscriptionId}:
+    get:
+      tags:
+      - Subscriptions
+      description: Get a notification subscription by its ID.
+      operationId: Subscriptions_Get
+      parameters:
+      - name: subscriptionId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: queryFlags
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - includeInvalidSubscriptions
+          - includeDeletedSubscriptions
+          - includeFilterDetails
+          - alwaysReturnBasicInformation
+          - includeSystemSubscriptions
+          x-ms-enum:
+            name: SubscriptionQueryFlags
+            values:
+            - value: none
+              description: ""
+            - value: includeInvalidSubscriptions
+              description: Include subscriptions with invalid subscribers.
+            - value: includeDeletedSubscriptions
+              description: Include subscriptions marked for deletion.
+            - value: includeFilterDetails
+              description: Include the full filter details with each subscription.
+            - value: alwaysReturnBasicInformation
+              description: For a subscription the caller does not have permission
+                to view, return basic (non-confidential) information.
+            - value: includeSystemSubscriptions
+              description: Include system subscriptions.
+        x-ms-enum:
+          name: SubscriptionQueryFlags
+          values:
+          - value: none
+            description: ""
+          - value: includeInvalidSubscriptions
+            description: Include subscriptions with invalid subscribers.
+          - value: includeDeletedSubscriptions
+            description: Include subscriptions marked for deletion.
+          - value: includeFilterDetails
+            description: Include the full filter details with each subscription.
+          - value: alwaysReturnBasicInformation
+            description: For a subscription the caller does not have permission to
+              view, return basic (non-confidential) information.
+          - value: includeSystemSubscriptions
+            description: Include system subscriptions.
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSubscription'
+      security:
+      - oauth2:
+        - vso.notification
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: subscriptions
+      x-ms-vss-method: GetSubscription
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Subscriptions/GET__notification_subscriptions__subscriptionId_.json
+    delete:
+      tags:
+      - Subscriptions
+      description: Delete a subscription.
+      operationId: Subscriptions_Delete
+      parameters:
+      - name: subscriptionId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.notification_write
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: subscriptions
+      x-ms-vss-method: DeleteSubscription
+      x-ms-preview: true
+      x-ms-examples:
+        Delete a subscription:
+          $ref: ./httpExamples/Subscriptions/DELETE__notification_subscriptions__subscriptionId_.json
+    patch:
+      tags:
+      - Subscriptions
+      description: Update an existing subscription. Depending on the type of subscription
+        and permissions, the caller can update the description, filter settings, channel
+        (delivery) settings and more.
+      operationId: Subscriptions_Update
+      parameters:
+      - name: subscriptionId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationSubscriptionUpdateParameters'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSubscription'
+      security:
+      - oauth2:
+        - vso.notification_write
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: subscriptions
+      x-ms-vss-method: UpdateSubscription
+      x-ms-preview: true
+      x-ms-examples:
+        Change description:
+          $ref: ./httpExamples/Subscriptions/PATCH__notification_subscriptions__subscriptionId_.json
+        Disable a subscription:
+          $ref: ./httpExamples/Subscriptions/PATCH__notification_subscriptions__subscriptionId_2.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/notification/subscriptions/{subscriptionId}/diagnostics:
+    get:
+      tags:
+      - Diagnostics
+      description: Get the diagnostics settings for a subscription.
+      operationId: Diagnostics_Get
+      parameters:
+      - name: subscriptionId
+        in: path
+        description: The id of the notifications subscription.
+        required: true
+        schema:
+          type: string
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionDiagnostics'
+      security:
+      - oauth2:
+        - vso.notification
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: diagnostics
+      x-ms-vss-method: GetSubscriptionDiagnostics
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Diagnostics/GET__notification_diagnostics.json
+    put:
+      tags:
+      - Diagnostics
+      description: Update the diagnostics settings for a subscription.
+      operationId: Diagnostics_Update
+      parameters:
+      - name: subscriptionId
+        in: path
+        description: The id of the notifications subscription.
+        required: true
+        schema:
+          type: string
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSubscripitonDiagnosticsParameters'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionDiagnostics'
+      security:
+      - oauth2:
+        - vso.notification_write
+        - vso.notification_diagnostics
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: diagnostics
+      x-ms-vss-method: UpdateSubscriptionDiagnostics
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Diagnostics/PUT__notification_diagnostics.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/notification/Subscriptions/{subscriptionId}/usersettings/{userId}:
+    put:
+      tags:
+      - Subscriptions
+      description: Update the specified user's settings for the specified subscription.
+        This API is typically used to opt in or out of a shared subscription. User
+        settings can only be applied to shared subscriptions, like team subscriptions
+        or default subscriptions.
+      operationId: Subscriptions_Update Subscription User Settings
+      parameters:
+      - name: subscriptionId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: path
+        description: ID of the user
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionUserSettings'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionUserSettings'
+      security:
+      - oauth2:
+        - vso.notification_write
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: userSettings
+      x-ms-vss-method: UpdateSubscriptionUserSettings
+      x-ms-preview: true
+      x-ms-examples:
+        Opt out:
+          $ref: ./httpExamples/UserSettings/PUT__notification_subscriptions__sharedSubscriptionId__userSettings_me.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/notification/subscriptiontemplates:
+    get:
+      tags:
+      - Subscriptions
+      description: Get available subscription templates.
+      operationId: Subscriptions_Get Subscription Templates
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationSubscriptionTemplate'
+      security:
+      - oauth2:
+        - vso.notification
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: subscriptionTemplates
+      x-ms-vss-method: GetSubscriptionTemplates
+      x-ms-preview: true
+components:
+  schemas:
+    ActorFilter:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/RoleBasedFilter'
+    ActorNotificationReason:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/NotificationReason'
+    ArtifactFilter:
+      description: Artifact filter options. Used in "follow" subscriptions.
+      allOf:
+      - $ref: '#/components/schemas/BaseSubscriptionFilter'
+    BaseSubscriptionFilter:
+      type: object
+      properties:
+        eventType:
+          type: string
+        type:
+          type: string
+      description: ""
+    BatchNotificationOperation:
+      type: object
+      properties:
+        notificationOperation:
+          type: string
+          enum:
+          - none
+          - suspendUnprocessed
+          x-ms-enum:
+            name: NotificationOperation
+            values:
+            - value: none
+              description: ""
+            - value: suspendUnprocessed
+              description: ""
+        notificationQueryConditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationQueryCondition'
+      description: ""
+    BlockFilter:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/RoleBasedFilter'
+    BlockSubscriptionChannel:
+      type: object
+      properties:
+        type:
+          type: string
+      description: ""
+    DiagnosticIdentity:
+      type: object
+      properties:
+        displayName:
+          type: string
+        emailAddress:
+          type: string
+        id:
+          type: string
+          format: uuid
+      description: ""
+    DiagnosticNotification:
+      type: object
+      properties:
+        eventId:
+          type: integer
+          format: int32
+        eventType:
+          type: string
+        id:
+          type: integer
+          format: int32
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationDiagnosticLogMessage'
+        recipients:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DiagnosticRecipient'
+        result:
+          type: string
+        stats:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+        subscriptionId:
+          type: string
+      description: ""
+    DiagnosticRecipient:
+      type: object
+      properties:
+        recipient:
+          $ref: '#/components/schemas/DiagnosticIdentity'
+        status:
+          type: string
+      description: ""
+    EmailHtmlSubscriptionChannel:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/SubscriptionChannelWithAddress'
+    EmailPlaintextSubscriptionChannel:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/SubscriptionChannelWithAddress'
+    EventActor:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Required: This is the identity of the user for the specified
+            role.'
+          format: uuid
+        role:
+          type: string
+          description: 'Required: The event specific name of a role.'
+      description: Defines an "actor" for an event.
+    EventBacklogStatus:
+      type: object
+      properties:
+        captureTime:
+          type: string
+          format: date-time
+        jobId:
+          type: string
+          format: uuid
+        lastEventBatchStartTime:
+          type: string
+          format: date-time
+        lastEventProcessedTime:
+          type: string
+          format: date-time
+        lastJobBatchStartTime:
+          type: string
+          format: date-time
+        lastJobProcessedTime:
+          type: string
+          format: date-time
+        oldestPendingEventTime:
+          type: string
+          format: date-time
+        publisher:
+          type: string
+        unprocessedEvents:
+          type: integer
+          format: int32
+      description: ""
+    EventBatch:
+      type: object
+      properties:
+        endTime:
+          type: string
+          format: TimeSpan
+        eventCounts:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+        eventIds:
+          type: string
+        notificationCounts:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+        preProcessEndTime:
+          type: string
+          format: TimeSpan
+        preProcessStartTime:
+          type: string
+          format: TimeSpan
+        processEndTime:
+          type: string
+          format: TimeSpan
+        processStartTime:
+          type: string
+          format: TimeSpan
+        startTime:
+          type: string
+          format: TimeSpan
+        subscriptionCounts:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+      description: ""
+    EventProcessingLog:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/NotificationJobDiagnosticLog'
+    EventScope:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Required: This is the identity of the scope for the type.'
+          format: uuid
+        name:
+          type: string
+          description: 'Optional: The display name of the scope'
+        type:
+          type: string
+          description: 'Required: The event specific type of a scope.'
+      description: Defines a scope for an event.
+    EventsEvaluationResult:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Count of events evaluated.
+          format: int32
+        matchedCount:
+          type: integer
+          description: Count of matched events.
+          format: int32
+      description: Encapsulates events result properties. It defines the total number
+        of events used and the number of matched events.
+    EventTransformRequest:
+      type: object
+      properties:
+        eventPayload:
+          type: string
+          description: Event payload.
+        eventType:
+          type: string
+          description: Event type.
+        systemInputs:
+          type: object
+          additionalProperties:
+            type: string
+          description: System inputs.
+      description: A transform request specify the properties of a notification event
+        to be transformed.
+    EventTransformResult:
+      type: object
+      properties:
+        content:
+          type: string
+          description: Transformed html content.
+        data:
+          type: object
+          properties: {}
+          description: Calculated data.
+        systemInputs:
+          type: object
+          additionalProperties:
+            type: string
+          description: Calculated system inputs.
+      description: Result of transforming a notification event.
+    ExpressionFilter:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/BaseSubscriptionFilter'
+    ExpressionFilterClause:
+      type: object
+      properties:
+        fieldName:
+          type: string
+        index:
+          type: integer
+          description: The order in which this clause appeared in the filter query
+          format: int32
+        logicalOperator:
+          type: string
+          description: Logical Operator 'AND', 'OR' or NULL (only for the first clause
+            in the filter)
+        operator:
+          type: string
+        value:
+          type: string
+      description: 'Subscription Filter Clause represents a single clause in a subscription
+        filter e.g. If the subscription has the following criteria "Project Name =
+        [Current Project] AND Assigned To = [Me] it will be represented as two Filter
+        Clauses Clause 1: Index = 1, Logical Operator: NULL  , FieldName = ''Project
+        Name'', Operator = ''='', Value = ''[Current Project]'' Clause 2: Index =
+        2, Logical Operator: ''AND'' , FieldName = ''Assigned To'' , Operator = ''='',
+        Value = ''[Me]'''
+    ExpressionFilterGroup:
+      type: object
+      properties:
+        end:
+          type: integer
+          description: The index of the last FilterClause in this group
+          format: int32
+        level:
+          type: integer
+          description: Level of the group, since groups can be nested for each nested
+            group the level will increase by 1
+          format: int32
+        start:
+          type: integer
+          description: The index of the first FilterClause in this group
+          format: int32
+      description: Represents a hierarchy of SubscritionFilterClauses that have been
+        grouped together through either adding a group in the WebUI or using parethesis
+        in the Subscription condition string
+    ExpressionFilterModel:
+      type: object
+      properties:
+        clauses:
+          type: array
+          description: Flat list of clauses in this subscription
+          items:
+            $ref: '#/components/schemas/ExpressionFilterClause'
+        groups:
+          type: array
+          description: Grouping of clauses in the subscription
+          items:
+            $ref: '#/components/schemas/ExpressionFilterGroup'
+        maxGroupLevel:
+          type: integer
+          description: Max depth of the Subscription tree
+          format: int32
+      description: ""
+    FieldInputValues:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/InputValues'
+    FieldValuesQuery:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/InputValuesQuery'
+    GeneratedNotification:
+      type: object
+      properties:
+        recipients:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiagnosticIdentity'
+      description: ""
+    GraphSubjectBase:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        descriptor:
+          type: string
+          description: The descriptor is the primary way to reference the graph subject
+            while the system is running. This field will uniquely identify the same
+            graph subject across both Accounts and Organizations.
+        displayName:
+          type: string
+          description: This is the non-unique display name of the graph subject. To
+            change this field, you must alter its value in the source provider.
+        url:
+          type: string
+          description: This url is the full route to the source resource of this graph
+            subject.
+      description: ""
+    GroupSubscriptionChannel:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/SubscriptionChannelWithAddress'
+    IdentityRef:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/GraphSubjectBase'
+    INotificationDiagnosticLog:
+      type: object
+      properties:
+        activityId:
+          type: string
+          description: Identifier used for correlating to other diagnostics that may
+            have been recorded elsewhere.
+          format: uuid
+        description:
+          type: string
+          description: Description of what subscription or notification job is being
+            logged.
+        endTime:
+          type: string
+          description: Time the log ended.
+          format: date-time
+        id:
+          type: string
+          description: Unique instance identifier.
+          format: uuid
+        logType:
+          type: string
+          description: Type of information being logged.
+        messages:
+          type: array
+          description: List of log messages.
+          items:
+            $ref: '#/components/schemas/NotificationDiagnosticLogMessage'
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+          description: Dictionary of log properties and settings for the job.
+        source:
+          type: string
+          description: This identifier depends on the logType.  For notification jobs,
+            this will be the job Id. For subscription tracing, this will be a special
+            root Guid with the subscription Id encoded.
+          format: uuid
+        startTime:
+          type: string
+          description: Time the log started.
+          format: date-time
+      description: Abstraction interface for the diagnostic log.  Primarily for deserialization.
+    InputValue:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: Any other data about this input
+        displayValue:
+          type: string
+          description: The text to show for the display of this value
+        value:
+          type: string
+          description: The value to store for this input
+      description: Information about a single value for an input
+    InputValues:
+      type: object
+      properties:
+        defaultValue:
+          type: string
+          description: The default value to use for this input
+        error:
+          $ref: '#/components/schemas/InputValuesError'
+        inputId:
+          type: string
+          description: The id of the input
+        isDisabled:
+          type: boolean
+          description: Should this input be disabled
+        isLimitedToPossibleValues:
+          type: boolean
+          description: Should the value be restricted to one of the values in the
+            PossibleValues (True) or are the values in PossibleValues just a suggestion
+            (False)
+        isReadOnly:
+          type: boolean
+          description: Should this input be made read-only
+        possibleValues:
+          type: array
+          description: Possible values that this input can take
+          items:
+            $ref: '#/components/schemas/InputValue'
+      description: Information about the possible/allowed values for a given subscription
+        input
+    InputValuesError:
+      type: object
+      properties:
+        message:
+          type: string
+          description: The error message.
+      description: Error information related to a subscription input value.
+    InputValuesQuery:
+      type: object
+      properties:
+        currentValues:
+          type: object
+          additionalProperties:
+            type: string
+        inputValues:
+          type: array
+          description: The input values to return on input, and the result from the
+            consumer on output.
+          items:
+            $ref: '#/components/schemas/InputValues'
+        resource:
+          type: object
+          properties: {}
+          description: Subscription containing information about the publisher/consumer
+            and the current input values
+      description: ""
+    ISubscriptionChannel:
+      type: object
+      properties:
+        type:
+          type: string
+      description: ""
+    ISubscriptionFilter:
+      type: object
+      properties:
+        eventType:
+          type: string
+        type:
+          type: string
+      description: ""
+    MatcherResult:
+      type: object
+      properties:
+        matcher:
+          type: string
+        stats:
+          type: object
+          additionalProperties:
+            type: object
+      description: ""
+    MessageQueueSubscriptionChannel:
+      type: object
+      properties:
+        type:
+          type: string
+      description: ""
+    NotificationAdminSettings:
+      type: object
+      properties:
+        defaultGroupDeliveryPreference:
+          type: string
+          description: The default group delivery preference for groups in this collection
+          enum:
+          - noDelivery
+          - eachMember
+          x-ms-enum:
+            name: DefaultGroupDeliveryPreference
+            values:
+            - value: noDelivery
+              description: ""
+            - value: eachMember
+              description: ""
+      description: ""
+    NotificationAdminSettingsUpdateParameters:
+      type: object
+      properties:
+        defaultGroupDeliveryPreference:
+          type: string
+          enum:
+          - noDelivery
+          - eachMember
+          x-ms-enum:
+            name: DefaultGroupDeliveryPreference
+            values:
+            - value: noDelivery
+              description: ""
+            - value: eachMember
+              description: ""
+      description: ""
+    NotificationBacklogStatus:
+      type: object
+      properties:
+        captureTime:
+          type: string
+          format: date-time
+        channel:
+          type: string
+        jobId:
+          type: string
+          format: uuid
+        lastJobBatchStartTime:
+          type: string
+          format: date-time
+        lastJobProcessedTime:
+          type: string
+          format: date-time
+        lastNotificationBatchStartTime:
+          type: string
+          format: date-time
+        lastNotificationProcessedTime:
+          type: string
+          format: date-time
+        oldestPendingNotificationTime:
+          type: string
+          format: date-time
+        publisher:
+          type: string
+        status:
+          type: string
+          description: Null status is unprocessed
+        unprocessedNotifications:
+          type: integer
+          format: int32
+      description: ""
+    NotificationBatch:
+      type: object
+      properties:
+        endTime:
+          type: string
+          format: TimeSpan
+        notificationCount:
+          type: integer
+          format: int32
+        notificationIds:
+          type: string
+        problematicNotifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiagnosticNotification'
+        startTime:
+          type: string
+          format: TimeSpan
+      description: ""
+    NotificationDeliveryLog:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/NotificationJobDiagnosticLog'
+    NotificationDiagnosticLog:
+      type: object
+      properties:
+        activityId:
+          type: string
+          description: Identifier used for correlating to other diagnostics that may
+            have been recorded elsewhere.
+          format: uuid
+        description:
+          type: string
+        endTime:
+          type: string
+          format: date-time
+        errors:
+          type: integer
+          format: int32
+        id:
+          type: string
+          description: Unique instance identifier.
+          format: uuid
+        logType:
+          type: string
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationDiagnosticLogMessage'
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+        source:
+          type: string
+          description: This identifier depends on the logType.  For notification jobs,
+            this will be the job Id. For subscription tracing, this will be a special
+            root Guid with the subscription Id encoded.
+          format: uuid
+        startTime:
+          type: string
+          format: date-time
+        warnings:
+          type: integer
+          format: int32
+      description: Abstract base class for all of the diagnostic logs.
+    NotificationDiagnosticLogMessage:
+      type: object
+      properties:
+        level:
+          type: integer
+          description: Corresponds to .Net TraceLevel enumeration
+          format: int32
+        message:
+          type: string
+        time:
+          type: string
+          format: TimeSpan
+      description: ""
+    NotificationEventBacklogStatus:
+      type: object
+      properties:
+        eventBacklogStatus:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventBacklogStatus'
+        notificationBacklogStatus:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationBacklogStatus'
+      description: ""
+    NotificationEventField:
+      type: object
+      properties:
+        fieldType:
+          $ref: '#/components/schemas/NotificationEventFieldType'
+        id:
+          type: string
+          description: Gets or sets the unique identifier of this field.
+        name:
+          type: string
+          description: Gets or sets the name of this field.
+        path:
+          type: string
+          description: Gets or sets the path to the field in the event object. This
+            path can be either Json Path or XPath, depending on if the event will
+            be serialized into Json or XML
+        supportedScopes:
+          type: array
+          description: Gets or sets the scopes that this field supports. If not specified
+            then the event type scopes apply.
+          items:
+            type: string
+      description: Encapsulates the properties of a filterable field. A filterable
+        field is a field in an event that can used to filter notifications for a certain
+        event type.
+    NotificationEventFieldOperator:
+      type: object
+      properties:
+        displayName:
+          type: string
+          description: Gets or sets the display name of an operator
+        id:
+          type: string
+          description: Gets or sets the id of an operator
+      description: Encapsulates the properties of a field type. It includes a unique
+        id for the operator and a localized string for display name
+    NotificationEventFieldType:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Gets or sets the unique identifier of this field type.
+        operatorConstraints:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperatorConstraint'
+        operators:
+          type: array
+          description: Gets or sets the list of operators that this type supports.
+          items:
+            $ref: '#/components/schemas/NotificationEventFieldOperator'
+        subscriptionFieldType:
+          type: string
+          enum:
+          - string
+          - integer
+          - dateTime
+          - plainText
+          - html
+          - treePath
+          - history
+          - double
+          - guid
+          - boolean
+          - identity
+          - picklistInteger
+          - picklistString
+          - picklistDouble
+          - teamProject
+          x-ms-enum:
+            name: SubscriptionFieldType
+            values:
+            - value: string
+              description: ""
+            - value: integer
+              description: ""
+            - value: dateTime
+              description: ""
+            - value: plainText
+              description: ""
+            - value: html
+              description: ""
+            - value: treePath
+              description: ""
+            - value: history
+              description: ""
+            - value: double
+              description: ""
+            - value: guid
+              description: ""
+            - value: boolean
+              description: ""
+            - value: identity
+              description: ""
+            - value: picklistInteger
+              description: ""
+            - value: picklistString
+              description: ""
+            - value: picklistDouble
+              description: ""
+            - value: teamProject
+              description: ""
+        value:
+          $ref: '#/components/schemas/ValueDefinition'
+      description: Encapsulates the properties of a field type. It describes the data
+        type of a field, the operators it support and how to populate it in the UI
+    NotificationEventPublisher:
+      type: object
+      properties:
+        id:
+          type: string
+        subscriptionManagementInfo:
+          $ref: '#/components/schemas/SubscriptionManagement'
+        url:
+          type: string
+      description: Encapsulates the properties of a notification event publisher.
+    NotificationEventRole:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Gets or sets an Id for that role, this id is used by the event.
+        name:
+          type: string
+          description: Gets or sets the Name for that role, this name is used for
+            UI display.
+        supportsGroups:
+          type: boolean
+          description: Gets or sets whether this role can be a group or just an individual
+            user
+      description: Encapsulates the properties of an event role.  An event Role is
+        used for role based subscription for example for a buildCompletedEvent, one
+        role is request by field
+    NotificationEventType:
+      type: object
+      properties:
+        category:
+          $ref: '#/components/schemas/NotificationEventTypeCategory'
+        color:
+          type: string
+          description: 'Gets or sets the color representing this event type. Example:
+            rgb(128,245,211) or #fafafa'
+        customSubscriptionsAllowed:
+          type: boolean
+        eventPublisher:
+          $ref: '#/components/schemas/NotificationEventPublisher'
+        fields:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/NotificationEventField'
+        hasInitiator:
+          type: boolean
+        icon:
+          type: string
+          description: 'Gets or sets the icon representing this event type. Can be
+            a URL or a CSS class. Example: css://some-css-class'
+        id:
+          type: string
+          description: Gets or sets the unique identifier of this event definition.
+        name:
+          type: string
+          description: Gets or sets the name of this event definition.
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationEventRole'
+        supportedScopes:
+          type: array
+          description: Gets or sets the scopes that this event type supports
+          items:
+            type: string
+        url:
+          type: string
+          description: Gets or sets the rest end point to get this event type details
+            (fields, fields types)
+      description: Encapsulates the properties of an event type. It defines the fields,
+        that can be used for filtering, for that event type.
+    NotificationEventTypeCategory:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Gets or sets the unique identifier of this category.
+        name:
+          type: string
+          description: Gets or sets the friendly name of this category.
+      description: Encapsulates the properties of a category. A category will be used
+        by the UI to group event types
+    NotificationJobDiagnosticLog:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/NotificationDiagnosticLog'
+    NotificationQueryCondition:
+      type: object
+      properties:
+        eventInitiator:
+          type: string
+          format: uuid
+        eventType:
+          type: string
+        subscriber:
+          type: string
+          format: uuid
+        subscriptionId:
+          type: string
+      description: ""
+    NotificationReason:
+      type: object
+      properties:
+        notificationReasonType:
+          type: string
+          enum:
+          - unknown
+          - follows
+          - personal
+          - personalAlias
+          - directMember
+          - indirectMember
+          - groupAlias
+          - subscriptionAlias
+          - singleRole
+          - directMemberGroupRole
+          - inDirectMemberGroupRole
+          - aliasMemberGroupRole
+          x-ms-enum:
+            name: NotificationReasonType
+            values:
+            - value: unknown
+              description: ""
+            - value: follows
+              description: ""
+            - value: personal
+              description: ""
+            - value: personalAlias
+              description: ""
+            - value: directMember
+              description: ""
+            - value: indirectMember
+              description: ""
+            - value: groupAlias
+              description: ""
+            - value: subscriptionAlias
+              description: ""
+            - value: singleRole
+              description: ""
+            - value: directMemberGroupRole
+              description: ""
+            - value: inDirectMemberGroupRole
+              description: ""
+            - value: aliasMemberGroupRole
+              description: ""
+        targetIdentities:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityRef'
+      description: ""
+    NotificationsEvaluationResult:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Count of generated notifications
+          format: int32
+      description: Encapsulates notifications result properties. It defines the number
+        of notifications and the recipients of notifications.
+    NotificationStatistic:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        hitCount:
+          type: integer
+          format: int32
+        path:
+          type: string
+        type:
+          type: string
+          enum:
+          - notificationBySubscription
+          - eventsByEventType
+          - notificationByEventType
+          - eventsByEventTypePerUser
+          - notificationByEventTypePerUser
+          - events
+          - notifications
+          - notificationFailureBySubscription
+          - unprocessedRangeStart
+          - unprocessedEventsByPublisher
+          - unprocessedEventDelayByPublisher
+          - unprocessedNotificationsByChannelByPublisher
+          - unprocessedNotificationDelayByChannelByPublisher
+          - delayRangeStart
+          - totalPipelineTime
+          - notificationPipelineTime
+          - eventPipelineTime
+          - hourlyRangeStart
+          - hourlyNotificationBySubscription
+          - hourlyEventsByEventTypePerUser
+          - hourlyEvents
+          - hourlyNotifications
+          - hourlyUnprocessedEventsByPublisher
+          - hourlyUnprocessedEventDelayByPublisher
+          - hourlyUnprocessedNotificationsByChannelByPublisher
+          - hourlyUnprocessedNotificationDelayByChannelByPublisher
+          - hourlyTotalPipelineTime
+          - hourlyNotificationPipelineTime
+          - hourlyEventPipelineTime
+          x-ms-enum:
+            name: NotificationStatisticType
+            values:
+            - value: notificationBySubscription
+              description: ""
+            - value: eventsByEventType
+              description: ""
+            - value: notificationByEventType
+              description: ""
+            - value: eventsByEventTypePerUser
+              description: ""
+            - value: notificationByEventTypePerUser
+              description: ""
+            - value: events
+              description: ""
+            - value: notifications
+              description: ""
+            - value: notificationFailureBySubscription
+              description: ""
+            - value: unprocessedRangeStart
+              description: ""
+            - value: unprocessedEventsByPublisher
+              description: ""
+            - value: unprocessedEventDelayByPublisher
+              description: ""
+            - value: unprocessedNotificationsByChannelByPublisher
+              description: ""
+            - value: unprocessedNotificationDelayByChannelByPublisher
+              description: ""
+            - value: delayRangeStart
+              description: ""
+            - value: totalPipelineTime
+              description: ""
+            - value: notificationPipelineTime
+              description: ""
+            - value: eventPipelineTime
+              description: ""
+            - value: hourlyRangeStart
+              description: ""
+            - value: hourlyNotificationBySubscription
+              description: ""
+            - value: hourlyEventsByEventTypePerUser
+              description: ""
+            - value: hourlyEvents
+              description: ""
+            - value: hourlyNotifications
+              description: ""
+            - value: hourlyUnprocessedEventsByPublisher
+              description: ""
+            - value: hourlyUnprocessedEventDelayByPublisher
+              description: ""
+            - value: hourlyUnprocessedNotificationsByChannelByPublisher
+              description: ""
+            - value: hourlyUnprocessedNotificationDelayByChannelByPublisher
+              description: ""
+            - value: hourlyTotalPipelineTime
+              description: ""
+            - value: hourlyNotificationPipelineTime
+              description: ""
+            - value: hourlyEventPipelineTime
+              description: ""
+        user:
+          $ref: '#/components/schemas/IdentityRef'
+      description: ""
+    NotificationStatisticsQuery:
+      type: object
+      properties:
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationStatisticsQueryConditions'
+      description: ""
+    NotificationStatisticsQueryConditions:
+      type: object
+      properties:
+        endDate:
+          type: string
+          format: date-time
+        hitCountMinimum:
+          type: integer
+          format: int32
+        path:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        type:
+          type: string
+          enum:
+          - notificationBySubscription
+          - eventsByEventType
+          - notificationByEventType
+          - eventsByEventTypePerUser
+          - notificationByEventTypePerUser
+          - events
+          - notifications
+          - notificationFailureBySubscription
+          - unprocessedRangeStart
+          - unprocessedEventsByPublisher
+          - unprocessedEventDelayByPublisher
+          - unprocessedNotificationsByChannelByPublisher
+          - unprocessedNotificationDelayByChannelByPublisher
+          - delayRangeStart
+          - totalPipelineTime
+          - notificationPipelineTime
+          - eventPipelineTime
+          - hourlyRangeStart
+          - hourlyNotificationBySubscription
+          - hourlyEventsByEventTypePerUser
+          - hourlyEvents
+          - hourlyNotifications
+          - hourlyUnprocessedEventsByPublisher
+          - hourlyUnprocessedEventDelayByPublisher
+          - hourlyUnprocessedNotificationsByChannelByPublisher
+          - hourlyUnprocessedNotificationDelayByChannelByPublisher
+          - hourlyTotalPipelineTime
+          - hourlyNotificationPipelineTime
+          - hourlyEventPipelineTime
+          x-ms-enum:
+            name: NotificationStatisticType
+            values:
+            - value: notificationBySubscription
+              description: ""
+            - value: eventsByEventType
+              description: ""
+            - value: notificationByEventType
+              description: ""
+            - value: eventsByEventTypePerUser
+              description: ""
+            - value: notificationByEventTypePerUser
+              description: ""
+            - value: events
+              description: ""
+            - value: notifications
+              description: ""
+            - value: notificationFailureBySubscription
+              description: ""
+            - value: unprocessedRangeStart
+              description: ""
+            - value: unprocessedEventsByPublisher
+              description: ""
+            - value: unprocessedEventDelayByPublisher
+              description: ""
+            - value: unprocessedNotificationsByChannelByPublisher
+              description: ""
+            - value: unprocessedNotificationDelayByChannelByPublisher
+              description: ""
+            - value: delayRangeStart
+              description: ""
+            - value: totalPipelineTime
+              description: ""
+            - value: notificationPipelineTime
+              description: ""
+            - value: eventPipelineTime
+              description: ""
+            - value: hourlyRangeStart
+              description: ""
+            - value: hourlyNotificationBySubscription
+              description: ""
+            - value: hourlyEventsByEventTypePerUser
+              description: ""
+            - value: hourlyEvents
+              description: ""
+            - value: hourlyNotifications
+              description: ""
+            - value: hourlyUnprocessedEventsByPublisher
+              description: ""
+            - value: hourlyUnprocessedEventDelayByPublisher
+              description: ""
+            - value: hourlyUnprocessedNotificationsByChannelByPublisher
+              description: ""
+            - value: hourlyUnprocessedNotificationDelayByChannelByPublisher
+              description: ""
+            - value: hourlyTotalPipelineTime
+              description: ""
+            - value: hourlyNotificationPipelineTime
+              description: ""
+            - value: hourlyEventPipelineTime
+              description: ""
+        user:
+          $ref: '#/components/schemas/IdentityRef'
+      description: ""
+    NotificationSubscriber:
+      type: object
+      properties:
+        deliveryPreference:
+          type: string
+          description: Indicates how the subscriber should be notified by default.
+          enum:
+          - noDelivery
+          - preferredEmailAddress
+          - eachMember
+          - useDefault
+          x-ms-enum:
+            name: NotificationSubscriberDeliveryPreference
+            values:
+            - value: noDelivery
+              description: 'Do not send notifications by default. Note: notifications
+                can still be delivered to this subscriber, for example via a custom
+                subscription.'
+            - value: preferredEmailAddress
+              description: Deliver notifications to the subscriber's preferred email
+                address.
+            - value: eachMember
+              description: Deliver notifications to each member of the group representing
+                the subscriber. Only applicable when the subscriber is a group.
+            - value: useDefault
+              description: Use default
+        flags:
+          type: string
+          enum:
+          - none
+          - deliveryPreferencesEditable
+          - supportsPreferredEmailAddressDelivery
+          - supportsEachMemberDelivery
+          - supportsNoDelivery
+          - isUser
+          - isGroup
+          - isTeam
+          x-ms-enum:
+            name: SubscriberFlags
+            values:
+            - value: none
+              description: ""
+            - value: deliveryPreferencesEditable
+              description: Subscriber's delivery preferences could be updated
+            - value: supportsPreferredEmailAddressDelivery
+              description: Subscriber's delivery preferences supports email delivery
+            - value: supportsEachMemberDelivery
+              description: Subscriber's delivery preferences supports individual members
+                delivery(group expansion)
+            - value: supportsNoDelivery
+              description: Subscriber's delivery preferences supports no delivery
+            - value: isUser
+              description: Subscriber is a user
+            - value: isGroup
+              description: Subscriber is a group
+            - value: isTeam
+              description: Subscriber is a team
+        id:
+          type: string
+          description: Identifier of the subscriber.
+          format: uuid
+        preferredEmailAddress:
+          type: string
+          description: Preferred email address of the subscriber. A null or empty
+            value indicates no preferred email address has been set.
+      description: A subscriber is a user or group that has the potential to receive
+        notifications.
+    NotificationSubscriberUpdateParameters:
+      type: object
+      properties:
+        deliveryPreference:
+          type: string
+          description: New delivery preference for the subscriber (indicates how the
+            subscriber should be notified).
+          enum:
+          - noDelivery
+          - preferredEmailAddress
+          - eachMember
+          - useDefault
+          x-ms-enum:
+            name: NotificationSubscriberDeliveryPreference
+            values:
+            - value: noDelivery
+              description: 'Do not send notifications by default. Note: notifications
+                can still be delivered to this subscriber, for example via a custom
+                subscription.'
+            - value: preferredEmailAddress
+              description: Deliver notifications to the subscriber's preferred email
+                address.
+            - value: eachMember
+              description: Deliver notifications to each member of the group representing
+                the subscriber. Only applicable when the subscriber is a group.
+            - value: useDefault
+              description: Use default
+        preferredEmailAddress:
+          type: string
+          description: New preferred email address for the subscriber. Specify an
+            empty string to clear the current address.
+      description: Updates to a subscriber. Typically used to change (or set) a preferred
+        email address or default delivery preference.
+    NotificationSubscription:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        adminSettings:
+          $ref: '#/components/schemas/SubscriptionAdminSettings'
+        channel:
+          $ref: '#/components/schemas/ISubscriptionChannel'
+        description:
+          type: string
+          description: Description of the subscription. Typically describes filter
+            criteria which helps identity the subscription.
+        diagnostics:
+          $ref: '#/components/schemas/SubscriptionDiagnostics'
+        extendedProperties:
+          type: object
+          additionalProperties:
+            type: string
+          description: Any extra properties like detailed description for different
+            contexts, user/group contexts
+        filter:
+          $ref: '#/components/schemas/ISubscriptionFilter'
+        flags:
+          type: string
+          description: Read-only indicators that further describe the subscription.
+          enum:
+          - none
+          - groupSubscription
+          - contributedSubscription
+          - canOptOut
+          - teamSubscription
+          - oneActorMatches
+          x-ms-enum:
+            name: SubscriptionFlags
+            values:
+            - value: none
+              description: None
+            - value: groupSubscription
+              description: Subscription's subscriber is a group, not a user
+            - value: contributedSubscription
+              description: Subscription is contributed and not persisted. This means
+                certain fields of the subscription, like Filter, are read-only.
+            - value: canOptOut
+              description: A user that is member of the subscription's subscriber
+                group can opt in/out of the subscription.
+            - value: teamSubscription
+              description: If the subscriber is a group, is it a team.
+            - value: oneActorMatches
+              description: For role based subscriptions, there is an expectation that
+                there will always be at least one actor that matches
+        id:
+          type: string
+          description: Subscription identifier.
+        lastModifiedBy:
+          $ref: '#/components/schemas/IdentityRef'
+        modifiedDate:
+          type: string
+          description: Date when the subscription was last modified. If the subscription
+            has not been updated since it was created, this value will indicate when
+            the subscription was created.
+          format: date-time
+        permissions:
+          type: string
+          description: The permissions the user have for this subscriptions.
+          enum:
+          - none
+          - view
+          - edit
+          - delete
+          x-ms-enum:
+            name: SubscriptionPermissions
+            values:
+            - value: none
+              description: None
+            - value: view
+              description: full view of description, filters, etc. Not limited.
+            - value: edit
+              description: update subscription
+            - value: delete
+              description: delete subscription
+        scope:
+          $ref: '#/components/schemas/SubscriptionScope'
+        status:
+          type: string
+          description: Status of the subscription. Typically indicates whether the
+            subscription is enabled or not.
+          enum:
+          - jailedByNotificationsVolume
+          - pendingDeletion
+          - disabledArgumentException
+          - disabledProjectInvalid
+          - disabledMissingPermissions
+          - disabledFromProbation
+          - disabledInactiveIdentity
+          - disabledMessageQueueNotSupported
+          - disabledMissingIdentity
+          - disabledInvalidRoleExpression
+          - disabledInvalidPathClause
+          - disabledAsDuplicateOfDefault
+          - disabledByAdmin
+          - disabled
+          - enabled
+          - enabledOnProbation
+          x-ms-enum:
+            name: SubscriptionStatus
+            values:
+            - value: jailedByNotificationsVolume
+              description: Subscription is disabled because it generated a high volume
+                of notifications.
+            - value: pendingDeletion
+              description: Subscription is disabled and will be deleted.
+            - value: disabledArgumentException
+              description: Subscription is disabled because of an Argument Exception
+                while processing the subscription
+            - value: disabledProjectInvalid
+              description: Subscription is disabled because the project is invalid
+            - value: disabledMissingPermissions
+              description: Subscription is disabled because the identity does not
+                have the appropriate permissions
+            - value: disabledFromProbation
+              description: Subscription is disabled service due to failures.
+            - value: disabledInactiveIdentity
+              description: Subscription is disabled because the identity is no longer
+                active
+            - value: disabledMessageQueueNotSupported
+              description: Subscription is disabled because message queue is not supported.
+            - value: disabledMissingIdentity
+              description: Subscription is disabled because its subscriber is unknown.
+            - value: disabledInvalidRoleExpression
+              description: Subscription is disabled because it has an invalid role
+                expression.
+            - value: disabledInvalidPathClause
+              description: Subscription is disabled because it has an invalid filter
+                expression.
+            - value: disabledAsDuplicateOfDefault
+              description: Subscription is disabled because it is a duplicate of a
+                default subscription.
+            - value: disabledByAdmin
+              description: Subscription is disabled by an administrator, not the subscription's
+                subscriber.
+            - value: disabled
+              description: Subscription is disabled, typically by the owner of the
+                subscription, and will not produce any notifications.
+            - value: enabled
+              description: Subscription is active.
+            - value: enabledOnProbation
+              description: Subscription is active, but is on probation due to failed
+                deliveries or other issues with the subscription.
+        statusMessage:
+          type: string
+          description: Message that provides more details about the status of the
+            subscription.
+        subscriber:
+          $ref: '#/components/schemas/IdentityRef'
+        url:
+          type: string
+          description: REST API URL of the subscription.
+        userSettings:
+          $ref: '#/components/schemas/SubscriptionUserSettings'
+      description: A subscription defines criteria for matching events and how the
+        subscription's subscriber should be notified about those events.
+    NotificationSubscriptionCreateParameters:
+      type: object
+      properties:
+        channel:
+          $ref: '#/components/schemas/ISubscriptionChannel'
+        description:
+          type: string
+          description: Brief description for the new subscription. Typically describes
+            filter criteria which helps identity the subscription.
+        filter:
+          $ref: '#/components/schemas/ISubscriptionFilter'
+        scope:
+          $ref: '#/components/schemas/SubscriptionScope'
+        subscriber:
+          $ref: '#/components/schemas/IdentityRef'
+      description: Parameters for creating a new subscription. A subscription defines
+        criteria for matching events and how the subscription's subscriber should
+        be notified about those events.
+    NotificationSubscriptionTemplate:
+      type: object
+      properties:
+        description:
+          type: string
+        filter:
+          $ref: '#/components/schemas/ISubscriptionFilter'
+        id:
+          type: string
+        notificationEventInformation:
+          $ref: '#/components/schemas/NotificationEventType'
+        type:
+          type: string
+          enum:
+          - user
+          - team
+          - both
+          - none
+          x-ms-enum:
+            name: SubscriptionTemplateType
+            values:
+            - value: user
+              description: ""
+            - value: team
+              description: ""
+            - value: both
+              description: ""
+            - value: none
+              description: ""
+      description: ""
+    NotificationSubscriptionUpdateParameters:
+      type: object
+      properties:
+        adminSettings:
+          $ref: '#/components/schemas/SubscriptionAdminSettings'
+        channel:
+          $ref: '#/components/schemas/ISubscriptionChannel'
+        description:
+          type: string
+          description: Updated description for the subscription. Typically describes
+            filter criteria which helps identity the subscription.
+        filter:
+          $ref: '#/components/schemas/ISubscriptionFilter'
+        scope:
+          $ref: '#/components/schemas/SubscriptionScope'
+        status:
+          type: string
+          description: Updated status for the subscription. Typically used to enable
+            or disable a subscription.
+          enum:
+          - jailedByNotificationsVolume
+          - pendingDeletion
+          - disabledArgumentException
+          - disabledProjectInvalid
+          - disabledMissingPermissions
+          - disabledFromProbation
+          - disabledInactiveIdentity
+          - disabledMessageQueueNotSupported
+          - disabledMissingIdentity
+          - disabledInvalidRoleExpression
+          - disabledInvalidPathClause
+          - disabledAsDuplicateOfDefault
+          - disabledByAdmin
+          - disabled
+          - enabled
+          - enabledOnProbation
+          x-ms-enum:
+            name: SubscriptionStatus
+            values:
+            - value: jailedByNotificationsVolume
+              description: Subscription is disabled because it generated a high volume
+                of notifications.
+            - value: pendingDeletion
+              description: Subscription is disabled and will be deleted.
+            - value: disabledArgumentException
+              description: Subscription is disabled because of an Argument Exception
+                while processing the subscription
+            - value: disabledProjectInvalid
+              description: Subscription is disabled because the project is invalid
+            - value: disabledMissingPermissions
+              description: Subscription is disabled because the identity does not
+                have the appropriate permissions
+            - value: disabledFromProbation
+              description: Subscription is disabled service due to failures.
+            - value: disabledInactiveIdentity
+              description: Subscription is disabled because the identity is no longer
+                active
+            - value: disabledMessageQueueNotSupported
+              description: Subscription is disabled because message queue is not supported.
+            - value: disabledMissingIdentity
+              description: Subscription is disabled because its subscriber is unknown.
+            - value: disabledInvalidRoleExpression
+              description: Subscription is disabled because it has an invalid role
+                expression.
+            - value: disabledInvalidPathClause
+              description: Subscription is disabled because it has an invalid filter
+                expression.
+            - value: disabledAsDuplicateOfDefault
+              description: Subscription is disabled because it is a duplicate of a
+                default subscription.
+            - value: disabledByAdmin
+              description: Subscription is disabled by an administrator, not the subscription's
+                subscriber.
+            - value: disabled
+              description: Subscription is disabled, typically by the owner of the
+                subscription, and will not produce any notifications.
+            - value: enabled
+              description: Subscription is active.
+            - value: enabledOnProbation
+              description: Subscription is active, but is on probation due to failed
+                deliveries or other issues with the subscription.
+        statusMessage:
+          type: string
+          description: Optional message that provides more details about the updated
+            status.
+        userSettings:
+          $ref: '#/components/schemas/SubscriptionUserSettings'
+      description: 'Parameters for updating an existing subscription. A subscription
+        defines criteria for matching events and how the subscription''s subscriber
+        should be notified about those events. Note: only the fields to be updated
+        should be set.'
+    OperatorConstraint:
+      type: object
+      properties:
+        operator:
+          type: string
+        supportedScopes:
+          type: array
+          description: Gets or sets the list of scopes that this type supports.
+          items:
+            type: string
+      description: Encapsulates the properties of an operator constraint. An operator
+        constraint defines if some operator is available only for specific scope like
+        a project scope.
+    ProcessedEvent:
+      type: object
+      properties:
+        actors:
+          type: array
+          description: All of the users that were associated with this event and their
+            role.
+          items:
+            $ref: '#/components/schemas/EventActor'
+        allowedChannels:
+          type: string
+        artifactUri:
+          type: string
+        deliveryIdentities:
+          $ref: '#/components/schemas/ProcessingIdentities'
+        evaluations:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/SubscriptionEvaluation'
+          description: Evaluations for each user
+        eventId:
+          type: integer
+          format: int32
+        exclusions:
+          type: array
+          description: Which members were excluded from evaluation (only applies to
+            ActorMatcher subscriptions)
+          items:
+            $ref: '#/components/schemas/EventActor'
+        inclusions:
+          type: array
+          description: Which members were included for evaluation (only applies to
+            ActorMatcher subscriptions)
+          items:
+            $ref: '#/components/schemas/EventActor'
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/GeneratedNotification'
+      description: ""
+    ProcessingDiagnosticIdentity:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/DiagnosticIdentity'
+    ProcessingIdentities:
+      type: object
+      properties:
+        excludedIdentities:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ProcessingDiagnosticIdentity'
+        includedIdentities:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ProcessingDiagnosticIdentity'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationDiagnosticLogMessage'
+        missingIdentities:
+          type: array
+          items:
+            type: string
+            format: uuid
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+      description: ""
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    RoleBasedFilter:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/ExpressionFilter'
+    ServiceBusSubscriptionChannel:
+      type: object
+      properties:
+        type:
+          type: string
+      description: ""
+    ServiceHooksSubscriptionChannel:
+      type: object
+      properties:
+        type:
+          type: string
+      description: ""
+    SoapSubscriptionChannel:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/SubscriptionChannelWithAddress'
+    SubscriptionAdminSettings:
+      type: object
+      properties:
+        blockUserOptOut:
+          type: boolean
+          description: If true, members of the group subscribed to the associated
+            subscription cannot opt (choose not to get notified)
+      description: Admin-managed settings for a group subscription.
+    SubscriptionChannelWithAddress:
+      type: object
+      properties:
+        address:
+          type: string
+        type:
+          type: string
+        useCustomAddress:
+          type: boolean
+      description: ""
+    SubscriptionDiagnostics:
+      type: object
+      properties:
+        deliveryResults:
+          $ref: '#/components/schemas/SubscriptionTracing'
+        deliveryTracing:
+          $ref: '#/components/schemas/SubscriptionTracing'
+        evaluationTracing:
+          $ref: '#/components/schemas/SubscriptionTracing'
+      description: Contains all the diagnostics settings for a subscription.
+    SubscriptionEvaluation:
+      type: object
+      properties:
+        clauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionEvaluationClause'
+        user:
+          $ref: '#/components/schemas/DiagnosticIdentity'
+      description: ""
+    SubscriptionEvaluationClause:
+      type: object
+      properties:
+        clause:
+          type: string
+        order:
+          type: integer
+          format: int32
+        result:
+          type: boolean
+      description: ""
+    SubscriptionEvaluationRequest:
+      type: object
+      properties:
+        minEventsCreatedDate:
+          type: string
+          description: The min created date for the events used for matching in UTC.
+            Use all events created since this date
+          format: date-time
+        subscriptionCreateParameters:
+          $ref: '#/components/schemas/NotificationSubscriptionCreateParameters'
+      description: Encapsulates the properties of a SubscriptionEvaluationRequest.
+        It defines the subscription to be evaluated and time interval for events used
+        in evaluation.
+    SubscriptionEvaluationResult:
+      type: object
+      properties:
+        evaluationJobStatus:
+          type: string
+          description: Subscription evaluation job status
+          enum:
+          - notSet
+          - queued
+          - inProgress
+          - cancelled
+          - succeeded
+          - failed
+          - timedOut
+          - notFound
+          x-ms-enum:
+            name: EvaluationOperationStatus
+            values:
+            - value: notSet
+              description: The operation object does not have the status set.
+            - value: queued
+              description: The operation has been queued.
+            - value: inProgress
+              description: The operation is in progress.
+            - value: cancelled
+              description: The operation was cancelled by the user.
+            - value: succeeded
+              description: The operation completed successfully.
+            - value: failed
+              description: The operation completed with a failure.
+            - value: timedOut
+              description: The operation timed out.
+            - value: notFound
+              description: The operation could not be found.
+        events:
+          $ref: '#/components/schemas/EventsEvaluationResult'
+        id:
+          type: string
+          description: The requestId which is the subscription evaluation jobId
+          format: uuid
+        notifications:
+          $ref: '#/components/schemas/NotificationsEvaluationResult'
+      description: Encapsulates the subscription evaluation results. It defines the
+        Date Interval that was used, number of events evaluated and events and notifications
+        results
+    SubscriptionEvaluationSettings:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Indicates whether subscription evaluation before saving is
+            enabled or not
+        interval:
+          type: integer
+          description: Time interval to check on subscription evaluation job in seconds
+          format: int32
+        threshold:
+          type: integer
+          description: Threshold on the number of notifications for considering a
+            subscription too noisy
+          format: int32
+        timeOut:
+          type: integer
+          description: Time out for the subscription evaluation check in seconds
+          format: int32
+      description: Encapsulates the subscription evaluation settings needed for the
+        UI
+    SubscriptionManagement:
+      type: object
+      properties:
+        serviceInstanceType:
+          type: string
+          format: uuid
+        url:
+          type: string
+      description: Encapsulates the properties needed to manage subscriptions, opt
+        in and out of subscriptions.
+    SubscriptionQuery:
+      type: object
+      properties:
+        conditions:
+          type: array
+          description: One or more conditions to query on. If more than 2 conditions
+            are specified, the combined results of each condition is returned (i.e.
+            conditions are logically OR'ed).
+          items:
+            $ref: '#/components/schemas/SubscriptionQueryCondition'
+        queryFlags:
+          type: string
+          description: Flags the refine the types of subscriptions that will be returned
+            from the query.
+          enum:
+          - none
+          - includeInvalidSubscriptions
+          - includeDeletedSubscriptions
+          - includeFilterDetails
+          - alwaysReturnBasicInformation
+          - includeSystemSubscriptions
+          x-ms-enum:
+            name: SubscriptionQueryFlags
+            values:
+            - value: none
+              description: ""
+            - value: includeInvalidSubscriptions
+              description: Include subscriptions with invalid subscribers.
+            - value: includeDeletedSubscriptions
+              description: Include subscriptions marked for deletion.
+            - value: includeFilterDetails
+              description: Include the full filter details with each subscription.
+            - value: alwaysReturnBasicInformation
+              description: For a subscription the caller does not have permission
+                to view, return basic (non-confidential) information.
+            - value: includeSystemSubscriptions
+              description: Include system subscriptions.
+      description: Notification subscriptions query input.
+    SubscriptionQueryCondition:
+      type: object
+      properties:
+        filter:
+          $ref: '#/components/schemas/ISubscriptionFilter'
+        flags:
+          type: string
+          description: Flags to specify the type subscriptions to query for.
+          enum:
+          - none
+          - groupSubscription
+          - contributedSubscription
+          - canOptOut
+          - teamSubscription
+          - oneActorMatches
+          x-ms-enum:
+            name: SubscriptionFlags
+            values:
+            - value: none
+              description: None
+            - value: groupSubscription
+              description: Subscription's subscriber is a group, not a user
+            - value: contributedSubscription
+              description: Subscription is contributed and not persisted. This means
+                certain fields of the subscription, like Filter, are read-only.
+            - value: canOptOut
+              description: A user that is member of the subscription's subscriber
+                group can opt in/out of the subscription.
+            - value: teamSubscription
+              description: If the subscriber is a group, is it a team.
+            - value: oneActorMatches
+              description: For role based subscriptions, there is an expectation that
+                there will always be at least one actor that matches
+        scope:
+          type: string
+          description: Scope that matching subscriptions must have.
+        subscriberId:
+          type: string
+          description: ID of the subscriber (user or group) that matching subscriptions
+            must be subscribed to.
+          format: uuid
+        subscriptionId:
+          type: string
+          description: ID of the subscription to query for.
+      description: Conditions a subscription must match to qualify for the query result
+        set. Not all fields are required. A subscription must match all conditions
+        specified in order to qualify for the result set.
+    SubscriptionScope:
+      description: A resource, typically an account or project, in which events are
+        published from.
+      allOf:
+      - $ref: '#/components/schemas/EventScope'
+    SubscriptionTraceDiagnosticLog:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/NotificationDiagnosticLog'
+    SubscriptionTraceEventProcessingLog:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/SubscriptionTraceDiagnosticLog'
+    SubscriptionTraceNotificationDeliveryLog:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/SubscriptionTraceDiagnosticLog'
+    SubscriptionTracing:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Indicates whether the diagnostic tracing is enabled or not.
+        endDate:
+          type: string
+          description: Trace until the specified end date.
+          format: date-time
+        maxTracedEntries:
+          type: integer
+          description: The maximum number of result details to trace.
+          format: int32
+        startDate:
+          type: string
+          description: The date and time tracing started.
+          format: date-time
+        tracedEntries:
+          type: integer
+          description: Trace until remaining count reaches 0.
+          format: int32
+      description: Data controlling a single diagnostic setting for a subscription.
+    SubscriptionUserSettings:
+      type: object
+      properties:
+        optedOut:
+          type: boolean
+          description: Indicates whether the user will receive notifications for the
+            associated group subscription.
+      description: User-managed settings for a group subscription.
+    UnsupportedFilter:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/BaseSubscriptionFilter'
+    UnsupportedSubscriptionChannel:
+      type: object
+      properties:
+        type:
+          type: string
+      description: ""
+    UpdateSubscripitonDiagnosticsParameters:
+      type: object
+      properties:
+        deliveryResults:
+          $ref: '#/components/schemas/UpdateSubscripitonTracingParameters'
+        deliveryTracing:
+          $ref: '#/components/schemas/UpdateSubscripitonTracingParameters'
+        evaluationTracing:
+          $ref: '#/components/schemas/UpdateSubscripitonTracingParameters'
+      description: Parameters to update diagnostics settings for a subscription.
+    UpdateSubscripitonTracingParameters:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Indicates whether to enable to disable the diagnostic tracing.
+      description: Parameters to update a specific diagnostic setting.
+    UserSubscriptionChannel:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/SubscriptionChannelWithAddress'
+    UserSystemSubscriptionChannel:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/SubscriptionChannelWithAddress'
+    ValueDefinition:
+      type: object
+      properties:
+        dataSource:
+          type: array
+          description: Gets or sets the data source.
+          items:
+            $ref: '#/components/schemas/InputValue'
+        endPoint:
+          type: string
+          description: Gets or sets the rest end point.
+        resultTemplate:
+          type: string
+          description: Gets or sets the result template.
+      description: Encapsulates the properties of a field value definition. It has
+        the information needed to retrieve the list of possible values for a certain
+        field and how to handle that field values in the UI. This information includes
+        what type of object this value represents, which property to use for UI display
+        and which property to use for saving the subscription
+    VssJsonCollectionWrapper:
+      description: This class is used to serialize collections as a single JSON object
+        on the wire.
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: The number of serialized items.
+          format: int32
+      description: ""
+    VssNotificationEvent:
+      type: object
+      properties:
+        actors:
+          type: array
+          description: 'Optional: A list of actors which are additional identities
+            with corresponding roles that are relevant to the event.'
+          items:
+            $ref: '#/components/schemas/EventActor'
+        artifactUris:
+          type: array
+          description: 'Optional: A list of artifacts referenced or impacted by this
+            event.'
+          items:
+            type: string
+        data:
+          type: object
+          properties: {}
+          description: 'Required: The event payload.  If Data is a string, it must
+            be in Json or XML format.  Otherwise it must have a serialization format
+            attribute.'
+        eventType:
+          type: string
+          description: 'Required: The name of the event.  This event must be registered
+            in the context it is being fired.'
+        expiresIn:
+          type: string
+          description: How long before the event expires and will be cleaned up.  The
+            default is to use the system default.
+          format: TimeSpan
+        itemId:
+          type: string
+          description: The id of the item, artifact, extension, project, etc.
+        processDelay:
+          type: string
+          description: How long to wait before processing this event.  The default
+            is to process immediately.
+          format: TimeSpan
+        scopes:
+          type: array
+          description: 'Optional: A list of scopes which are relevant to the event.'
+          items:
+            $ref: '#/components/schemas/EventScope'
+        sourceEventCreatedTime:
+          type: string
+          description: This is the time the original source event for this VssNotificationEvent
+            was created.  For example, for something like a build completion notification
+            SourceEventCreatedTime should be the time the build finished not the time
+            this event was raised.
+          format: date-time
+      description: This is the type used for firing notifications intended for the
+        subsystem in the Notifications SDK. For components that can't take a dependency
+        on the Notifications SDK directly, they can use ITeamFoundationEventService.PublishNotification
+        and the Notifications SDK ISubscriber implementation will get it.
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.1-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.notification: Provides read access to subscriptions and event metadata,
+              including filterable field values.
+            vso.notification_write: Provides read/write access to subscriptions and
+              read access to event metadata, including filterable field values.
+            vso.notification_manage: Provides read, write, and management access to
+              subscriptions and read access to event metadata, including filterable
+              field values.
+            vso.notification_diagnostics: Provides access to notification-related
+              diagnostic logs and provides the ability to enable diagnostics for individual
+              subscriptions.
+x-ms-parameterized-host:
+  hostTemplate: '{service}dev.azure.com'
+  parameters:
+  - name: service
+    description: The service to which this request is directed.
+    required: false
+    type: string
+    in: path
+x-ms-vss-area: Notification

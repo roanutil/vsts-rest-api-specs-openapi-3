@@ -1,0 +1,3077 @@
+openapi: 3.0.1
+info:
+  title: WorkItemTracking
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 4.1-preview
+externalDocs:
+  description: Team Foundation Server REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://https://fabrikam-fiber-inc:8080/DefaultCollection/
+security:
+- accessToken: []
+tags:
+- name: Behaviors
+- name: Controls
+  description: Manage the controls in the work item form layout for a process using
+    inherited customization
+- name: Fields
+- name: Groups
+  description: Manage the groups in the work item form layout for a process using
+    inherited customization
+- name: Layout
+  description: Gets the full work item form layout for a process using inherited customization
+- name: Lists
+- name: Pages
+  description: Manage the pages in the work item form layout for a process using inherited
+    customization
+- name: States
+- name: Work Item Types
+- name: Work Item Types Fields
+paths:
+  /{collection}/_apis/work/processdefinitions/{processId}/behaviors:
+    get:
+      tags:
+      - Behaviors
+      description: Returns a list of all behaviors in the process.
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BehaviorModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: behaviors
+      x-ms-vss-method: GetBehaviors
+      x-ms-preview: true
+      x-ms-examples:
+        Get the list of custom process behaviors:
+          $ref: ./httpExamples/behaviors/GET__behaviors_list-onprem.json
+    post:
+      tags:
+      - Behaviors
+      description: Creates a single behavior in the given process.
+      operationId: Create
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BehaviorCreateModel'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BehaviorModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: behaviors
+      x-ms-vss-method: CreateBehavior
+      x-ms-preview: true
+      x-ms-examples:
+        Create the process behavior:
+          $ref: ./httpExamples/behaviors/POST__behavior-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/_apis/work/processdefinitions/{processId}/behaviors/{behaviorId}:
+    get:
+      tags:
+      - Behaviors
+      description: Returns a single behavior in the process.
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: behaviorId
+        in: path
+        description: The ID of the behavior
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BehaviorModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: behaviors
+      x-ms-vss-method: GetBehavior
+      x-ms-preview: true
+      x-ms-examples:
+        Get the custom process behavior definition:
+          $ref: ./httpExamples/behaviors/GET__behavior-onprem.json
+    put:
+      tags:
+      - Behaviors
+      description: Replaces a behavior in the process.
+      operationId: Replace Behavior
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: behaviorId
+        in: path
+        description: The ID of the behavior
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BehaviorReplaceModel'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BehaviorModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: behaviors
+      x-ms-vss-method: ReplaceBehavior
+      x-ms-preview: true
+      x-ms-examples:
+        Replace the process behavior:
+          $ref: ./httpExamples/behaviors/PUT__behavior-onprem.json
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Behaviors
+      description: Removes a behavior in the process.
+      operationId: Delete
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: behaviorId
+        in: path
+        description: The ID of the behavior
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: behaviors
+      x-ms-vss-method: DeleteBehavior
+      x-ms-preview: true
+      x-ms-examples:
+        Delete the process behavior:
+          $ref: ./httpExamples/behaviors/DELETE__behavior-onprem.json
+  /{collection}/_apis/work/processdefinitions/{processId}/fields:
+    post:
+      tags:
+      - Fields
+      description: Creates a single field in the process.
+      operationId: Create
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FieldModel'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: fields
+      x-ms-vss-method: CreateField
+      x-ms-preview: true
+      x-ms-examples:
+        Create new field:
+          $ref: ./httpExamples/fields/POST__field-onprem.json
+      x-codegen-request-body-name: body
+    patch:
+      tags:
+      - Fields
+      description: Updates a given field in the process.
+      operationId: Update
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FieldUpdate'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: fields
+      x-ms-vss-method: UpdateField
+      x-ms-preview: true
+      x-ms-examples:
+        Update the field:
+          $ref: ./httpExamples/fields/PATCH__field-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/_apis/work/processdefinitions/{processId}/workitemtypes:
+    get:
+      tags:
+      - Work Item Types
+      description: Returns a list of all work item types in the process.
+      operationId: Get Work Item Types
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - states
+          - behaviors
+          - layout
+          x-ms-enum:
+            name: GetWorkItemTypeExpand
+            values:
+            - value: none
+              description: ""
+            - value: states
+              description: ""
+            - value: behaviors
+              description: ""
+            - value: layout
+              description: ""
+        x-ms-enum:
+          name: GetWorkItemTypeExpand
+          values:
+          - value: none
+            description: ""
+          - value: states
+            description: ""
+          - value: behaviors
+            description: ""
+          - value: layout
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemTypeModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypes
+      x-ms-vss-method: GetWorkItemTypes
+      x-ms-preview: true
+      x-ms-examples:
+        Get work item types:
+          $ref: ./httpExamples/workItemTypes/GET__wits-onprem.json
+    post:
+      tags:
+      - Work Item Types
+      description: Creates a work item type in the process.
+      operationId: Create
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkItemTypeModel'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemTypeModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypes
+      x-ms-vss-method: CreateWorkItemType
+      x-ms-preview: true
+      x-ms-examples:
+        Create work item type:
+          $ref: ./httpExamples/workItemTypes/POST__wit-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/_apis/work/processdefinitions/{processId}/workitemtypes/{witRefName}:
+    get:
+      tags:
+      - Work Item Types
+      description: Returns a work item type of the process.
+      operationId: Get Work Item Type
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - states
+          - behaviors
+          - layout
+          x-ms-enum:
+            name: GetWorkItemTypeExpand
+            values:
+            - value: none
+              description: ""
+            - value: states
+              description: ""
+            - value: behaviors
+              description: ""
+            - value: layout
+              description: ""
+        x-ms-enum:
+          name: GetWorkItemTypeExpand
+          values:
+          - value: none
+            description: ""
+          - value: states
+            description: ""
+          - value: behaviors
+            description: ""
+          - value: layout
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemTypeModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypes
+      x-ms-vss-method: GetWorkItemType
+      x-ms-preview: true
+      x-ms-examples:
+        Get work item type:
+          $ref: ./httpExamples/workItemTypes/GET__wit-onprem.json
+    delete:
+      tags:
+      - Work Item Types
+      description: Removes a work itewm type in the process.
+      operationId: Delete
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypes
+      x-ms-vss-method: DeleteWorkItemType
+      x-ms-preview: true
+      x-ms-examples:
+        Delete work item type:
+          $ref: ./httpExamples/workItemTypes/DELETE__wit-onprem.json
+    patch:
+      tags:
+      - Work Item Types
+      description: Updates a work item type of the process.
+      operationId: Update Work Item Type
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkItemTypeUpdateModel'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemTypeModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypes
+      x-ms-vss-method: UpdateWorkItemType
+      x-ms-preview: true
+      x-ms-examples:
+        Update work item type:
+          $ref: ./httpExamples/workItemTypes/PATCH__wit-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/_apis/work/processdefinitions/{processId}/workItemTypes/{witRefName}/layout:
+    get:
+      tags:
+      - Layout
+      description: Gets the form layout
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormLayout'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: layout
+      x-ms-vss-method: GetFormLayout
+      x-ms-preview: true
+      x-ms-examples:
+        Get the form layout:
+          $ref: ./httpExamples/layout/GET__layout-onprem.json
+  /{collection}/_apis/work/processdefinitions/{processId}/workItemTypes/{witRefName}/layout/groups/{groupId}/controls:
+    post:
+      tags:
+      - Controls
+      description: Creates a control in a group
+      operationId: Add
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: The ID of the group to add the control to
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The control
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Control'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Control'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: controls
+      x-ms-vss-method: AddControlToGroup
+      x-ms-preview: true
+      x-ms-examples:
+        Create a control in a group:
+          $ref: ./httpExamples/Controls/POST__control-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/_apis/work/processdefinitions/{processId}/workItemTypes/{witRefName}/layout/groups/{groupId}/controls/{controlId}:
+    put:
+      tags:
+      - Controls
+      description: Moves a control to a new group
+      operationId: Set Control In Group
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: The ID of the group to move the control to
+        required: true
+        schema:
+          type: string
+      - name: controlId
+        in: path
+        description: The id of the control
+        required: true
+        schema:
+          type: string
+      - name: removeFromGroupId
+        in: query
+        description: The group to remove the control from
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The control
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Control'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Control'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: controls
+      x-ms-vss-method: SetControlInGroup
+      x-ms-preview: true
+      x-ms-examples:
+        Move a control to a new group:
+          $ref: ./httpExamples/Controls/PUT__control-onprem.json
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Controls
+      description: Removes a control from the work item form
+      operationId: Remove Control From Group
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: The ID of the group
+        required: true
+        schema:
+          type: string
+      - name: controlId
+        in: path
+        description: The ID of the control to remove
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: controls
+      x-ms-vss-method: RemoveControlFromGroup
+      x-ms-preview: true
+      x-ms-examples:
+        Remove a control from the work item form:
+          $ref: ./httpExamples/Controls/DELETE__control-onprem.json
+    patch:
+      tags:
+      - Controls
+      description: Updates a control on the work item form
+      operationId: Edit Control
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: The ID of the group
+        required: true
+        schema:
+          type: string
+      - name: controlId
+        in: path
+        description: The ID of the control
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The updated control
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Control'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Control'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: controls
+      x-ms-vss-method: EditControl
+      x-ms-preview: true
+      x-ms-examples:
+        Update a control on the work item form:
+          $ref: ./httpExamples/Controls/PATCH__control-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/_apis/work/processdefinitions/{processId}/workItemTypes/{witRefName}/layout/pages:
+    post:
+      tags:
+      - Pages
+      description: Adds a page to the work item form
+      operationId: Add
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The page
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Page'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: pages
+      x-ms-vss-method: AddPage
+      x-ms-preview: true
+      x-ms-examples:
+        Add a page:
+          $ref: ./httpExamples/Pages/POST__page-onprem.json
+      x-codegen-request-body-name: body
+    patch:
+      tags:
+      - Pages
+      description: Updates a page on the work item form
+      operationId: Edit Page
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The page
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Page'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: pages
+      x-ms-vss-method: EditPage
+      x-ms-preview: true
+      x-ms-examples:
+        Edit page:
+          $ref: ./httpExamples/Pages/PATCH__page-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/_apis/work/processdefinitions/{processId}/workItemTypes/{witRefName}/layout/pages/{pageId}:
+    delete:
+      tags:
+      - Pages
+      description: Removes a page from the work item form
+      operationId: Remove Page
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: pageId
+        in: path
+        description: The ID of the page
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: pages
+      x-ms-vss-method: RemovePage
+      x-ms-preview: true
+      x-ms-examples:
+        Delete the page:
+          $ref: ./httpExamples/Pages/DELETE__page-onprem.json
+  ? /{collection}/_apis/work/processdefinitions/{processId}/workItemTypes/{witRefName}/layout/pages/{pageId}/sections/{sectionId}/groups
+  : post:
+      tags:
+      - Groups
+      description: Adds a group to the work item form
+      operationId: Add
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: pageId
+        in: path
+        description: The ID of the page to add the group to
+        required: true
+        schema:
+          type: string
+      - name: sectionId
+        in: path
+        description: The ID of the section to add the group to
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The group
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: groups
+      x-ms-vss-method: AddGroup
+      x-ms-preview: true
+      x-ms-examples:
+        Add a group:
+          $ref: ./httpExamples/Groups/POST__group-onprem.json
+      x-codegen-request-body-name: body
+  ? /{collection}/_apis/work/processdefinitions/{processId}/workItemTypes/{witRefName}/layout/pages/{pageId}/sections/{sectionId}/groups/{groupId}
+  : put:
+      tags:
+      - Groups
+      description: Moves a group to a different section
+      operationId: Set Group In Section
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: pageId
+        in: path
+        description: The ID of the page the group is in
+        required: true
+        schema:
+          type: string
+      - name: sectionId
+        in: path
+        description: The ID of the section the group is in
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: The ID of the group
+        required: true
+        schema:
+          type: string
+      - name: removeFromSectionId
+        in: query
+        description: ID of the section to remove the group from
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The updated group
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: groups
+      x-ms-vss-method: SetGroupInSection
+      x-ms-preview: true
+      x-ms-examples:
+        Move a group to a different section:
+          $ref: ./httpExamples/Groups/PUT__group_section-onprem.json
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Groups
+      description: Removes a group from the work item form
+      operationId: Remove Group
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: pageId
+        in: path
+        description: The ID of the page the group is in
+        required: true
+        schema:
+          type: string
+      - name: sectionId
+        in: path
+        description: The ID of the section to the group is in
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: The ID of the group
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: groups
+      x-ms-vss-method: RemoveGroup
+      x-ms-preview: true
+      x-ms-examples:
+        Removes a group from the work item form:
+          $ref: ./httpExamples/Groups/DELETE__group-onprem.json
+    patch:
+      tags:
+      - Groups
+      description: Updates a group in the work item form
+      operationId: Edit Group
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: pageId
+        in: path
+        description: The ID of the page the group is in
+        required: true
+        schema:
+          type: string
+      - name: sectionId
+        in: path
+        description: The ID of the section the group is in
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: The ID of the group
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The updated group
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: groups
+      x-ms-vss-method: EditGroup
+      x-ms-preview: true
+      x-ms-examples:
+        Edit group:
+          $ref: ./httpExamples/Groups/PATCH__group-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/_apis/work/processdefinitions/{processId}/workItemTypes/{witRefName}/states:
+    get:
+      tags:
+      - States
+      description: Returns a list of all state definitions in the work item type of
+        the process.
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemStateResultModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: states
+      x-ms-vss-method: GetStateDefinitions
+      x-ms-preview: true
+      x-ms-examples:
+        Get the state definitions:
+          $ref: ./httpExamples/states/GET__states-onprem.json
+    post:
+      tags:
+      - States
+      description: Creates a state definition in the work item type of the process.
+      operationId: Create
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkItemStateInputModel'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemStateResultModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: states
+      x-ms-vss-method: CreateStateDefinition
+      x-ms-preview: true
+      x-ms-examples:
+        Create the state definition:
+          $ref: ./httpExamples/states/POST__state-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/_apis/work/processdefinitions/{processId}/workItemTypes/{witRefName}/states/{stateId}:
+    get:
+      tags:
+      - States
+      description: Returns a state definition in the work item type of the process.
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: stateId
+        in: path
+        description: The ID of the state
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemStateResultModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: states
+      x-ms-vss-method: GetStateDefinition
+      x-ms-preview: true
+      x-ms-examples:
+        Get the state definition:
+          $ref: ./httpExamples/states/GET__state-onprem.json
+    put:
+      tags:
+      - States
+      description: Hides a state definition in the work item type of the process.
+      operationId: Hide State Definition
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: stateId
+        in: path
+        description: The ID of the state
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HideStateModel'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemStateResultModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: states
+      x-ms-vss-method: HideStateDefinition
+      x-ms-preview: true
+      x-ms-examples:
+        Hide the state definition:
+          $ref: ./httpExamples/states/PUT__state-onprem.json
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - States
+      description: Removes a state definition in the work item type of the process.
+      operationId: Delete
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: stateId
+        in: path
+        description: ID of the state
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: states
+      x-ms-vss-method: DeleteStateDefinition
+      x-ms-preview: true
+      x-ms-examples:
+        Delete the state definition:
+          $ref: ./httpExamples/states/DELETE__state-onprem.json
+    patch:
+      tags:
+      - States
+      description: Updates a given state definition in the work item type of the process.
+      operationId: Update
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: stateId
+        in: path
+        description: ID of the state
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkItemStateInputModel'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemStateResultModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: states
+      x-ms-vss-method: UpdateStateDefinition
+      x-ms-preview: true
+      x-ms-examples:
+        Update the state definition:
+          $ref: ./httpExamples/states/PATCH__state-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/_apis/work/processdefinitions/{processId}/workitemtypes/{witRefNameForBehaviors}/behaviors:
+    get:
+      tags:
+      - Work Item Types
+      description: Returns a list of all behaviors for the work item type of the process.
+      operationId: Get Behaviors For Work Item Type
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefNameForBehaviors
+        in: path
+        description: Work item type reference name for the behavior
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemTypeBehavior'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypes
+      x-ms-vss-method: GetBehaviorsForWorkItemType
+      x-ms-preview: true
+      x-ms-examples:
+        Get behaviors for work item type:
+          $ref: ./httpExamples/workItemTypes/GET__wit_behaviors-onprem.json
+    post:
+      tags:
+      - Work Item Types
+      description: Adds a behavior to the work item type of the process.
+      operationId: Add
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefNameForBehaviors
+        in: path
+        description: Work item type reference name for the behavior
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkItemTypeBehavior'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemTypeBehavior'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypes
+      x-ms-vss-method: AddBehaviorToWorkItemType
+      x-ms-preview: true
+      x-ms-examples:
+        Add behavior to work item type:
+          $ref: ./httpExamples/workItemTypes/PATCH__wit_behavior-onprem.json
+      x-codegen-request-body-name: body
+    patch:
+      tags:
+      - Work Item Types
+      description: Updates a behavior for the work item type of the process.
+      operationId: Update Behavior To Work Item Type
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefNameForBehaviors
+        in: path
+        description: Work item type reference name for the behavior
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkItemTypeBehavior'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemTypeBehavior'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypes
+      x-ms-vss-method: UpdateBehaviorToWorkItemType
+      x-ms-preview: true
+      x-ms-examples:
+        Update work item type behavior:
+          $ref: ./httpExamples/workItemTypes/PATCH__wit_behavior-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/_apis/work/processdefinitions/{processId}/workitemtypes/{witRefNameForBehaviors}/behaviors/{behaviorRefName}:
+    get:
+      tags:
+      - Work Item Types
+      description: Returns a behavior for the work item type of the process.
+      operationId: Get Behavior For Work Item Type
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefNameForBehaviors
+        in: path
+        description: Work item type reference name for the behavior
+        required: true
+        schema:
+          type: string
+      - name: behaviorRefName
+        in: path
+        description: The reference name of the behavior
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemTypeBehavior'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypes
+      x-ms-vss-method: GetBehaviorForWorkItemType
+      x-ms-preview: true
+      x-ms-examples:
+        Get behavior for work item type:
+          $ref: ./httpExamples/workItemTypes/GET__wit_behavior-onprem.json
+    delete:
+      tags:
+      - Work Item Types
+      description: Removes a behavior for the work item type of the process.
+      operationId: Remove Behavior From Work Item Type
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefNameForBehaviors
+        in: path
+        description: Work item type reference name for the behavior
+        required: true
+        schema:
+          type: string
+      - name: behaviorRefName
+        in: path
+        description: The reference name of the behavior
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypes
+      x-ms-vss-method: RemoveBehaviorFromWorkItemType
+      x-ms-preview: true
+      x-ms-examples:
+        Remove behaviors for work item type:
+          $ref: ./httpExamples/workItemTypes/DELETE__wit_behavior-onprem.json
+  /{collection}/_apis/work/processdefinitions/{processId}/workItemTypes/{witRefNameForFields}/fields:
+    get:
+      tags:
+      - Work Item Types Fields
+      description: Returns a list of all fields in the work item type of the process.
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefNameForFields
+        in: path
+        description: Work item type reference name for fields
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemTypeFieldModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypesFields
+      x-ms-vss-method: GetWorkItemTypeFields
+      x-ms-preview: true
+      x-ms-examples:
+        Get fields from work item type:
+          $ref: ./httpExamples/workItemTypesFields/GET__fields-onprem.json
+    post:
+      tags:
+      - Work Item Types Fields
+      description: Adds a field to the work item type in the process.
+      operationId: Add
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefNameForFields
+        in: path
+        description: Work item type reference name for the field
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkItemTypeFieldModel'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemTypeFieldModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypesFields
+      x-ms-vss-method: AddFieldToWorkItemType
+      x-ms-preview: true
+      x-ms-examples:
+        Add field to work item type:
+          $ref: ./httpExamples/workItemTypesFields/POST__field-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/_apis/work/processdefinitions/{processId}/workItemTypes/{witRefNameForFields}/fields/{fieldRefName}:
+    get:
+      tags:
+      - Work Item Types Fields
+      description: Retuens a single field in the work item type of the process.
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefNameForFields
+        in: path
+        description: Work item type reference name for fields
+        required: true
+        schema:
+          type: string
+      - name: fieldRefName
+        in: path
+        description: The reference name of the field
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemTypeFieldModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypesFields
+      x-ms-vss-method: GetWorkItemTypeField
+      x-ms-preview: true
+      x-ms-examples:
+        Get field from work item type:
+          $ref: ./httpExamples/workItemTypesFields/GET__field-onprem.json
+    delete:
+      tags:
+      - Work Item Types Fields
+      description: Removes a field in the work item type of the process.
+      operationId: Remove Field From Work Item Type
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefNameForFields
+        in: path
+        description: Work item type reference name for fields
+        required: true
+        schema:
+          type: string
+      - name: fieldRefName
+        in: path
+        description: The reference name of the field
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypesFields
+      x-ms-vss-method: RemoveFieldFromWorkItemType
+      x-ms-preview: true
+      x-ms-examples:
+        Delete field from work item type:
+          $ref: ./httpExamples/workItemTypesFields/DELETE__field-onprem.json
+  /{collection}/_apis/work/processdefinitions/lists:
+    get:
+      tags:
+      - Lists
+      description: Returns meta data of the picklist.
+      operationId: List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PickListMetadataModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: lists
+      x-ms-vss-method: GetListsMetadata
+      x-ms-preview: true
+      x-ms-examples:
+        Get lists metadata:
+          $ref: ./httpExamples/lists/GET__lists-onprem.json
+    post:
+      tags:
+      - Lists
+      description: Creates a picklist.
+      operationId: Create
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PickListModel'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PickListModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: lists
+      x-ms-vss-method: CreateList
+      x-ms-preview: true
+      x-ms-examples:
+        Create the picklist:
+          $ref: ./httpExamples/lists/POST__list-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/_apis/work/processdefinitions/lists/{listId}:
+    get:
+      tags:
+      - Lists
+      description: Returns a picklist.
+      operationId: Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: listId
+        in: path
+        description: The ID of the list
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PickListModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: lists
+      x-ms-vss-method: GetList
+      x-ms-preview: true
+      x-ms-examples:
+        Get list metadata:
+          $ref: ./httpExamples/lists/GET__list-onprem.json
+    put:
+      tags:
+      - Lists
+      description: Updates a list.
+      operationId: Update
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: listId
+        in: path
+        description: The ID of the list
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PickListModel'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PickListModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: lists
+      x-ms-vss-method: UpdateList
+      x-ms-preview: true
+      x-ms-examples:
+        Update the picklist:
+          $ref: ./httpExamples/lists/PUT__list-onprem.json
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Lists
+      description: Removes a picklist.
+      operationId: Delete
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Team Foundation Server collection.
+        required: true
+        schema:
+          type: string
+      - name: listId
+        in: path
+        description: The ID of the list
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: lists
+      x-ms-vss-method: DeleteList
+      x-ms-preview: true
+      x-ms-examples:
+        Delete the picklist:
+          $ref: ./httpExamples/lists/DELETE__list-onprem.json
+components:
+  schemas:
+    BehaviorCreateModel:
+      type: object
+      properties:
+        color:
+          type: string
+          description: Color
+        inherits:
+          type: string
+          description: Parent behavior id
+        name:
+          type: string
+          description: Name of the behavior
+      description: ""
+    BehaviorModel:
+      type: object
+      properties:
+        abstract:
+          type: boolean
+          description: Is the behavior abstract (i.e. can not be associated with any
+            work item type)
+        color:
+          type: string
+          description: Color
+        description:
+          type: string
+          description: Description
+        id:
+          type: string
+          description: Behavior Id
+        inherits:
+          $ref: '#/components/schemas/WorkItemBehaviorReference'
+        name:
+          type: string
+          description: Behavior Name
+        overridden:
+          type: boolean
+          description: Is the behavior overrides a behavior from system process
+        rank:
+          type: integer
+          description: Rank
+          format: int32
+        url:
+          type: string
+          description: Url of the behavior
+      description: ""
+    BehaviorReplaceModel:
+      type: object
+      properties:
+        color:
+          type: string
+          description: Color
+        name:
+          type: string
+          description: Behavior Name
+      description: ""
+    Control:
+      type: object
+      properties:
+        contribution:
+          $ref: '#/components/schemas/WitContribution'
+        controlType:
+          type: string
+          description: Type of the control.
+        height:
+          type: integer
+          description: Height of the control, for html controls.
+          format: int32
+        id:
+          type: string
+          description: The id for the layout node.
+        inherited:
+          type: boolean
+          description: A value indicating whether this layout node has been inherited
+            from a parent layout.  This is expected to only be only set by the combiner.
+        isContribution:
+          type: boolean
+          description: A value indicating if the layout node is contribution or not.
+        label:
+          type: string
+          description: Label for the field
+        metadata:
+          type: string
+          description: Inner text of the control.
+        order:
+          type: integer
+          format: int32
+        overridden:
+          type: boolean
+          description: A value indicating whether this layout node has been overridden
+            by a child layout.
+        readOnly:
+          type: boolean
+          description: A value indicating if the control is readonly.
+        visible:
+          type: boolean
+          description: A value indicating if the control should be hidden or not.
+        watermark:
+          type: string
+          description: Watermark text for the textbox.
+      description: Represent a control in the form.
+    Extension:
+      type: object
+      properties:
+        id:
+          type: string
+      description: Represents the extensions part of the layout
+    FieldModel:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description about field
+        id:
+          type: string
+          description: ID of the field
+        name:
+          type: string
+          description: Name of the field
+        pickList:
+          $ref: '#/components/schemas/PickListMetadataModel'
+        type:
+          type: string
+          description: Type of field
+          enum:
+          - string
+          - integer
+          - dateTime
+          - plainText
+          - html
+          - treePath
+          - history
+          - double
+          - guid
+          - boolean
+          - identity
+          - picklistInteger
+          - picklistString
+          - picklistDouble
+          x-ms-enum:
+            name: FieldType
+            values:
+            - value: string
+              description: ""
+            - value: integer
+              description: ""
+            - value: dateTime
+              description: ""
+            - value: plainText
+              description: ""
+            - value: html
+              description: ""
+            - value: treePath
+              description: ""
+            - value: history
+              description: ""
+            - value: double
+              description: ""
+            - value: guid
+              description: ""
+            - value: boolean
+              description: ""
+            - value: identity
+              description: ""
+            - value: picklistInteger
+              description: ""
+            - value: picklistString
+              description: ""
+            - value: picklistDouble
+              description: ""
+        url:
+          type: string
+          description: Url to the field
+      description: ""
+    FieldUpdate:
+      type: object
+      properties:
+        description:
+          type: string
+        id:
+          type: string
+      description: ""
+    FormLayout:
+      type: object
+      properties:
+        extensions:
+          type: array
+          description: Gets and sets extensions list
+          items:
+            $ref: '#/components/schemas/Extension'
+        pages:
+          type: array
+          description: Top level tabs of the layout.
+          items:
+            $ref: '#/components/schemas/Page'
+        systemControls:
+          type: array
+          description: Headers controls of the layout.
+          items:
+            $ref: '#/components/schemas/Control'
+      description: ""
+    Group:
+      type: object
+      properties:
+        contribution:
+          $ref: '#/components/schemas/WitContribution'
+        controls:
+          type: array
+          description: Controls to be put in the group.
+          items:
+            $ref: '#/components/schemas/Control'
+        height:
+          type: integer
+          description: The height for the contribution.
+          format: int32
+        id:
+          type: string
+          description: The id for the layout node.
+        inherited:
+          type: boolean
+          description: A value indicating whether this layout node has been inherited
+            from a parent layout.  This is expected to only be only set by the combiner.
+        isContribution:
+          type: boolean
+          description: A value indicating if the layout node is contribution are not.
+        label:
+          type: string
+          description: Label for the group.
+        order:
+          type: integer
+          description: Order in which the group should appear in the section.
+          format: int32
+        overridden:
+          type: boolean
+          description: A value indicating whether this layout node has been overridden
+            by a child layout.
+        visible:
+          type: boolean
+          description: A value indicating if the group should be hidden or not.
+      description: Represent a group in the form that holds controls in it.
+    HideStateModel:
+      type: object
+      properties:
+        hidden:
+          type: boolean
+      description: ""
+    Page:
+      type: object
+      properties:
+        contribution:
+          $ref: '#/components/schemas/WitContribution'
+        id:
+          type: string
+          description: The id for the layout node.
+        inherited:
+          type: boolean
+          description: A value indicating whether this layout node has been inherited
+            from a parent layout.  This is expected to only be only set by the combiner.
+        isContribution:
+          type: boolean
+          description: A value indicating if the layout node is contribution are not.
+        label:
+          type: string
+          description: The label for the page.
+        locked:
+          type: boolean
+          description: A value indicating whether any user operations are permitted
+            on this page and the contents of this page
+        order:
+          type: integer
+          description: Order in which the page should appear in the layout.
+          format: int32
+        overridden:
+          type: boolean
+          description: A value indicating whether this layout node has been overridden
+            by a child layout.
+        pageType:
+          type: string
+          description: The icon for the page.
+          enum:
+          - custom
+          - history
+          - links
+          - attachments
+          x-ms-enum:
+            name: PageType
+            values:
+            - value: custom
+              description: ""
+            - value: history
+              description: ""
+            - value: links
+              description: ""
+            - value: attachments
+              description: ""
+        sections:
+          type: array
+          description: The sections of the page.
+          items:
+            $ref: '#/components/schemas/Section'
+        visible:
+          type: boolean
+          description: A value indicating if the page should be hidden or not.
+      description: ""
+    PickListItemModel:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        value:
+          type: string
+      description: ""
+    PickListMetadataModel:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the picklist
+          format: uuid
+        isSuggested:
+          type: boolean
+          description: Is input values by user only limited to suggested values
+        name:
+          type: string
+          description: Name of the picklist
+        type:
+          type: string
+          description: Type of picklist
+        url:
+          type: string
+          description: Url of the picklist
+      description: ""
+    PickListModel:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/PickListMetadataModel'
+    Section:
+      type: object
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+        id:
+          type: string
+          description: The id for the layout node.
+        overridden:
+          type: boolean
+          description: A value indicating whether this layout node has been overridden
+            by a child layout.
+      description: A layout node holding groups together in a page
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+    WitContribution:
+      type: object
+      properties:
+        contributionId:
+          type: string
+          description: The id for the contribution.
+        height:
+          type: integer
+          description: The height for the contribution.
+          format: int32
+        inputs:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: A dictionary holding key value pairs for contribution inputs.
+        showOnDeletedWorkItem:
+          type: boolean
+          description: A value indicating if the contribution should be show on deleted
+            workItem.
+      description: ""
+    WorkItemBehaviorReference:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of the reference behavior
+        url:
+          type: string
+          description: The url of the reference behavior
+      description: ""
+    WorkItemStateInputModel:
+      type: object
+      properties:
+        color:
+          type: string
+          description: Color of the state
+        name:
+          type: string
+          description: Name of the state
+        order:
+          type: integer
+          description: Order in which state should appear
+          format: int32
+        stateCategory:
+          type: string
+          description: Category of the state
+      description: ""
+    WorkItemStateResultModel:
+      type: object
+      properties:
+        color:
+          type: string
+          description: Color of the state
+        hidden:
+          type: boolean
+          description: Is the state hidden
+        id:
+          type: string
+          description: The ID of the State
+          format: uuid
+        name:
+          type: string
+          description: Name of the state
+        order:
+          type: integer
+          description: Order in which state should appear
+          format: int32
+        stateCategory:
+          type: string
+          description: Category of the state
+        url:
+          type: string
+          description: Url of the state
+      description: ""
+    WorkItemTypeBehavior:
+      type: object
+      properties:
+        behavior:
+          $ref: '#/components/schemas/WorkItemBehaviorReference'
+        isDefault:
+          type: boolean
+        url:
+          type: string
+      description: ""
+    WorkItemTypeFieldModel:
+      type: object
+      properties:
+        allowGroups:
+          type: boolean
+        defaultValue:
+          type: string
+        name:
+          type: string
+        pickList:
+          $ref: '#/components/schemas/PickListMetadataModel'
+        readOnly:
+          type: boolean
+        referenceName:
+          type: string
+        required:
+          type: boolean
+        type:
+          type: string
+          enum:
+          - string
+          - integer
+          - dateTime
+          - plainText
+          - html
+          - treePath
+          - history
+          - double
+          - guid
+          - boolean
+          - identity
+          - picklistInteger
+          - picklistString
+          - picklistDouble
+          x-ms-enum:
+            name: FieldType
+            values:
+            - value: string
+              description: ""
+            - value: integer
+              description: ""
+            - value: dateTime
+              description: ""
+            - value: plainText
+              description: ""
+            - value: html
+              description: ""
+            - value: treePath
+              description: ""
+            - value: history
+              description: ""
+            - value: double
+              description: ""
+            - value: guid
+              description: ""
+            - value: boolean
+              description: ""
+            - value: identity
+              description: ""
+            - value: picklistInteger
+              description: ""
+            - value: picklistString
+              description: ""
+            - value: picklistDouble
+              description: ""
+        url:
+          type: string
+      description: ""
+    WorkItemTypeModel:
+      type: object
+      properties:
+        behaviors:
+          type: array
+          description: Behaviors of the work item type
+          items:
+            $ref: '#/components/schemas/WorkItemTypeBehavior'
+        class:
+          type: string
+          description: Class of the work item type
+          enum:
+          - system
+          - derived
+          - custom
+          x-ms-enum:
+            name: WorkItemTypeClass
+            values:
+            - value: system
+              description: ""
+            - value: derived
+              description: ""
+            - value: custom
+              description: ""
+        color:
+          type: string
+          description: Color of the work item type
+        description:
+          type: string
+          description: Description of the work item type
+        icon:
+          type: string
+          description: Icon of the work item type
+        id:
+          type: string
+          description: The ID of the work item type
+        inherits:
+          type: string
+          description: Parent WIT Id/Internal ReferenceName that it inherits from
+        isDisabled:
+          type: boolean
+          description: Is work item type disabled
+        layout:
+          $ref: '#/components/schemas/FormLayout'
+        name:
+          type: string
+          description: Name of the work item type
+        states:
+          type: array
+          description: States of the work item type
+          items:
+            $ref: '#/components/schemas/WorkItemStateResultModel'
+        url:
+          type: string
+          description: Url of the work item type
+      description: ""
+    WorkItemTypeUpdateModel:
+      type: object
+      properties:
+        color:
+          type: string
+          description: Color of the work item type
+        description:
+          type: string
+          description: Description of the work item type
+        icon:
+          type: string
+          description: Icon of the work item type
+        isDisabled:
+          type: boolean
+          description: Is the workitem type to be disabled
+      description: ""
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '4.1-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+x-ms-parameterized-host:
+  hostTemplate: '{instance}'
+  parameters:
+  - name: instance
+    description: TFS server name ({server:port})
+    required: true
+    type: string
+    in: path
+x-ms-vss-area: WorkItemTracking
+x-ms-vss-resource-area-id: 5264459e-e5e0-4bd8-b118-0985e68a4ec5
+x-ms-paths:
+  ? /{collection}/_apis/work/processdefinitions/{processId}/workItemTypes/{witRefName}/layout/pages/{pageId}/sections/{sectionId}/groups/{groupId}?removeFromPageId={removeFromPageId}&removeFromSectionId={removeFromSectionId}
+  : put:
+      tags:
+      - Groups
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: groups
+      x-ms-vss-method: SetGroupInPage
+      x-ms-preview: true
+      description: Moves a group to a different page and section
+      operationId: Set Group In Page
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: collection
+        description: The name of the Team Foundation Server collection.
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The updated group
+        required: true
+        schema:
+          $ref: '#/definitions/Group'
+      - in: path
+        name: processId
+        description: The ID of the process
+        required: true
+        type: string
+        format: uuid
+      - in: path
+        name: witRefName
+        description: The reference name of the work item type
+        required: true
+        type: string
+      - in: path
+        name: pageId
+        description: The ID of the page the group is in
+        required: true
+        type: string
+      - in: path
+        name: sectionId
+        description: The ID of the section the group is in
+        required: true
+        type: string
+      - in: path
+        name: groupId
+        description: The ID of the group
+        required: true
+        type: string
+      - in: query
+        name: removeFromPageId
+        description: ID of the page to remove the group from
+        required: true
+        type: string
+      - in: query
+        name: removeFromSectionId
+        description: ID of the section to remove the group from
+        required: true
+        type: string
+      - $ref: '#/parameters/api-Version-preview.1'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Group'
+      x-ms-examples:
+        Moves a group to a different page and section:
+          $ref: ./httpExamples/Groups/PUT__group_page-onprem.json

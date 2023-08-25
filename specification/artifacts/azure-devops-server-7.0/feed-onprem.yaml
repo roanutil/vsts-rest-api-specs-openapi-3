@@ -1,0 +1,3228 @@
+openapi: 3.0.1
+info:
+  title: Feed
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: "7.0"
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://https://fabrikam-fiber-inc:8080/DefaultCollection/
+security:
+- accessToken: []
+tags:
+- name: Artifact  Details
+- name: Change  Tracking
+- name: Feed  Management
+- name: Feed Recycle Bin
+- name: Recycle  Bin
+- name: Retention  Policies
+- name: Service  Settings
+paths:
+  /{collection}/_apis/packaging/globalpermissions:
+    get:
+      tags:
+      - Service  Settings
+      description: Get all service-wide feed creation and administration permissions.
+      operationId: Service  Settings_GetGlobalPermissions
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: includeIds
+        in: query
+        description: Set to true to add IdentityIds to the permission objects.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GlobalPermission'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: globalPermissions
+      x-ms-vss-method: GetGlobalPermissions
+    patch:
+      tags:
+      - Service  Settings
+      description: Set service-wide permissions that govern feed creation and administration.
+      operationId: Service  Settings_SetGlobalPermissions
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: New permissions for the collection.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/GlobalPermission'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GlobalPermission'
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: globalPermissions
+      x-ms-vss-method: SetGlobalPermissions
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/packaging/feedchanges:
+    get:
+      tags:
+      - Change  Tracking
+      description: |-
+        Query to determine which feeds have changed since the last call, tracked through the provided continuationToken. Only changes to a feed itself are returned and impact the continuationToken, not additions or alterations to packages within the feeds.
+
+        If the project parameter is present, gets all feed changes in the given project.
+        If omitted, gets all feed changes in the collection.
+      operationId: Change  Tracking_Get Feed Changes
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: includeDeleted
+        in: query
+        description: If true, get changes for all feeds including deleted feeds. The
+          default value is false.
+        schema:
+          type: boolean
+      - name: continuationToken
+        in: query
+        description: A continuation token which acts as a bookmark to a previously
+          retrieved change. This token allows the user to continue retrieving changes
+          in batches, picking up where the previous batch left off. If specified,
+          all the changes that occur strictly after the token will be returned. If
+          not specified or 0, iteration will start with the first change.
+        schema:
+          type: integer
+          format: int64
+      - name: batchSize
+        in: query
+        description: Number of package changes to fetch. The default value is 1000.
+          The maximum value is 2000.
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedChangesResponse'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: feedChanges
+      x-ms-vss-method: GetFeedChanges
+  /{collection}/{project}/_apis/packaging/feedchanges/{feedId}:
+    get:
+      tags:
+      - Change  Tracking
+      description: |-
+        Query a feed to determine its current state.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Change  Tracking_Get Feed Change
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedChange'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: feedChanges
+      x-ms-vss-method: GetFeedChange
+  /{collection}/{project}/_apis/packaging/feedrecyclebin:
+    get:
+      tags:
+      - Feed Recycle Bin
+      description: |-
+        Query for feeds within the recycle bin.
+
+        If the project parameter is present, gets all feeds in recycle bin in the given project.
+        If omitted, gets all feeds in recycle bin in the collection.
+      operationId: Feed Recycle Bin_List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Feed'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: feedRecycleBin
+      x-ms-vss-method: GetFeedsFromRecycleBin
+  /{collection}/{project}/_apis/packaging/feedrecyclebin/{feedId}:
+    delete:
+      tags:
+      - Feed Recycle Bin
+      operationId: Feed Recycle Bin_Permanent Delete Feed
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: feedRecycleBin
+      x-ms-vss-method: PermanentDeleteFeed
+    patch:
+      tags:
+      - Feed Recycle Bin
+      operationId: Feed Recycle Bin_Restore Deleted Feed
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/JsonPatchDocument'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: feedRecycleBin
+      x-ms-vss-method: RestoreDeletedFeed
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/packaging/feeds:
+    get:
+      tags:
+      - Feed  Management
+      description: |-
+        Get all feeds in an account where you have the provided role access.
+
+        If the project parameter is present, gets all feeds in the given project.
+        If omitted, gets all feeds in the collection.
+      operationId: Feed  Management_Get Feeds
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: feedRole
+        in: query
+        description: Filter by this role, either Administrator(4), Contributor(3),
+          or Reader(2) level permissions.
+        schema:
+          type: string
+          enum:
+          - custom
+          - none
+          - reader
+          - contributor
+          - administrator
+          - collaborator
+          x-ms-enum:
+            name: FeedRole
+            values:
+            - value: custom
+              description: Unsupported.
+            - value: none
+              description: Unsupported.
+            - value: reader
+              description: Readers can only read packages and view settings.
+            - value: contributor
+              description: Contributors can do anything to packages in the feed including
+                adding new packages, but they may not modify feed settings.
+            - value: administrator
+              description: Administrators have total control over the feed.
+            - value: collaborator
+              description: Collaborators have the same permissions as readers, but
+                can also ingest packages from configured upstream sources.
+        x-ms-enum:
+          name: FeedRole
+          values:
+          - value: custom
+            description: Unsupported.
+          - value: none
+            description: Unsupported.
+          - value: reader
+            description: Readers can only read packages and view settings.
+          - value: contributor
+            description: Contributors can do anything to packages in the feed including
+              adding new packages, but they may not modify feed settings.
+          - value: administrator
+            description: Administrators have total control over the feed.
+          - value: collaborator
+            description: Collaborators have the same permissions as readers, but can
+              also ingest packages from configured upstream sources.
+      - name: includeDeletedUpstreams
+        in: query
+        description: Include upstreams that have been deleted in the response.
+        schema:
+          type: boolean
+      - name: includeUrls
+        in: query
+        description: Resolve names if true
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Feed'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: feeds
+      x-ms-vss-method: GetFeeds
+    post:
+      tags:
+      - Feed  Management
+      description: |-
+        Create a feed, a container for various package types.
+
+        Feeds can be created in a project if the project parameter is included in the request url.
+        If the project parameter is omitted, the feed will not be associated with a project and will be created at the collection level.
+      operationId: Feed  Management_Create Feed
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: A JSON object containing both required and optional attributes
+          for the feed. Name is the only required value.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Feed'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feed'
+      security:
+      - oauth2:
+        - vso.packaging_write
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: feeds
+      x-ms-vss-method: CreateFeed
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/packaging/feeds/{feedId}:
+    get:
+      tags:
+      - Feed  Management
+      description: |-
+        Get the settings for a specific feed.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Feed  Management_Get Feed
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: includeDeletedUpstreams
+        in: query
+        description: Include upstreams that have been deleted in the response.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feed'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: feeds
+      x-ms-vss-method: GetFeed
+    delete:
+      tags:
+      - Feed  Management
+      description: |-
+        Remove a feed and all its packages. The feed moves to the recycle bin and is reversible.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Feed  Management_Delete Feed
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: feeds
+      x-ms-vss-method: DeleteFeed
+    patch:
+      tags:
+      - Feed  Management
+      description: |-
+        Change the attributes of a feed.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Feed  Management_Update Feed
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: A JSON object containing the feed settings to be updated.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedUpdate'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feed'
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: feeds
+      x-ms-vss-method: UpdateFeed
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/packaging/Feeds/{feedId}/packagechanges:
+    get:
+      tags:
+      - Change  Tracking
+      description: |-
+        Get a batch of package changes made to a feed.  The changes returned are 'most recent change' so if an Add is followed by an Update before you begin enumerating, you'll only see one change in the batch.  While consuming batches using the continuation token, you may see changes to the same package version multiple times if they are happening as you enumerate.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Change  Tracking_Get Package Changes
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: continuationToken
+        in: query
+        description: A continuation token which acts as a bookmark to a previously
+          retrieved change. This token allows the user to continue retrieving changes
+          in batches, picking up where the previous batch left off. If specified,
+          all the changes that occur strictly after the token will be returned. If
+          not specified or 0, iteration will start with the first change.
+        schema:
+          type: integer
+          format: int64
+      - name: batchSize
+        in: query
+        description: Number of package changes to fetch. The default value is 1000.
+          The maximum value is 2000.
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageChangesResponse'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: packageChanges
+      x-ms-vss-method: GetPackageChanges
+  /{collection}/{project}/_apis/packaging/Feeds/{feedId}/packagemetricsbatch:
+    post:
+      tags:
+      - Artifact  Details
+      operationId: Artifact  Details_Query Package Metrics
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PackageMetricsQuery'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PackageMetrics'
+      security:
+      - oauth2:
+        - vso.packaging_write
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: packageMetricsBatch
+      x-ms-vss-method: QueryPackageMetrics
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/packaging/Feeds/{feedId}/packages:
+    get:
+      tags:
+      - Artifact  Details
+      description: |-
+        Get details about all of the packages in the feed. Use the various filters to include or exclude information from the result set.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Artifact  Details_Get Packages
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: protocolType
+        in: query
+        description: One of the supported artifact package types.
+        schema:
+          type: string
+      - name: packageNameQuery
+        in: query
+        description: Filter to packages that contain the provided string. Characters
+          in the string must conform to the package name constraints.
+        schema:
+          type: string
+      - name: normalizedPackageName
+        in: query
+        description: '[Obsolete] Used for legacy scenarios and may be removed in future
+          versions.'
+        schema:
+          type: string
+      - name: includeUrls
+        in: query
+        description: True to return REST Urls with the response. Default is True.
+        schema:
+          type: boolean
+      - name: includeAllVersions
+        in: query
+        description: True to return all versions of the package in the response. Default
+          is false (latest version only).
+        schema:
+          type: boolean
+      - name: isListed
+        in: query
+        description: Only applicable for NuGet packages, setting it for other package
+          types will result in a 404. If false, delisted package versions will be
+          returned. Use this to filter the response when includeAllVersions is set
+          to true. Default is unset (do not return delisted packages).
+        schema:
+          type: boolean
+      - name: getTopPackageVersions
+        in: query
+        description: Changes the behavior of $top and $skip to return all versions
+          of each package up to $top. Must be used in conjunction with includeAllVersions=true
+        schema:
+          type: boolean
+      - name: isRelease
+        in: query
+        description: Only applicable for Nuget packages. Use this to filter the response
+          when includeAllVersions is set to true. Default is True (only return packages
+          without prerelease versioning).
+        schema:
+          type: boolean
+      - name: includeDescription
+        in: query
+        description: Return the description for every version of each package in the
+          response. Default is False.
+        schema:
+          type: boolean
+      - name: $top
+        in: query
+        description: Get the top N packages (or package versions where getTopPackageVersions=true)
+        schema:
+          type: integer
+          format: int32
+      - name: $skip
+        in: query
+        description: Skip the first N packages (or package versions where getTopPackageVersions=true)
+        schema:
+          type: integer
+          format: int32
+      - name: includeDeleted
+        in: query
+        description: Return deleted or unpublished versions of packages in the response.
+          Default is False.
+        schema:
+          type: boolean
+      - name: isCached
+        in: query
+        description: '[Obsolete] Used for legacy scenarios and may be removed in future
+          versions.'
+        schema:
+          type: boolean
+      - name: directUpstreamId
+        in: query
+        description: Filter results to return packages from a specific upstream.
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Package'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: packages
+      x-ms-vss-method: GetPackages
+  /{collection}/{project}/_apis/packaging/Feeds/{feedId}/packages/{packageId}:
+    get:
+      tags:
+      - Artifact  Details
+      description: |-
+        Get details about a specific package.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Artifact  Details_Get Package
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: packageId
+        in: path
+        description: The package Id (GUID Id, not the package name).
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: includeAllVersions
+        in: query
+        description: True to return all versions of the package in the response. Default
+          is false (latest version only).
+        schema:
+          type: boolean
+      - name: includeUrls
+        in: query
+        description: True to return REST Urls with the response. Default is True.
+        schema:
+          type: boolean
+      - name: isListed
+        in: query
+        description: Only applicable for NuGet packages, setting it for other package
+          types will result in a 404. If false, delisted package versions will be
+          returned. Use this to filter the response when includeAllVersions is set
+          to true. Default is unset (do not return delisted packages).
+        schema:
+          type: boolean
+      - name: isRelease
+        in: query
+        description: Only applicable for Nuget packages. Use this to filter the response
+          when includeAllVersions is set to true.  Default is True (only return packages
+          without prerelease versioning).
+        schema:
+          type: boolean
+      - name: includeDeleted
+        in: query
+        description: Return deleted or unpublished versions of packages in the response.
+          Default is False.
+        schema:
+          type: boolean
+      - name: includeDescription
+        in: query
+        description: Return the description for every version of each package in the
+          response. Default is False.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Package'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: packages
+      x-ms-vss-method: GetPackage
+  /{collection}/{project}/_apis/packaging/Feeds/{feedId}/Packages/{packageId}/versionmetricsbatch:
+    post:
+      tags:
+      - Artifact  Details
+      operationId: Artifact  Details_Query Package Version Metrics
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: packageId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PackageVersionMetricsQuery'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PackageVersionMetrics'
+      security:
+      - oauth2:
+        - vso.packaging_write
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: versionMetricsBatch
+      x-ms-vss-method: QueryPackageVersionMetrics
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/packaging/Feeds/{feedId}/Packages/{packageId}/versions:
+    get:
+      tags:
+      - Artifact  Details
+      description: |-
+        Get a list of package versions, optionally filtering by state.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Artifact  Details_Get Package Versions
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: packageId
+        in: path
+        description: Id of the package (GUID Id, not name).
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: includeUrls
+        in: query
+        description: True to include urls for each version. Default is true.
+        schema:
+          type: boolean
+      - name: isListed
+        in: query
+        description: Only applicable for NuGet packages. If false, delisted package
+          versions will be returned.
+        schema:
+          type: boolean
+      - name: isDeleted
+        in: query
+        description: If set specifies whether to return only deleted or non-deleted
+          versions of packages in the response. Default is unset (return all versions).
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PackageVersion'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: versions
+      x-ms-vss-method: GetPackageVersions
+  /{collection}/{project}/_apis/packaging/Feeds/{feedId}/Packages/{packageId}/versions/{packageVersionId}:
+    get:
+      tags:
+      - Artifact  Details
+      description: |-
+        Get details about a specific package version.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Artifact  Details_Get Package Version
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: packageId
+        in: path
+        description: Id of the package (GUID Id, not name).
+        required: true
+        schema:
+          type: string
+      - name: packageVersionId
+        in: path
+        description: Id of the package version (GUID Id, not name).
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: includeUrls
+        in: query
+        description: True to include urls for each version. Default is true.
+        schema:
+          type: boolean
+      - name: isListed
+        in: query
+        description: Only applicable for NuGet packages. If false, delisted package
+          versions will be returned.
+        schema:
+          type: boolean
+      - name: isDeleted
+        in: query
+        description: This does not have any effect on the requested package version,
+          for other versions returned specifies whether to return only deleted or
+          non-deleted versions of packages in the response. Default is unset (return
+          all versions).
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageVersion'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: versions
+      x-ms-vss-method: GetPackageVersion
+  /{collection}/{project}/_apis/packaging/Feeds/{feedId}/Packages/{packageId}/Versions/{packageVersionId}/provenance:
+    get:
+      tags:
+      - Artifact  Details
+      description: |-
+        Gets provenance for a package version.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Artifact  Details_GetPackageVersionProvenance
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: packageId
+        in: path
+        description: Id of the package (GUID Id, not name).
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: packageVersionId
+        in: path
+        description: Id of the package version (GUID Id, not name).
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageVersionProvenance'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: 7.0-preview.1
+      x-ms-vss-resource: provenance
+      x-ms-vss-method: GetPackageVersionProvenance
+      x-ms-preview: true
+  /{collection}/{project}/_apis/packaging/Feeds/{feedId}/permissions:
+    get:
+      tags:
+      - Feed  Management
+      description: |-
+        Get the permissions for a feed.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Feed  Management_Get Feed Permissions
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: includeIds
+        in: query
+        description: True to include user Ids in the response.  Default is false.
+        schema:
+          type: boolean
+      - name: excludeInheritedPermissions
+        in: query
+        description: True to only return explicitly set permissions on the feed.  Default
+          is false.
+        schema:
+          type: boolean
+      - name: identityDescriptor
+        in: query
+        description: Filter permissions to the provided identity.
+        schema:
+          type: string
+      - name: includeDeletedFeeds
+        in: query
+        description: If includeDeletedFeeds is true, then feedId must be specified
+          by name and not by Guid.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeedPermission'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: permissions
+      x-ms-vss-method: GetFeedPermissions
+    patch:
+      tags:
+      - Feed  Management
+      description: |-
+        Update the permissions on a feed.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Feed  Management_Set Feed Permissions
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Permissions to set.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/FeedPermission'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeedPermission'
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: permissions
+      x-ms-vss-method: SetFeedPermissions
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages:
+    get:
+      tags:
+      - Recycle  Bin
+      description: |-
+        Query for packages within the recycle bin.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Recycle  Bin_Get Recycle Bin Packages
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: protocolType
+        in: query
+        description: Type of package (e.g. NuGet, npm, ...).
+        schema:
+          type: string
+      - name: packageNameQuery
+        in: query
+        description: Filter to packages matching this name.
+        schema:
+          type: string
+      - name: includeUrls
+        in: query
+        description: True to return REST Urls with the response.  Default is True.
+        schema:
+          type: boolean
+      - name: $top
+        in: query
+        description: Get the top N packages.
+        schema:
+          type: integer
+          format: int32
+      - name: $skip
+        in: query
+        description: Skip the first N packages.
+        schema:
+          type: integer
+          format: int32
+      - name: includeAllVersions
+        in: query
+        description: True to return all versions of the package in the response.  Default
+          is false (latest version only).
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Package'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: recycleBinPackages
+      x-ms-vss-method: GetRecycleBinPackages
+    delete:
+      tags:
+      - Recycle  Bin
+      description: Queues a job to remove all package versions from a feed's recycle
+        bin
+      operationId: Recycle  Bin_Empty Recycle Bin
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationReference'
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: recycleBinPackages
+      x-ms-vss-method: EmptyRecycleBin
+  /{collection}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages/{packageId}:
+    get:
+      tags:
+      - Recycle  Bin
+      description: |-
+        Get information about a package and all its versions within the recycle bin.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Recycle  Bin_Get Recycle Bin Package
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: packageId
+        in: path
+        description: The package Id (GUID Id, not the package name).
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: includeUrls
+        in: query
+        description: True to return REST Urls with the response.  Default is True.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Package'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: recycleBinPackages
+      x-ms-vss-method: GetRecycleBinPackage
+  /{collection}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages/{packageId}/Versions:
+    get:
+      tags:
+      - Recycle  Bin
+      description: |-
+        Get a list of package versions within the recycle bin.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Recycle  Bin_Get Recycle Bin Package Versions
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: packageId
+        in: path
+        description: The package Id (GUID Id, not the package name).
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: includeUrls
+        in: query
+        description: True to return REST Urls with the response.  Default is True.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecycleBinPackageVersion'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: recycleBinVersions
+      x-ms-vss-method: GetRecycleBinPackageVersions
+  /{collection}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages/{packageId}/Versions/{packageVersionId}:
+    get:
+      tags:
+      - Recycle  Bin
+      description: |-
+        Get information about a package version within the recycle bin.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Recycle  Bin_Get Recycle Bin Package Version
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: packageId
+        in: path
+        description: The package Id (GUID Id, not the package name).
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: packageVersionId
+        in: path
+        description: The package version Id 9guid Id, not the version string).
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: includeUrls
+        in: query
+        description: True to return REST Urls with the response.  Default is True.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecycleBinPackageVersion'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: recycleBinVersions
+      x-ms-vss-method: GetRecycleBinPackageVersion
+  /{collection}/{project}/_apis/packaging/Feeds/{feedId}/retentionpolicies:
+    get:
+      tags:
+      - Retention  Policies
+      description: |-
+        Get the retention policy for a feed.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Retention  Policies_Get Retention Policy
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedRetentionPolicy'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: retentionPolicies
+      x-ms-vss-method: GetFeedRetentionPolicies
+    put:
+      tags:
+      - Retention  Policies
+      description: |-
+        Set the retention policy for a feed.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Retention  Policies_Set Retention Policy
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Feed retention policy.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedRetentionPolicy'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedRetentionPolicy'
+      security:
+      - oauth2:
+        - vso.packaging_write
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: retentionPolicies
+      x-ms-vss-method: SetFeedRetentionPolicies
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Retention  Policies
+      description: |-
+        Delete the retention policy for a feed.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Retention  Policies_Delete Retention Policy
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or ID of the feed.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: retentionPolicies
+      x-ms-vss-method: DeleteFeedRetentionPolicies
+  /{collection}/{project}/_apis/packaging/Feeds/{feedId}/views:
+    get:
+      tags:
+      - Feed  Management
+      description: |-
+        Get all views for a feed.
+
+        The project parameter must be supplied if the feed was created in a project.
+      operationId: Feed  Management_Get Feed Views
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeedView'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: views
+      x-ms-vss-method: GetFeedViews
+    post:
+      tags:
+      - Feed  Management
+      description: |-
+        Create a new view on the referenced feed.
+
+        The project parameter must be supplied if the feed was created in a project.
+      operationId: Feed  Management_Create Feed View
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: View to be created.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedView'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedView'
+      security:
+      - oauth2:
+        - vso.packaging_write
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: views
+      x-ms-vss-method: CreateFeedView
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/packaging/Feeds/{feedId}/views/{viewId}:
+    get:
+      tags:
+      - Feed  Management
+      description: |-
+        Get a view by Id.
+
+        The project parameter must be supplied if the feed was created in a project.
+      operationId: Feed  Management_Get Feed View
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: viewId
+        in: path
+        description: Name or Id of the view.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedView'
+      security:
+      - oauth2:
+        - vso.packaging
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: views
+      x-ms-vss-method: GetFeedView
+    delete:
+      tags:
+      - Feed  Management
+      description: |-
+        Delete a feed view.
+
+        The project parameter must be supplied if the feed was created in a project.
+      operationId: Feed  Management_Delete Feed View
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: viewId
+        in: path
+        description: Name or Id of the view.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: views
+      x-ms-vss-method: DeleteFeedView
+    patch:
+      tags:
+      - Feed  Management
+      description: |-
+        Update a view.
+
+        The project parameter must be supplied if the feed was created in a project.
+      operationId: Feed  Management_Update Feed View
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: viewId
+        in: path
+        description: Name or Id of the view.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: New settings to apply to the specified view.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedView'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedView'
+      security:
+      - oauth2:
+        - vso.packaging_manage
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: views
+      x-ms-vss-method: UpdateFeedView
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/public/packaging/Feeds/{feedId}/Packages/{packageId}/badge:
+    get:
+      tags:
+      - Artifact  Details
+      description: |-
+        Generate a SVG badge for the latest version of a package.  The generated SVG is typically used as the image in an HTML link which takes users to the feed containing the package to accelerate discovery and consumption.
+
+        The project parameter must be supplied if the feed was created in a project.
+        If the feed is not associated with any project, omit the project parameter from the request.
+      operationId: Artifact  Details_Get Badge
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: feedId
+        in: path
+        description: Name or Id of the feed.
+        required: true
+        schema:
+          type: string
+      - name: packageId
+        in: path
+        description: Id of the package (GUID Id, not name).
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            image/svg+xml:
+              schema:
+                type: string
+                format: Stream
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: badge
+      x-ms-vss-method: GetBadge
+components:
+  schemas:
+    BuildPackage:
+      type: object
+      properties:
+        feedName:
+          type: string
+          description: Display name of the feed.
+        packageDescription:
+          type: string
+          description: Package version description.
+        packageName:
+          type: string
+          description: Display name of the package.
+        packageVersion:
+          type: string
+          description: Version of the package.
+        projectId:
+          type: string
+          description: TFS project id.
+          format: uuid
+        protocolType:
+          type: string
+          description: Type of the package.
+      description: ""
+    Feed:
+      description: A container for artifacts.
+      allOf:
+      - $ref: '#/components/schemas/FeedCore'
+    FeedBatchData:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/FeedBatchOperationData'
+        operation:
+          type: string
+          enum:
+          - saveCachedPackages
+          x-ms-enum:
+            name: FeedBatchOperation
+            values:
+            - value: saveCachedPackages
+              description: ""
+      description: ""
+    FeedBatchOperationData:
+      type: object
+      description: ""
+    FeedChange:
+      type: object
+      properties:
+        changeType:
+          type: string
+          description: The type of operation.
+          enum:
+          - addOrUpdate
+          - delete
+          - permanentDelete
+          x-ms-enum:
+            name: ChangeType
+            values:
+            - value: addOrUpdate
+              description: A package version was added or updated.
+            - value: delete
+              description: A package version was deleted.
+            - value: permanentDelete
+              description: A feed was permanently deleted. This is not used for package
+                version.
+        feed:
+          $ref: '#/components/schemas/Feed'
+        feedContinuationToken:
+          type: integer
+          description: A token that identifies the next change in the log of changes.
+          format: int64
+        latestPackageContinuationToken:
+          type: integer
+          description: A token that identifies the latest package change for this
+            feed.  This can be used to quickly determine if there have been any changes
+            to packages in a specific feed.
+          format: int64
+      description: A container that encapsulates the state of the feed after a create,
+        update, or delete.
+    FeedChangesResponse:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        count:
+          type: integer
+          description: The number of changes in this set.
+          format: int32
+        feedChanges:
+          type: array
+          description: A container that encapsulates the state of the feed after a
+            create, update, or delete.
+          items:
+            $ref: '#/components/schemas/FeedChange'
+        nextFeedContinuationToken:
+          type: integer
+          description: When iterating through the log of changes this value indicates
+            the value that should be used for the next continuation token.
+          format: int64
+      description: A result set containing the feed changes for the range that was
+        requested.
+    FeedCore:
+      type: object
+      properties:
+        capabilities:
+          type: string
+          description: Supported capabilities of a feed.
+          enum:
+          - none
+          - upstreamV2
+          - underMaintenance
+          - defaultCapabilities
+          x-ms-enum:
+            name: FeedCapabilities
+            values:
+            - value: none
+              description: No flags exist for this feed
+            - value: upstreamV2
+              description: This feed can serve packages from upstream sources Upstream
+                packages must be manually promoted to views
+            - value: underMaintenance
+              description: This feed is currently under maintenance and may have reduced
+                functionality
+            - value: defaultCapabilities
+              description: The capabilities given to a newly created feed
+        fullyQualifiedId:
+          type: string
+          description: This will either be the feed GUID or the feed GUID and view
+            GUID depending on how the feed was accessed.
+        fullyQualifiedName:
+          type: string
+          description: Full name of the view, in feed@view format.
+        id:
+          type: string
+          description: A GUID that uniquely identifies this feed.
+          format: uuid
+        isReadOnly:
+          type: boolean
+          description: If set, all packages in the feed are immutable.  It is important
+            to note that feed views are immutable; therefore, this flag will always
+            be set for views.
+        name:
+          type: string
+          description: 'A name for the feed. feed names must follow these rules: <list
+            type="bullet"><item><description> Must not exceed 64 characters </description></item><item><description>
+            Must not contain whitespaces </description></item><item><description>
+            Must not start with an underscore or a period </description></item><item><description>
+            Must not end with a period </description></item><item><description> Must
+            not contain any of the following illegal characters: <![CDATA[ @, ~, ;,
+            {, }, \, +, =, <, >, |, /, \\, ?, :, &, $, *, \", #, [, ] ]]></description></item></list>'
+        project:
+          $ref: '#/components/schemas/ProjectReference'
+        upstreamEnabled:
+          type: boolean
+          description: 'OBSOLETE: This should always be true.  Setting to false will
+            override all sources in UpstreamSources.'
+        upstreamSources:
+          type: array
+          description: A list of sources that this feed will fetch packages from.  An
+            empty list indicates that this feed will not search any additional sources
+            for packages.
+          items:
+            $ref: '#/components/schemas/UpstreamSource'
+        view:
+          $ref: '#/components/schemas/FeedView'
+        viewId:
+          type: string
+          description: View Id.
+          format: uuid
+        viewName:
+          type: string
+          description: View name.
+      description: An object that contains all of the settings for a specific feed.
+    FeedPermission:
+      type: object
+      properties:
+        displayName:
+          type: string
+          description: Display name for the identity.
+        identityDescriptor:
+          $ref: '#/components/schemas/IdentityDescriptor'
+        identityId:
+          type: string
+          description: Id of the identity associated with this role.
+          format: uuid
+        isInheritedRole:
+          type: boolean
+          description: Boolean indicating whether the role is inherited or set directly.
+        role:
+          type: string
+          description: The role for this identity on a feed.
+          enum:
+          - custom
+          - none
+          - reader
+          - contributor
+          - administrator
+          - collaborator
+          x-ms-enum:
+            name: FeedRole
+            values:
+            - value: custom
+              description: Unsupported.
+            - value: none
+              description: Unsupported.
+            - value: reader
+              description: Readers can only read packages and view settings.
+            - value: contributor
+              description: Contributors can do anything to packages in the feed including
+                adding new packages, but they may not modify feed settings.
+            - value: administrator
+              description: Administrators have total control over the feed.
+            - value: collaborator
+              description: Collaborators have the same permissions as readers, but
+                can also ingest packages from configured upstream sources.
+      description: Permissions for a feed.
+    FeedRetentionPolicy:
+      type: object
+      properties:
+        ageLimitInDays:
+          type: integer
+          description: This attribute is deprecated and is not honoured by retention
+          format: int32
+        countLimit:
+          type: integer
+          description: Maximum versions to preserve per package and package type.
+          format: int32
+        daysToKeepRecentlyDownloadedPackages:
+          type: integer
+          description: Number of days to preserve a package version after its latest
+            download.
+          format: int32
+      description: Retention policy settings.
+    FeedUpdate:
+      type: object
+      properties:
+        allowUpstreamNameConflict:
+          type: boolean
+          description: If set, the feed will allow upload of packages that exist on
+            the upstream
+        badgesEnabled:
+          type: boolean
+          description: If set, this feed supports generation of package badges.
+        defaultViewId:
+          type: string
+          description: The view that the feed administrator has indicated is the default
+            experience for readers.
+          format: uuid
+        description:
+          type: string
+          description: A description for the feed.  Descriptions must not exceed 255
+            characters.
+        hideDeletedPackageVersions:
+          type: boolean
+          description: If set, feed will hide all deleted/unpublished versions
+        id:
+          type: string
+          description: A GUID that uniquely identifies this feed.
+          format: uuid
+        name:
+          type: string
+          description: 'A name for the feed. feed names must follow these rules: <list
+            type="bullet"><item><description> Must not exceed 64 characters </description></item><item><description>
+            Must not contain whitespaces </description></item><item><description>
+            Must not start with an underscore or a period </description></item><item><description>
+            Must not end with a period </description></item><item><description> Must
+            not contain any of the following illegal characters: <![CDATA[ @, ~, ;,
+            {, }, \, +, =, <, >, |, /, \\, ?, :, &, $, *, \", #, [, ] ]]></description></item></list>'
+        upstreamEnabled:
+          type: boolean
+          description: 'OBSOLETE: If set, the feed can proxy packages from an upstream
+            feed'
+        upstreamSources:
+          type: array
+          description: A list of sources that this feed will fetch packages from.  An
+            empty list indicates that this feed will not search any additional sources
+            for packages.
+          items:
+            $ref: '#/components/schemas/UpstreamSource'
+      description: Update a feed definition with these new values.
+    FeedView:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        id:
+          type: string
+          description: Id of the view.
+          format: uuid
+        name:
+          type: string
+          description: Name of the view.
+        type:
+          type: string
+          description: Type of view.
+          enum:
+          - none
+          - release
+          - implicit
+          x-ms-enum:
+            name: FeedViewType
+            values:
+            - value: none
+              description: Default, unspecified view type.
+            - value: release
+              description: View used as a promotion destination to classify released
+                artifacts.
+            - value: implicit
+              description: Internal view type that is automatically created and managed
+                by the system.
+        url:
+          type: string
+          description: Url of the view.
+        visibility:
+          type: string
+          description: Visibility status of the view.
+          enum:
+          - private
+          - collection
+          - collection
+          - aadTenant
+          x-ms-enum:
+            name: FeedVisibility
+            values:
+            - value: private
+              description: Only accessible by the permissions explicitly set by the
+                feed administrator.
+            - value: collection
+              description: Feed is accessible by all the valid users present in the
+                collection where the feed resides (for example across collection 'myorg'
+                at 'dev.azure.com/myorg')
+            - value: collection
+              description: Feed is accessible by all the valid users present in the
+                enterprise where the feed resides. Note that legacy naming and back
+                compat leaves the name of this value out of sync with its new meaning.
+            - value: aadTenant
+              description: Feed is accessible by all the valid users present in the
+                Azure Active Directory tenant.
+      description: A view on top of a feed.
+    GlobalPermission:
+      type: object
+      properties:
+        identityDescriptor:
+          $ref: '#/components/schemas/IdentityDescriptor'
+        identityId:
+          type: string
+          description: IdentityId corresponding to the IdentityDescriptor
+          format: uuid
+        role:
+          type: string
+          description: Role associated with the Identity.
+          enum:
+          - custom
+          - none
+          - feedCreator
+          - administrator
+          x-ms-enum:
+            name: GlobalRole
+            values:
+            - value: custom
+              description: Invalid default value.
+            - value: none
+              description: Explicit no permissions.
+            - value: feedCreator
+              description: Ability to create new feeds.
+            - value: administrator
+              description: Read and manage any feed
+      description: Permissions for feed service-wide operations such as the creation
+        of new feeds.
+    IdentityDescriptor:
+      type: object
+      properties:
+        identifier:
+          type: string
+          description: The unique identifier for this identity, not exceeding 256
+            chars, which will be persisted.
+        identityType:
+          type: string
+          description: Type of descriptor (for example, Windows, Passport, etc.).
+      description: An Identity descriptor is a wrapper for the identity type (Windows
+        SID, Passport) along with a unique identifier such as the SID or PUID.
+    JsonPatchDocument:
+      description: The JSON model for JSON Patch Operations
+      allOf:
+      - type: array
+        items:
+          $ref: '#/components/schemas/JsonPatchOperation'
+    JsonPatchOperation:
+      type: object
+      properties:
+        from:
+          type: string
+          description: The path to copy from for the Move/Copy operation.
+        op:
+          type: string
+          description: The patch operation
+          enum:
+          - add
+          - remove
+          - replace
+          - move
+          - copy
+          - test
+          x-ms-enum:
+            name: Operation
+            values:
+            - value: add
+              description: ""
+            - value: remove
+              description: ""
+            - value: replace
+              description: ""
+            - value: move
+              description: ""
+            - value: copy
+              description: ""
+            - value: test
+              description: ""
+        path:
+          type: string
+          description: The path for the operation. In the case of an array, a zero
+            based index can be used to specify the position in the array (e.g. /biscuits/0/name).
+            The "-" character can be used instead of an index to insert at the end
+            of the array (e.g. /biscuits/-).
+        value:
+          type: object
+          properties: {}
+          description: The value for the operation. This is either a primitive or
+            a JToken.
+      description: The JSON model for a JSON Patch operation
+    MinimalPackageVersion:
+      type: object
+      properties:
+        directUpstreamSourceId:
+          type: string
+          description: Upstream source this package was ingested from.
+          format: uuid
+        id:
+          type: string
+          description: Id for the package.
+          format: uuid
+        isCachedVersion:
+          type: boolean
+          description: '[Obsolete] Used for legacy scenarios and may be removed in
+            future versions.'
+        isDeleted:
+          type: boolean
+          description: True if this package has been deleted.
+        isLatest:
+          type: boolean
+          description: True if this is the latest version of the package by package
+            type sort order.
+        isListed:
+          type: boolean
+          description: (NuGet Only) True if this package is listed.
+        normalizedVersion:
+          type: string
+          description: Normalized version using normalization rules specific to a
+            package type.
+        packageDescription:
+          type: string
+          description: Package description.
+        publishDate:
+          type: string
+          description: UTC Date the package was published to the service.
+          format: date-time
+        storageId:
+          type: string
+          description: Internal storage id.
+        version:
+          type: string
+          description: Display version.
+        views:
+          type: array
+          description: List of views containing this package version.
+          items:
+            $ref: '#/components/schemas/FeedView'
+      description: Core data about any package, including its id and version information
+        and basic state.
+    OperationReference:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the operation.
+          format: uuid
+        pluginId:
+          type: string
+          description: Unique identifier for the plugin.
+          format: uuid
+        status:
+          type: string
+          description: The current status of the operation.
+          enum:
+          - notSet
+          - queued
+          - inProgress
+          - cancelled
+          - succeeded
+          - failed
+          x-ms-enum:
+            name: OperationStatus
+            values:
+            - value: notSet
+              description: The operation does not have a status set.
+            - value: queued
+              description: The operation has been queued.
+            - value: inProgress
+              description: The operation is in progress.
+            - value: cancelled
+              description: The operation was cancelled by the user.
+            - value: succeeded
+              description: The operation completed successfully.
+            - value: failed
+              description: The operation completed with a failure.
+        url:
+          type: string
+          description: URL to get the full operation object.
+      description: Reference for an async operation.
+    Package:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        id:
+          type: string
+          description: Id of the package.
+          format: uuid
+        isCached:
+          type: boolean
+          description: Used for legacy scenarios and may be removed in future versions.
+        name:
+          type: string
+          description: The display name of the package.
+        normalizedName:
+          type: string
+          description: The normalized name representing the identity of this package
+            within its package type.
+        protocolType:
+          type: string
+          description: Type of the package.
+        starCount:
+          type: integer
+          description: '[Obsolete] - this field is unused and will be removed in a
+            future release.'
+          format: int32
+        url:
+          type: string
+          description: Url for this package.
+        versions:
+          type: array
+          description: All versions for this package within its feed.
+          items:
+            $ref: '#/components/schemas/MinimalPackageVersion'
+      description: A package, which is a container for one or more package versions.
+    PackageChange:
+      type: object
+      properties:
+        package:
+          $ref: '#/components/schemas/Package'
+        packageVersionChange:
+          $ref: '#/components/schemas/PackageVersionChange'
+      description: A single change to a feed's packages.
+    PackageChangesResponse:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        count:
+          type: integer
+          description: Number of changes in this batch.
+          format: int32
+        nextPackageContinuationToken:
+          type: integer
+          description: Token that should be used in future calls for this feed to
+            retrieve new changes.
+          format: int64
+        packageChanges:
+          type: array
+          description: List of changes.
+          items:
+            $ref: '#/components/schemas/PackageChange'
+      description: A set of change operations to a feed's packages.
+    PackageDependency:
+      type: object
+      properties:
+        group:
+          type: string
+          description: Dependency package group (an optional classification within
+            some package types).
+        packageName:
+          type: string
+          description: Dependency package name.
+        versionRange:
+          type: string
+          description: Dependency package version range.
+      description: A dependency on another package version.
+    PackageFile:
+      type: object
+      properties:
+        children:
+          type: array
+          description: Hierarchical representation of files.
+          items:
+            $ref: '#/components/schemas/PackageFile'
+        name:
+          type: string
+          description: File name.
+        protocolMetadata:
+          $ref: '#/components/schemas/ProtocolMetadata'
+      description: A package file for a specific package version, only relevant to
+        package types that contain multiple files per version.
+    PackageMetrics:
+      type: object
+      properties:
+        downloadCount:
+          type: number
+          description: Total count of downloads per package id.
+          format: double
+        downloadUniqueUsers:
+          type: number
+          description: Number of downloads per unique user per package id.
+          format: double
+        lastDownloaded:
+          type: string
+          description: UTC date and time when package was last downloaded.
+          format: date-time
+        packageId:
+          type: string
+          description: Package id.
+          format: uuid
+      description: All metrics for a certain package id
+    PackageMetricsQuery:
+      type: object
+      properties:
+        packageIds:
+          type: array
+          description: List of package ids
+          items:
+            type: string
+            format: uuid
+      description: Query to get package metrics
+    PackageVersion:
+      description: A specific version of a package.
+      allOf:
+      - $ref: '#/components/schemas/MinimalPackageVersion'
+    PackageVersionChange:
+      type: object
+      properties:
+        changeType:
+          type: string
+          description: The type of change that was performed.
+          enum:
+          - addOrUpdate
+          - delete
+          - permanentDelete
+          x-ms-enum:
+            name: ChangeType
+            values:
+            - value: addOrUpdate
+              description: A package version was added or updated.
+            - value: delete
+              description: A package version was deleted.
+            - value: permanentDelete
+              description: A feed was permanently deleted. This is not used for package
+                version.
+        continuationToken:
+          type: integer
+          description: Token marker for this change, allowing the caller to send this
+            value back to the service and receive changes beyond this one.
+          format: int64
+        packageVersion:
+          $ref: '#/components/schemas/PackageVersion'
+      description: A change to a single package version.
+    PackageVersionMetrics:
+      type: object
+      properties:
+        downloadCount:
+          type: number
+          description: Total count of downloads per package version id.
+          format: double
+        downloadUniqueUsers:
+          type: number
+          description: Number of downloads per unique user per package version id.
+          format: double
+        lastDownloaded:
+          type: string
+          description: UTC date and time when package version was last downloaded.
+          format: date-time
+        packageId:
+          type: string
+          description: Package id.
+          format: uuid
+        packageVersionId:
+          type: string
+          description: Package version id.
+          format: uuid
+      description: All metrics for a certain package version id
+    PackageVersionMetricsQuery:
+      type: object
+      properties:
+        packageVersionIds:
+          type: array
+          description: List of package version ids
+          items:
+            type: string
+            format: uuid
+      description: Query to get package version metrics
+    PackageVersionProvenance:
+      type: object
+      properties:
+        feedId:
+          type: string
+          description: Name or Id of the feed.
+          format: uuid
+        packageId:
+          type: string
+          description: Id of the package (GUID Id, not name).
+          format: uuid
+        packageVersionId:
+          type: string
+          description: Id of the package version (GUID Id, not name).
+          format: uuid
+        provenance:
+          $ref: '#/components/schemas/Provenance'
+      description: Provenance for a published package version
+    ProjectReference:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Gets or sets id of the project.
+          format: uuid
+        name:
+          type: string
+          description: Gets or sets name of the project.
+        visibility:
+          type: string
+          description: Gets or sets visibility of the project.
+      description: ""
+    ProtocolMetadata:
+      type: object
+      properties:
+        data:
+          type: object
+          properties: {}
+          description: Extended metadata for a specific package type, formatted to
+            the associated schema version definition.
+        schemaVersion:
+          type: integer
+          description: Schema version.
+          format: int32
+      description: Extended metadata for a specific package type.
+    Provenance:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            type: string
+          description: Other provenance data.
+        provenanceSource:
+          type: string
+          description: Type of provenance source, for example "InternalBuild", "InternalRelease"
+        publisherUserIdentity:
+          type: string
+          description: Identity of user that published the package
+          format: uuid
+        userAgent:
+          type: string
+          description: HTTP User-Agent used when pushing the package.
+      description: Data about the origin of a published package
+    RecycleBinPackageVersion:
+      description: A single package version within the recycle bin.
+      allOf:
+      - $ref: '#/components/schemas/PackageVersion'
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    SaveCachedPackagesData:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/FeedBatchOperationData'
+    UpstreamSource:
+      type: object
+      properties:
+        deletedDate:
+          type: string
+          description: UTC date that this upstream was deleted.
+          format: date-time
+        displayLocation:
+          type: string
+          description: Locator for connecting to the upstream source in a user friendly
+            format, that may potentially change over time
+        id:
+          type: string
+          description: Identity of the upstream source.
+          format: uuid
+        internalUpstreamCollectionId:
+          type: string
+          description: For an internal upstream type, track the Azure DevOps collection
+            that contains it.
+          format: uuid
+        internalUpstreamFeedId:
+          type: string
+          description: For an internal upstream type, track the feed id being referenced.
+          format: uuid
+        internalUpstreamProjectId:
+          type: string
+          description: For an internal upstream type, track the project of the feed
+            being referenced.
+          format: uuid
+        internalUpstreamViewId:
+          type: string
+          description: For an internal upstream type, track the view of the feed being
+            referenced.
+          format: uuid
+        location:
+          type: string
+          description: Consistent locator for connecting to the upstream source.
+        name:
+          type: string
+          description: Display name.
+        protocol:
+          type: string
+          description: Package type associated with the upstream source.
+        serviceEndpointId:
+          type: string
+          description: The identity of the service endpoint that holds credentials
+            to use when accessing the upstream.
+          format: uuid
+        serviceEndpointProjectId:
+          type: string
+          description: Specifies the projectId of the Service Endpoint.
+          format: uuid
+        status:
+          type: string
+          description: Specifies the status of the upstream.
+          enum:
+          - ok
+          - disabled
+          x-ms-enum:
+            name: UpstreamStatus
+            values:
+            - value: ok
+              description: Upstream source is ok.
+            - value: disabled
+              description: Upstream source is disabled.
+        statusDetails:
+          type: array
+          description: Provides a human-readable reason for the status of the upstream.
+          items:
+            $ref: '#/components/schemas/UpstreamStatusDetail'
+        upstreamSourceType:
+          type: string
+          description: Source type, such as Public or Internal.
+          enum:
+          - public
+          - internal
+          x-ms-enum:
+            name: UpstreamSourceType
+            values:
+            - value: public
+              description: Publicly available source.
+            - value: internal
+              description: Azure DevOps upstream source.
+      description: Upstream source definition, including its Identity, package type,
+        and other associated information.
+    UpstreamStatusDetail:
+      type: object
+      properties:
+        reason:
+          type: string
+          description: Provides a human-readable reason for the status of the upstream.
+      description: ""
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+  parameters:
+    api-Version:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0' to use
+        this version of the api.
+      required: true
+      schema:
+        type: string
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.packaging_write: Grants the ability to create and read feeds and packages.
+            vso.packaging: Grants the ability to read feeds and packages. Also grants
+              the ability to search packages.
+            vso.packaging_manage: Grants the ability to create, read, update, and
+              delete feeds and packages.
+x-ms-vss-area: Packaging
+x-ms-vss-resource-area-id: 7ab4e64e-c4d8-4f50-ae73-5ef2e21642a5
+x-ms-parameterized-host:
+  hostTemplate: '{instance}'
+  parameters:
+  - name: instance
+    description: TFS server name ({server:port})
+    required: true
+    type: string
+    in: path

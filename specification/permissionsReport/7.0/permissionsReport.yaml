@@ -1,0 +1,308 @@
+openapi: 3.0.1
+info:
+  title: PermissionsReport
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: "7.0"
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Permissions Report
+- name: Permissions Report Download
+paths:
+  /{organization}/_apis/permissionsreport:
+    get:
+      tags:
+      - Permissions Report
+      description: Get a list of permissions reports
+      operationId: Permissions Report_List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PermissionsReport'
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: permissionsReport
+      x-ms-vss-method: GetPermissionsReports
+    post:
+      tags:
+      - Permissions Report
+      description: Request a permissions report to be created asyncronously
+      operationId: Permissions Report_Create
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Request configuration to be included in the permissions report
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionsReportRequest'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferenceLinks'
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: permissionsReport
+      x-ms-vss-method: CreatePermissionsReport
+      x-codegen-request-body-name: body
+  /{organization}/_apis/permissionsreport/{id}:
+    get:
+      tags:
+      - Permissions Report
+      description: Get a specific permissions report
+      operationId: Permissions Report_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: The ID (GUID) of the permissions report
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionsReport'
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: permissionsReport
+      x-ms-vss-method: GetPermissionsReport
+  /{organization}/_apis/permissionsreport/{id}/download:
+    get:
+      tags:
+      - Permissions Report Download
+      description: Download the json results of a permissions report
+      operationId: Permissions Report Download_Download
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: The ID (GUID) of the permissions report
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: Stream
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: permissionsReportDownload
+      x-ms-vss-method: Download
+components:
+  schemas:
+    PermissionsReport:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error if the report creation failed or empty if successful
+        id:
+          type: string
+          format: uuid
+        reportName:
+          type: string
+          description: Name of the report which typically includes the requestor's
+            display name
+        reportStatus:
+          type: string
+          enum:
+          - created
+          - inProgress
+          - completedWithErrors
+          - completedSuccessfully
+          - deleted
+          x-ms-enum:
+            name: PermissionsReportStatus
+            values:
+            - value: created
+              description: Request created but not started
+            - value: inProgress
+              description: Request started
+            - value: completedWithErrors
+              description: Completed but with errors.  Check the PermissionsReport
+                error field
+            - value: completedSuccessfully
+              description: Ready to download
+            - value: deleted
+              description: Has been deleted
+        reportStatusLastUpdatedTime:
+          type: string
+          format: date-time
+        requestedTime:
+          type: string
+          format: date-time
+        requestor:
+          type: string
+          description: User who requested the report be created
+      description: Detailed report of permissions for a set of groups and users over
+        a set of security namespaces
+    PermissionsReportRequest:
+      type: object
+      properties:
+        descriptors:
+          type: array
+          description: List of groups and users to fetch permissions on.  An empty
+            list will fetch all groups and users in the organization
+          items:
+            type: string
+        reportName:
+          type: string
+          description: Name of the report to create, make it unique
+        resources:
+          type: array
+          description: List of resources to fetch permisions on
+          items:
+            $ref: '#/components/schemas/PermissionsReportResource'
+      description: Details for creating a permissions report
+    PermissionsReportResource:
+      type: object
+      properties:
+        resourceId:
+          type: string
+          description: GUID, Name, or ref for the specified resource type
+        resourceName:
+          type: string
+          description: For repo resource type, resource name is the repo name
+        resourceType:
+          type: string
+          description: Specify the type of resource to report permissions on
+          enum:
+          - repo
+          - ref
+          - projectGit
+          - release
+          - tfvc
+          x-ms-enum:
+            name: ResourceType
+            values:
+            - value: repo
+              description: Permissions for the primary repo node.  The resource ID
+                should be RepoGuid, ProjectId/RepoGuid, or ProjectId/RepoName
+            - value: ref
+              description: Use repo/branch nodes using the ref format eg. RepoGuid/Refs/head/master,
+                ProjectName/RepoName/Refs/head/master, ProjectGuid/RepoGuid/Refs/tags
+            - value: projectGit
+              description: Use for the "Git repositories" root node
+            - value: release
+              description: Use for the Release permission. eg. ProjectGuid,  ProjectGuid/Path
+            - value: tfvc
+              description: Use for the Team Foundation Version Control permission
+                using the item path, eg. $/test tfvc
+      description: Specifics of the resource for the permissions report
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+  parameters:
+    api-Version:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0' to use
+        this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+x-ms-vss-area: PermissionsReport

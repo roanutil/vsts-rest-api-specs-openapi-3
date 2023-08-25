@@ -1,0 +1,227 @@
+openapi: 3.0.1
+info:
+  title: SBOM
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 7.0-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://pkgs.dev.azure.com/
+security:
+- accessToken: []
+tags: []
+paths: {}
+components:
+  schemas:
+    Configuration:
+      type: object
+      properties:
+        additionalComponentDetectorArgs:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        buildComponentPath:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        buildDropPath:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        buildListFile:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        catalogFilePath:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        configFilePath:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        dockerImagesToScan:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        externalDocumentReferenceListFile:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        hashAlgorithm:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        ignoreMissing:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        manifestDirPath:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        manifestInfo:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        manifestToolAction:
+          type: string
+          description: The action currently being performed by the manifest tool.
+          enum:
+          - none
+          - validate
+          - generate
+          - all
+          x-ms-enum:
+            name: ManifestToolActions
+            values:
+            - value: none
+              description: ""
+            - value: validate
+              description: ""
+            - value: generate
+              description: ""
+            - value: all
+              description: ""
+        packageName:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        packageVersion:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        parallelism:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        rootPathFilter:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        telemetryFilePath:
+          $ref: '#/components/schemas/ConfigurationSetting'
+        validateSignature:
+          $ref: '#/components/schemas/ConfigurationSetting'
+      description: This holds the configuration for the ManifestTool. The values in
+        this file are populated from the command line, config file and default.
+    ConfigurationSetting:
+      type: object
+      properties:
+        source:
+          type: string
+          description: The source where this setting came from.
+        value:
+          type: string
+          description: The actual value of the setting.
+          format: T
+      description: Encapsulates a configuration setting to provide metadata about
+        the setting source and type.
+    FileHash:
+      type: object
+      properties:
+        fileName:
+          type: string
+          description: The filename of the SBOM.
+        hash:
+          type: string
+          description: The string hash of the SBOM file.
+        hashAlgorithmName:
+          type: string
+          description: The HashAlgorithmName used to generate the hash of the file.
+          format: HashAlgorithmName
+      description: Used to provide the filename and hash of the SBOM file to be added
+        to the catalog file.
+    ManifestInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the manifest.
+        version:
+          type: string
+          description: The version of the manifest.
+      description: Defines a manifest name and version.
+    SBOMFile:
+      type: object
+      properties:
+        fileSizeInBytes:
+          type: integer
+          description: The size of the SBOM file in bytes.
+          format: int64
+        sbomFilePath:
+          type: string
+          description: The path where the final generated SBOM is placed.
+        sbomFormatName:
+          $ref: '#/components/schemas/ManifestInfo'
+      description: Represents a SBOM file object and contains additional properties
+        related to the file.
+    SBOMTelemetry:
+      type: object
+      properties:
+        bsiData:
+          type: object
+          additionalProperties:
+            type: string
+          description: All available bsi data from the task build execution which
+            includes build and system environment variables like repository and build
+            information.
+        bsiSource:
+          type: string
+          description: The source of the bsi data.
+        e2ETaskResult:
+          type: string
+          description: The end to end results of the extension task.
+        parameters:
+          $ref: '#/components/schemas/Configuration'
+        result:
+          type: string
+          description: The result of the execution
+        sbomFormatsUsed:
+          type: array
+          description: A list of the SBOM formats and related file properties that
+            was used in the generation/validation of the SBOM.
+          items:
+            $ref: '#/components/schemas/SBOMFile'
+        switches:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: Any internal switches and their value that were used during
+            the execution. A switch can be something that was provided through a configuraiton
+            or an environment variable.
+        taskErrorMessage:
+          type: string
+          description: Error messages that came from the extension task.
+        toolExecutionResult:
+          type: integer
+          description: The result of the tool as a numeric value.
+          format: int32
+      description: The telemetry that is logged to a file/console for the given SBOM
+        execution.
+    SignResponseBase:
+      type: object
+      properties:
+        customerCorrelationId:
+          type: string
+          description: The customer correlation id that is sent to ESRP for correlating
+            the current request to ESRP.
+        errorInfo:
+          type: string
+          description: If this is an error response, it will have more information
+            about the error.
+        result:
+          type: string
+          description: The result of the response.
+          enum:
+          - success
+          - failure
+          - inProgress
+          x-ms-enum:
+            name: Result
+            values:
+            - value: success
+              description: ""
+            - value: failure
+              description: ""
+            - value: inProgress
+              description: ""
+      description: The base reponse object for all responses from the signing api.
+    SignStatusResponse:
+      description: The response returned by the sign status api.
+      allOf:
+      - $ref: '#/components/schemas/SignResponseBase'
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+x-ms-vss-area: SBOM
+x-ms-vss-resource-area-id: 2e504d18-2c0c-46f8-af8f-322d2af0068a

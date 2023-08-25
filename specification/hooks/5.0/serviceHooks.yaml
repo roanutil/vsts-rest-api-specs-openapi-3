@@ -1,0 +1,2079 @@
+openapi: 3.0.1
+info:
+  title: ServiceHooks
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: "5.0"
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Consumers
+- name: Diagnostics
+- name: Notifications
+- name: Publishers
+- name: Subscriptions
+paths:
+  /{organization}/_apis/hooks/consumers:
+    get:
+      tags:
+      - Consumers
+      description: Get a list of available service hook consumer services. Optionally
+        filter by consumers that support at least one event type from the specific
+        publisher.
+      operationId: List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: publisherId
+        in: query
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Consumer'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: consumers
+      x-ms-vss-method: ListConsumers
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Consumers/GET__hooks_consumers.json
+  /{organization}/_apis/hooks/consumers/{consumerId}:
+    get:
+      tags:
+      - Consumers
+      description: Get a specific consumer service. Optionally filter out consumer
+        actions that do not support any event types for the specified publisher.
+      operationId: Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: consumerId
+        in: path
+        description: ID for a consumer.
+        required: true
+        schema:
+          type: string
+      - name: publisherId
+        in: query
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Consumer'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: consumers
+      x-ms-vss-method: GetConsumer
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Consumers/GET__hooks_consumers__consumerId_.json
+  /{organization}/_apis/hooks/consumers/{consumerId}/actions:
+    get:
+      tags:
+      - Consumers
+      description: Get a list of consumer actions for a specific consumer.
+      operationId: List Consumer Actions
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: consumerId
+        in: path
+        description: ID for a consumer.
+        required: true
+        schema:
+          type: string
+      - name: publisherId
+        in: query
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConsumerAction'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: actions
+      x-ms-vss-method: ListConsumerActions
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Actions/GET__hooks_consumers__consumerId__actions.json
+  /{organization}/_apis/hooks/consumers/{consumerId}/actions/{consumerActionId}:
+    get:
+      tags:
+      - Consumers
+      description: Get details about a specific consumer action.
+      operationId: Get Consumer Action
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: consumerId
+        in: path
+        description: ID for a consumer.
+        required: true
+        schema:
+          type: string
+      - name: consumerActionId
+        in: path
+        description: ID for a consumerActionId.
+        required: true
+        schema:
+          type: string
+      - name: publisherId
+        in: query
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumerAction'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: actions
+      x-ms-vss-method: GetConsumerAction
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Actions/GET__hooks_consumers__consumerId__actions__consumerActionId_.json
+  /{organization}/_apis/hooks/notificationsquery:
+    post:
+      tags:
+      - Notifications
+      description: Query for notifications. A notification includes details about
+        the event, the request to and the response from the consumer service.
+      operationId: Query
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationsQuery'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationsQuery'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: notificationsQuery
+      x-ms-vss-method: QueryNotifications
+      x-codegen-request-body-name: body
+  /{organization}/_apis/hooks/publishers:
+    get:
+      tags:
+      - Publishers
+      description: Get a list of publishers.
+      operationId: List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Publisher'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: publishers
+      x-ms-vss-method: ListPublishers
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Publishers/GET__hooks_publishers.json
+  /{organization}/_apis/hooks/publishers/{publisherId}:
+    get:
+      tags:
+      - Publishers
+      description: Get a specific service hooks publisher.
+      operationId: Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: publisherId
+        in: path
+        description: ID for a publisher.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publisher'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: publishers
+      x-ms-vss-method: GetPublisher
+  /{organization}/_apis/hooks/publishers/{publisherId}/eventtypes:
+    get:
+      tags:
+      - Publishers
+      description: Get the event types for a specific publisher.
+      operationId: List Event Types
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: publisherId
+        in: path
+        description: ID for a publisher.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventTypeDescriptor'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: eventTypes
+      x-ms-vss-method: ListEventTypes
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/EventTypes/GET__hooks_publishers__publisherId__eventTypes.json
+  /{organization}/_apis/hooks/publishers/{publisherId}/eventtypes/{eventTypeId}:
+    get:
+      tags:
+      - Publishers
+      description: Get a specific event type.
+      operationId: Get Event Type
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: publisherId
+        in: path
+        description: ID for a publisher.
+        required: true
+        schema:
+          type: string
+      - name: eventTypeId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventTypeDescriptor'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: eventTypes
+      x-ms-vss-method: GetEventType
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/EventTypes/GET__hooks_publishers__publisherId__eventTypes__eventTypeId_.json
+  /{organization}/_apis/hooks/publishers/{publisherId}/inputValuesQuery:
+    post:
+      tags:
+      - Publishers
+      operationId: Query Input Values
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: publisherId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InputValuesQuery'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InputValuesQuery'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: publisherInputValuesQuery
+      x-ms-vss-method: QueryInputValues
+      x-codegen-request-body-name: body
+  /{organization}/_apis/hooks/publishersquery:
+    post:
+      tags:
+      - Publishers
+      description: Query for service hook publishers.
+      operationId: Query Publishers
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishersQuery'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishersQuery'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: publishersQuery
+      x-ms-vss-method: QueryPublishers
+      x-codegen-request-body-name: body
+  /{organization}/_apis/hooks/subscriptions:
+    get:
+      tags:
+      - Subscriptions
+      description: Get a list of subscriptions.
+      operationId: List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: publisherId
+        in: query
+        description: ID for a subscription.
+        schema:
+          type: string
+      - name: eventType
+        in: query
+        description: Maximum number of notifications to return. Default is 100.
+        schema:
+          type: string
+      - name: consumerId
+        in: query
+        description: ID for a consumer.
+        schema:
+          type: string
+      - name: consumerActionId
+        in: query
+        description: ID for a consumerActionId.
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subscription'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: subscriptions
+      x-ms-vss-method: ListSubscriptions
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Subscriptions/GET__hooks_subscriptions_.json
+    post:
+      tags:
+      - Subscriptions
+      description: Create a subscription.
+      operationId: Create
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Subscription to be created.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: subscriptions
+      x-ms-vss-method: CreateSubscription
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Subscriptions/PUT__hooks_subscriptions__newSubscriptionId_.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/hooks/subscriptions/{subscriptionId}:
+    get:
+      tags:
+      - Subscriptions
+      description: Get a specific service hooks subscription.
+      operationId: Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: subscriptionId
+        in: path
+        description: ID for a subscription.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: subscriptions
+      x-ms-vss-method: GetSubscription
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Subscriptions/GET__hooks_subscriptions__subscriptionId_.json
+    put:
+      tags:
+      - Subscriptions
+      description: Update a subscription. <param name="subscriptionId">ID for a subscription
+        that you wish to update.</param>
+      operationId: Replace Subscription
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: subscriptionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: subscriptions
+      x-ms-vss-method: ReplaceSubscription
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Subscriptions/POST__hooks_subscriptions.json
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Subscriptions
+      description: Delete a specific service hooks subscription.
+      operationId: Delete
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: subscriptionId
+        in: path
+        description: ID for a subscription.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: subscriptions
+      x-ms-vss-method: DeleteSubscription
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Subscriptions/DELETE__hooks_subscriptions__newSubscriptionId_.json
+  /{organization}/_apis/hooks/subscriptions/{subscriptionId}/diagnostics:
+    get:
+      tags:
+      - Diagnostics
+      operationId: Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: subscriptionId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionDiagnostics'
+      x-ms-docs-override-version: 5.0-preview.1
+      x-ms-vss-resource: diagnostics
+      x-ms-vss-method: GetSubscriptionDiagnostics
+      x-ms-preview: true
+    put:
+      tags:
+      - Diagnostics
+      operationId: Update
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: subscriptionId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSubscripitonDiagnosticsParameters'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionDiagnostics'
+      x-ms-docs-override-version: 5.0-preview.1
+      x-ms-vss-resource: diagnostics
+      x-ms-vss-method: UpdateSubscriptionDiagnostics
+      x-ms-preview: true
+      x-codegen-request-body-name: body
+  /{organization}/_apis/hooks/subscriptions/{subscriptionId}/notifications:
+    get:
+      tags:
+      - Notifications
+      description: Get a list of notifications for a specific subscription. A notification
+        includes details about the event, the request to and the response from the
+        consumer service.
+      operationId: List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: subscriptionId
+        in: path
+        description: ID for a subscription.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: maxResults
+        in: query
+        description: Maximum number of notifications to return. Default is **100**.
+        schema:
+          type: integer
+          format: int32
+      - name: status
+        in: query
+        description: Get only notifications with this status.
+        schema:
+          type: string
+          enum:
+          - queued
+          - processing
+          - requestInProgress
+          - completed
+          x-ms-enum:
+            name: NotificationStatus
+            values:
+            - value: queued
+              description: The notification has been queued
+            - value: processing
+              description: The notification has been dequeued and has begun processing.
+            - value: requestInProgress
+              description: The consumer action has processed the notification. The
+                request is in progress.
+            - value: completed
+              description: The request completed
+        x-ms-enum:
+          name: NotificationStatus
+          values:
+          - value: queued
+            description: The notification has been queued
+          - value: processing
+            description: The notification has been dequeued and has begun processing.
+          - value: requestInProgress
+            description: The consumer action has processed the notification. The request
+              is in progress.
+          - value: completed
+            description: The request completed
+      - name: result
+        in: query
+        description: Get only notifications with this result type.
+        schema:
+          type: string
+          enum:
+          - pending
+          - succeeded
+          - failed
+          - filtered
+          x-ms-enum:
+            name: NotificationResult
+            values:
+            - value: pending
+              description: The notification has not yet completed
+            - value: succeeded
+              description: The notification was sent successfully
+            - value: failed
+              description: The notification failed to be sent successfully to the
+                consumer
+            - value: filtered
+              description: The notification was filtered by the Delivery Job
+        x-ms-enum:
+          name: NotificationResult
+          values:
+          - value: pending
+            description: The notification has not yet completed
+          - value: succeeded
+            description: The notification was sent successfully
+          - value: failed
+            description: The notification failed to be sent successfully to the consumer
+          - value: filtered
+            description: The notification was filtered by the Delivery Job
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: notifications
+      x-ms-vss-method: GetNotifications
+  /{organization}/_apis/hooks/subscriptions/{subscriptionId}/notifications/{notificationId}:
+    get:
+      tags:
+      - Notifications
+      description: Get a specific notification for a subscription.
+      operationId: Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: subscriptionId
+        in: path
+        description: ID for a subscription.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: notificationId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: notifications
+      x-ms-vss-method: GetNotification
+  /{organization}/_apis/hooks/subscriptionsquery:
+    post:
+      tags:
+      - Subscriptions
+      description: Query for service hook subscriptions.
+      operationId: Create Subscriptions Query
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionsQuery'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionsQuery'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: subscriptionsQuery
+      x-ms-vss-method: CreateSubscriptionsQuery
+      x-codegen-request-body-name: body
+  /{organization}/_apis/hooks/testnotifications:
+    post:
+      tags:
+      - Notifications
+      description: Sends a test notification. This is useful for verifying the configuration
+        of an updated or new service hooks subscription.
+      operationId: Create
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: useRealData
+        in: query
+        description: Only allow testing with real data in existing subscriptions.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: testNotifications
+      x-ms-vss-method: CreateTestNotification
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    Consumer:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        actions:
+          type: array
+          description: Gets this consumer's actions.
+          items:
+            $ref: '#/components/schemas/ConsumerAction'
+        authenticationType:
+          type: string
+          description: Gets or sets this consumer's authentication type.
+          enum:
+          - none
+          - oAuth
+          - external
+          x-ms-enum:
+            name: AuthenticationType
+            values:
+            - value: none
+              description: No authentication is required.
+            - value: oAuth
+              description: OAuth authentication.
+            - value: external
+              description: Externally-configured authentication.
+        description:
+          type: string
+          description: Gets or sets this consumer's localized description.
+        externalConfiguration:
+          $ref: '#/components/schemas/ExternalConfigurationDescriptor'
+        id:
+          type: string
+          description: Gets or sets this consumer's identifier.
+        imageUrl:
+          type: string
+          description: Gets or sets this consumer's image URL, if any.
+        informationUrl:
+          type: string
+          description: Gets or sets this consumer's information URL, if any.
+        inputDescriptors:
+          type: array
+          description: Gets or sets this consumer's input descriptors.
+          items:
+            $ref: '#/components/schemas/InputDescriptor'
+        name:
+          type: string
+          description: Gets or sets this consumer's localized name.
+        url:
+          type: string
+          description: The url for this resource
+      description: Defines the data contract of a consumer.
+    ConsumerAction:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        allowResourceVersionOverride:
+          type: boolean
+          description: Gets or sets the flag indicating if resource version can be
+            overridden when creating or editing a subscription.
+        consumerId:
+          type: string
+          description: Gets or sets the identifier of the consumer to which this action
+            belongs.
+        description:
+          type: string
+          description: Gets or sets this action's localized description.
+        id:
+          type: string
+          description: Gets or sets this action's identifier.
+        inputDescriptors:
+          type: array
+          description: Gets or sets this action's input descriptors.
+          items:
+            $ref: '#/components/schemas/InputDescriptor'
+        name:
+          type: string
+          description: Gets or sets this action's localized name.
+        supportedEventTypes:
+          type: array
+          description: Gets or sets this action's supported event identifiers.
+          items:
+            type: string
+        supportedResourceVersions:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          description: Gets or sets this action's supported resource versions.
+        url:
+          type: string
+          description: The url for this resource
+      description: Defines the data contract of a consumer action.
+    Event:
+      type: object
+      properties:
+        createdDate:
+          type: string
+          description: Gets or sets the UTC-based date and time that this event was
+            created.
+          format: date-time
+        detailedMessage:
+          $ref: '#/components/schemas/FormattedEventMessage'
+        eventType:
+          type: string
+          description: Gets or sets the type of this event.
+        id:
+          type: string
+          description: Gets or sets the unique identifier of this event.
+          format: uuid
+        message:
+          $ref: '#/components/schemas/FormattedEventMessage'
+        publisherId:
+          type: string
+          description: Gets or sets the identifier of the publisher that raised this
+            event.
+        resource:
+          type: object
+          properties: {}
+          description: Gets or sets the data associated with this event.
+        resourceContainers:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ResourceContainer'
+          description: Gets or sets the resource containers.
+        resourceVersion:
+          type: string
+          description: Gets or sets the version of the data associated with this event.
+        sessionToken:
+          $ref: '#/components/schemas/SessionToken'
+      description: Encapsulates the properties of an event.
+    EventTypeDescriptor:
+      type: object
+      properties:
+        description:
+          type: string
+          description: A localized description of the event type
+        id:
+          type: string
+          description: A unique id for the event type
+        inputDescriptors:
+          type: array
+          description: Event-specific inputs
+          items:
+            $ref: '#/components/schemas/InputDescriptor'
+        name:
+          type: string
+          description: A localized friendly name for the event type
+        publisherId:
+          type: string
+          description: A unique id for the publisher of this event type
+        supportedResourceVersions:
+          type: array
+          description: Supported versions for the event's resource payloads.
+          items:
+            type: string
+        url:
+          type: string
+          description: The url for this resource
+      description: Describes a type of event
+    ExternalConfigurationDescriptor:
+      type: object
+      properties:
+        createSubscriptionUrl:
+          type: string
+          description: Url of the site to create this type of subscription.
+        editSubscriptionPropertyName:
+          type: string
+          description: The name of an input property that contains the URL to edit
+            a subscription.
+        hostedOnly:
+          type: boolean
+          description: True if the external configuration applies only to hosted.
+      description: Describes how to configure a subscription that is managed externally.
+    FormattedEventMessage:
+      type: object
+      properties:
+        html:
+          type: string
+          description: Gets or sets the html format of the message
+        markdown:
+          type: string
+          description: Gets or sets the markdown format of the message
+        text:
+          type: string
+          description: Gets or sets the raw text of the message
+      description: Provides different formats of an event message
+    GraphSubjectBase:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        descriptor:
+          type: string
+          description: The descriptor is the primary way to reference the graph subject
+            while the system is running. This field will uniquely identify the same
+            graph subject across both Accounts and Organizations.
+        displayName:
+          type: string
+          description: This is the non-unique display name of the graph subject. To
+            change this field, you must alter its value in the source provider.
+        url:
+          type: string
+          description: This url is the full route to the source resource of this graph
+            subject.
+      description: ""
+    IdentityRef:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/GraphSubjectBase'
+    InputDescriptor:
+      type: object
+      properties:
+        dependencyInputIds:
+          type: array
+          description: The ids of all inputs that the value of this input is dependent
+            on.
+          items:
+            type: string
+        description:
+          type: string
+          description: Description of what this input is used for
+        groupName:
+          type: string
+          description: The group localized name to which this input belongs and can
+            be shown as a header for the container that will include all the inputs
+            in the group.
+        hasDynamicValueInformation:
+          type: boolean
+          description: If true, the value information for this input is dynamic and
+            should be fetched when the value of dependency inputs change.
+        id:
+          type: string
+          description: Identifier for the subscription input
+        inputMode:
+          type: string
+          description: Mode in which the value of this input should be entered
+          enum:
+          - none
+          - textBox
+          - passwordBox
+          - combo
+          - radioButtons
+          - checkBox
+          - textArea
+          x-ms-enum:
+            name: InputMode
+            values:
+            - value: none
+              description: This input should not be shown in the UI
+            - value: textBox
+              description: An input text box should be shown
+            - value: passwordBox
+              description: An password input box should be shown
+            - value: combo
+              description: A select/combo control should be shown
+            - value: radioButtons
+              description: Radio buttons should be shown
+            - value: checkBox
+              description: Checkbox should be shown(for true/false values)
+            - value: textArea
+              description: A multi-line text area should be shown
+        isConfidential:
+          type: boolean
+          description: Gets whether this input is confidential, such as for a password
+            or application key
+        name:
+          type: string
+          description: Localized name which can be shown as a label for the subscription
+            input
+        properties:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: Custom properties for the input which can be used by the service
+            provider
+        type:
+          type: string
+          description: Underlying data type for the input value. When this value is
+            specified, InputMode, Validation and Values are optional.
+        useInDefaultDescription:
+          type: boolean
+          description: Gets whether this input is included in the default generated
+            action description.
+        validation:
+          $ref: '#/components/schemas/InputValidation'
+        valueHint:
+          type: string
+          description: A hint for input value. It can be used in the UI as the input
+            placeholder.
+        values:
+          $ref: '#/components/schemas/InputValues'
+      description: Describes an input for subscriptions.
+    InputFilter:
+      type: object
+      properties:
+        conditions:
+          type: array
+          description: Groups of input filter expressions. This filter matches a set
+            of inputs if any (one or more) of the groups evaluates to true.
+          items:
+            $ref: '#/components/schemas/InputFilterCondition'
+      description: Defines a filter for subscription inputs. The filter matches a
+        set of inputs if any (one or more) of the groups evaluates to true.
+    InputFilterCondition:
+      type: object
+      properties:
+        caseSensitive:
+          type: boolean
+          description: Whether or not to do a case sensitive match
+        inputId:
+          type: string
+          description: The Id of the input to filter on
+        inputValue:
+          type: string
+          description: The "expected" input value to compare with the actual input
+            value
+        operator:
+          type: string
+          description: The operator applied between the expected and actual input
+            value
+          enum:
+          - equals
+          - notEquals
+          x-ms-enum:
+            name: InputFilterOperator
+            values:
+            - value: equals
+              description: ""
+            - value: notEquals
+              description: ""
+      description: An expression which can be applied to filter a list of subscription
+        inputs
+    InputValidation:
+      type: object
+      properties:
+        dataType:
+          type: string
+          enum:
+          - none
+          - string
+          - number
+          - boolean
+          - guid
+          - uri
+          x-ms-enum:
+            name: InputDataType
+            values:
+            - value: none
+              description: No data type is specified.
+            - value: string
+              description: Represents a textual value.
+            - value: number
+              description: Represents a numberic value.
+            - value: boolean
+              description: Represents a value of true or false.
+            - value: guid
+              description: Represents a Guid.
+            - value: uri
+              description: Represents a URI.
+        isRequired:
+          type: boolean
+        maxLength:
+          type: integer
+          format: int32
+        maxValue:
+          type: string
+          format: decimal
+        minLength:
+          type: integer
+          format: int32
+        minValue:
+          type: string
+          format: decimal
+        pattern:
+          type: string
+        patternMismatchErrorMessage:
+          type: string
+      description: Describes what values are valid for a subscription input
+    InputValue:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: Any other data about this input
+        displayValue:
+          type: string
+          description: The text to show for the display of this value
+        value:
+          type: string
+          description: The value to store for this input
+      description: Information about a single value for an input
+    InputValues:
+      type: object
+      properties:
+        defaultValue:
+          type: string
+          description: The default value to use for this input
+        error:
+          $ref: '#/components/schemas/InputValuesError'
+        inputId:
+          type: string
+          description: The id of the input
+        isDisabled:
+          type: boolean
+          description: Should this input be disabled
+        isLimitedToPossibleValues:
+          type: boolean
+          description: Should the value be restricted to one of the values in the
+            PossibleValues (True) or are the values in PossibleValues just a suggestion
+            (False)
+        isReadOnly:
+          type: boolean
+          description: Should this input be made read-only
+        possibleValues:
+          type: array
+          description: Possible values that this input can take
+          items:
+            $ref: '#/components/schemas/InputValue'
+      description: Information about the possible/allowed values for a given subscription
+        input
+    InputValuesError:
+      type: object
+      properties:
+        message:
+          type: string
+          description: The error message.
+      description: Error information related to a subscription input value.
+    InputValuesQuery:
+      type: object
+      properties:
+        currentValues:
+          type: object
+          additionalProperties:
+            type: string
+        inputValues:
+          type: array
+          description: The input values to return on input, and the result from the
+            consumer on output.
+          items:
+            $ref: '#/components/schemas/InputValues'
+        resource:
+          type: object
+          properties: {}
+          description: Subscription containing information about the publisher/consumer
+            and the current input values
+      description: ""
+    Notification:
+      type: object
+      properties:
+        createdDate:
+          type: string
+          description: Gets or sets date and time that this result was created.
+          format: date-time
+        details:
+          $ref: '#/components/schemas/NotificationDetails'
+        eventId:
+          type: string
+          description: The event id associated with this notification
+          format: uuid
+        id:
+          type: integer
+          description: The notification id
+          format: int32
+        modifiedDate:
+          type: string
+          description: Gets or sets date and time that this result was last modified.
+          format: date-time
+        result:
+          type: string
+          description: Result of the notification
+          enum:
+          - pending
+          - succeeded
+          - failed
+          - filtered
+          x-ms-enum:
+            name: NotificationResult
+            values:
+            - value: pending
+              description: The notification has not yet completed
+            - value: succeeded
+              description: The notification was sent successfully
+            - value: failed
+              description: The notification failed to be sent successfully to the
+                consumer
+            - value: filtered
+              description: The notification was filtered by the Delivery Job
+        status:
+          type: string
+          description: Status of the notification
+          enum:
+          - queued
+          - processing
+          - requestInProgress
+          - completed
+          x-ms-enum:
+            name: NotificationStatus
+            values:
+            - value: queued
+              description: The notification has been queued
+            - value: processing
+              description: The notification has been dequeued and has begun processing.
+            - value: requestInProgress
+              description: The consumer action has processed the notification. The
+                request is in progress.
+            - value: completed
+              description: The request completed
+        subscriberId:
+          type: string
+          description: The subscriber Id  associated with this notification. This
+            is the last identity who touched in the subscription. In case of test
+            notifications it can be the tester if the subscription is not created
+            yet.
+          format: uuid
+        subscriptionId:
+          type: string
+          description: The subscription id associated with this notification
+          format: uuid
+      description: Defines the data contract of the result of processing an event
+        for a subscription.
+    NotificationDetails:
+      type: object
+      properties:
+        completedDate:
+          type: string
+          description: Gets or sets the time that this notification was completed
+            (response received from the consumer)
+          format: date-time
+        consumerActionId:
+          type: string
+          description: Gets or sets this notification detail's consumer action identifier.
+        consumerId:
+          type: string
+          description: Gets or sets this notification detail's consumer identifier.
+        consumerInputs:
+          type: object
+          additionalProperties:
+            type: string
+          description: Gets or sets this notification detail's consumer inputs.
+        dequeuedDate:
+          type: string
+          description: Gets or sets the time that this notification was dequeued for
+            processing
+          format: date-time
+        errorDetail:
+          type: string
+          description: Gets or sets this notification detail's error detail.
+        errorMessage:
+          type: string
+          description: Gets or sets this notification detail's error message.
+        event:
+          $ref: '#/components/schemas/Event'
+        eventType:
+          type: string
+          description: Gets or sets this notification detail's event type.
+        processedDate:
+          type: string
+          description: Gets or sets the time that this notification was finished processing
+            (just before the request is sent to the consumer)
+          format: date-time
+        publisherId:
+          type: string
+          description: Gets or sets this notification detail's publisher identifier.
+        publisherInputs:
+          type: object
+          additionalProperties:
+            type: string
+          description: Gets or sets this notification detail's publisher inputs.
+        queuedDate:
+          type: string
+          description: Gets or sets the time that this notification was queued (created)
+          format: date-time
+        request:
+          type: string
+          description: Gets or sets this notification detail's request.
+        requestAttempts:
+          type: integer
+          description: Number of requests attempted to be sent to the consumer
+          format: int32
+        requestDuration:
+          type: number
+          description: Duration of the request to the consumer in seconds
+          format: double
+        response:
+          type: string
+          description: Gets or sets this notification detail's reponse.
+      description: Defines the data contract of notification details.
+    NotificationResultsSummaryDetail:
+      type: object
+      properties:
+        notificationCount:
+          type: integer
+          description: Count of notification sent out with a matching result.
+          format: int32
+        result:
+          type: string
+          description: Result of the notification
+          enum:
+          - pending
+          - succeeded
+          - failed
+          - filtered
+          x-ms-enum:
+            name: NotificationResult
+            values:
+            - value: pending
+              description: The notification has not yet completed
+            - value: succeeded
+              description: The notification was sent successfully
+            - value: failed
+              description: The notification failed to be sent successfully to the
+                consumer
+            - value: filtered
+              description: The notification was filtered by the Delivery Job
+      description: Summary of a particular result and count.
+    NotificationsQuery:
+      type: object
+      properties:
+        associatedSubscriptions:
+          type: array
+          description: The subscriptions associated with the notifications returned
+            from the query
+          items:
+            $ref: '#/components/schemas/Subscription'
+        includeDetails:
+          type: boolean
+          description: If true, we will return all notification history for the query
+            provided; otherwise, the summary is returned.
+        maxCreatedDate:
+          type: string
+          description: Optional maximum date at which the notification was created
+          format: date-time
+        maxResults:
+          type: integer
+          description: Optional maximum number of overall results to include
+          format: int32
+        maxResultsPerSubscription:
+          type: integer
+          description: Optional maximum number of results for each subscription. Only
+            takes effect when a list of subscription ids is supplied in the query.
+          format: int32
+        minCreatedDate:
+          type: string
+          description: Optional minimum date at which the notification was created
+          format: date-time
+        publisherId:
+          type: string
+          description: Optional publisher id to restrict the results to
+        results:
+          type: array
+          description: Results from the query
+          items:
+            $ref: '#/components/schemas/Notification'
+        resultType:
+          type: string
+          description: Optional notification result type to filter results to
+          enum:
+          - pending
+          - succeeded
+          - failed
+          - filtered
+          x-ms-enum:
+            name: NotificationResult
+            values:
+            - value: pending
+              description: The notification has not yet completed
+            - value: succeeded
+              description: The notification was sent successfully
+            - value: failed
+              description: The notification failed to be sent successfully to the
+                consumer
+            - value: filtered
+              description: The notification was filtered by the Delivery Job
+        status:
+          type: string
+          description: Optional notification status to filter results to
+          enum:
+          - queued
+          - processing
+          - requestInProgress
+          - completed
+          x-ms-enum:
+            name: NotificationStatus
+            values:
+            - value: queued
+              description: The notification has been queued
+            - value: processing
+              description: The notification has been dequeued and has begun processing.
+            - value: requestInProgress
+              description: The consumer action has processed the notification. The
+                request is in progress.
+            - value: completed
+              description: The request completed
+        subscriptionIds:
+          type: array
+          description: Optional list of subscription ids to restrict the results to
+          items:
+            type: string
+            format: uuid
+        summary:
+          type: array
+          description: Summary of notifications - the count of each result type (success,
+            fail, ..).
+          items:
+            $ref: '#/components/schemas/NotificationSummary'
+      description: Defines a query for service hook notifications.
+    NotificationSummary:
+      type: object
+      properties:
+        results:
+          type: array
+          description: The notification results for this particular subscription.
+          items:
+            $ref: '#/components/schemas/NotificationResultsSummaryDetail'
+        subscriptionId:
+          type: string
+          description: The subscription id associated with this notification
+          format: uuid
+      description: Summary of the notifications for a subscription.
+    Publisher:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        description:
+          type: string
+          description: Gets this publisher's localized description.
+        id:
+          type: string
+          description: Gets this publisher's identifier.
+        inputDescriptors:
+          type: array
+          description: Publisher-specific inputs
+          items:
+            $ref: '#/components/schemas/InputDescriptor'
+        name:
+          type: string
+          description: Gets this publisher's localized name.
+        serviceInstanceType:
+          type: string
+          description: The service instance type of the first party publisher.
+        supportedEvents:
+          type: array
+          description: Gets this publisher's supported event types.
+          items:
+            $ref: '#/components/schemas/EventTypeDescriptor'
+        url:
+          type: string
+          description: The url for this resource
+      description: Defines the data contract of an event publisher.
+    PublisherEvent:
+      type: object
+      properties:
+        diagnostics:
+          type: object
+          additionalProperties:
+            type: string
+          description: Add key/value pairs which will be stored with a published notification
+            in the SH service DB.  This key/value pairs are for diagnostic purposes
+            only and will have not effect on the delivery of a notificaton.
+        event:
+          $ref: '#/components/schemas/Event'
+        isFilteredEvent:
+          type: boolean
+          description: Gets or sets flag for filtered events
+        notificationData:
+          type: object
+          additionalProperties:
+            type: string
+          description: Additional data that needs to be sent as part of notification
+            to complement the Resource data in the Event
+        otherResourceVersions:
+          type: array
+          description: Gets or sets the array of older supported resource versions.
+          items:
+            $ref: '#/components/schemas/VersionedResource'
+        publisherInputFilters:
+          type: array
+          description: Optional publisher-input filters which restricts the set of
+            subscriptions which are triggered by the event
+          items:
+            $ref: '#/components/schemas/InputFilter'
+        subscription:
+          $ref: '#/components/schemas/Subscription'
+      description: Wrapper around an event which is being published
+    PublishersQuery:
+      type: object
+      properties:
+        publisherIds:
+          type: array
+          description: Optional list of publisher ids to restrict the results to
+          items:
+            type: string
+        publisherInputs:
+          type: object
+          additionalProperties:
+            type: string
+          description: Filter for publisher inputs
+        results:
+          type: array
+          description: Results from the query
+          items:
+            $ref: '#/components/schemas/Publisher'
+      description: Defines a query for service hook publishers.
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    ResourceContainer:
+      type: object
+      properties:
+        baseUrl:
+          type: string
+          description: Gets or sets the container's base URL, i.e. the URL of the
+            host (collection, application, or deploument) containing the container
+            resource.
+        id:
+          type: string
+          description: Gets or sets the container's specific Id.
+          format: uuid
+        name:
+          type: string
+          description: Gets or sets the container's name.
+        url:
+          type: string
+          description: Gets or sets the container's REST API URL.
+      description: The base class for all resource containers, i.e. Account, Collection,
+        Project
+    SessionToken:
+      type: object
+      properties:
+        error:
+          type: string
+          description: The error message in case of error
+        token:
+          type: string
+          description: The access token
+        validTo:
+          type: string
+          description: The expiration date in UTC
+          format: date-time
+      description: Represents a session token to be attached in Events for Consumer
+        actions that need it.
+    Subscription:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        actionDescription:
+          type: string
+        consumerActionId:
+          type: string
+        consumerId:
+          type: string
+        consumerInputs:
+          type: object
+          additionalProperties:
+            type: string
+          description: Consumer input values
+        createdBy:
+          $ref: '#/components/schemas/IdentityRef'
+        createdDate:
+          type: string
+          format: date-time
+        eventDescription:
+          type: string
+        eventType:
+          type: string
+        id:
+          type: string
+          format: uuid
+        modifiedBy:
+          $ref: '#/components/schemas/IdentityRef'
+        modifiedDate:
+          type: string
+          format: date-time
+        probationRetries:
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+        publisherId:
+          type: string
+        publisherInputs:
+          type: object
+          additionalProperties:
+            type: string
+          description: Publisher input values
+        resourceVersion:
+          type: string
+        status:
+          type: string
+          enum:
+          - enabled
+          - onProbation
+          - disabledByUser
+          - disabledBySystem
+          - disabledByInactiveIdentity
+          x-ms-enum:
+            name: SubscriptionStatus
+            values:
+            - value: enabled
+              description: The subscription is enabled.
+            - value: onProbation
+              description: The subscription is temporarily on probation by the system.
+            - value: disabledByUser
+              description: The subscription is disabled by a user.
+            - value: disabledBySystem
+              description: The subscription is disabled by the system.
+            - value: disabledByInactiveIdentity
+              description: The subscription is disabled because the owner is inactive
+                or is missing permissions.
+        subscriber:
+          $ref: '#/components/schemas/IdentityRef'
+        url:
+          type: string
+      description: Encapsulates an event subscription.
+    SubscriptionDiagnostics:
+      type: object
+      properties:
+        deliveryResults:
+          $ref: '#/components/schemas/SubscriptionTracing'
+        deliveryTracing:
+          $ref: '#/components/schemas/SubscriptionTracing'
+        evaluationTracing:
+          $ref: '#/components/schemas/SubscriptionTracing'
+      description: ""
+    SubscriptionsQuery:
+      type: object
+      properties:
+        consumerActionId:
+          type: string
+          description: Optional consumer action id to restrict the results to (null
+            for any)
+        consumerId:
+          type: string
+          description: Optional consumer id to restrict the results to (null for any)
+        consumerInputFilters:
+          type: array
+          description: Filter for subscription consumer inputs
+          items:
+            $ref: '#/components/schemas/InputFilter'
+        eventType:
+          type: string
+          description: Optional event type id to restrict the results to (null for
+            any)
+        publisherId:
+          type: string
+          description: Optional publisher id to restrict the results to (null for
+            any)
+        publisherInputFilters:
+          type: array
+          description: Filter for subscription publisher inputs
+          items:
+            $ref: '#/components/schemas/InputFilter'
+        results:
+          type: array
+          description: Results from the query
+          items:
+            $ref: '#/components/schemas/Subscription'
+        subscriberId:
+          type: string
+          description: Optional subscriber filter.
+          format: uuid
+      description: Defines a query for service hook subscriptions.
+    SubscriptionTracing:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        endDate:
+          type: string
+          description: Trace until the specified end date.
+          format: date-time
+        maxTracedEntries:
+          type: integer
+          description: The maximum number of result details to trace.
+          format: int32
+        startDate:
+          type: string
+          description: The date and time tracing started.
+          format: date-time
+        tracedEntries:
+          type: integer
+          description: Trace until remaining count reaches 0.
+          format: int32
+      description: ""
+    UpdateSubscripitonDiagnosticsParameters:
+      type: object
+      properties:
+        deliveryResults:
+          $ref: '#/components/schemas/UpdateSubscripitonTracingParameters'
+        deliveryTracing:
+          $ref: '#/components/schemas/UpdateSubscripitonTracingParameters'
+        evaluationTracing:
+          $ref: '#/components/schemas/UpdateSubscripitonTracingParameters'
+      description: ""
+    UpdateSubscripitonTracingParameters:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+      description: ""
+    VersionedResource:
+      type: object
+      properties:
+        compatibleWith:
+          type: string
+          description: Gets or sets the reference to the compatible version.
+        resource:
+          type: object
+          properties: {}
+          description: Gets or sets the resource data.
+        resourceVersion:
+          type: string
+          description: Gets or sets the version of the resource data.
+      description: Encapsulates the resource version and its data or reference to
+        the compatible version. Only one of the two last fields should be not null.
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+  parameters:
+    api-Version:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '5.0' to use
+        this version of the api.
+      required: true
+      schema:
+        type: string
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '5.0-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+x-ms-vss-area: ServiceHooks

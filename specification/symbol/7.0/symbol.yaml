@@ -1,0 +1,891 @@
+openapi: 3.0.1
+info:
+  title: Symbol
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: "7.0"
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://artifacts.dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Availability
+  description: |-
+    An endpoint for clients to determine the availability of symbol service for the current VSTS account.
+
+    This controller does not sit behind any feature flag.
+
+    The controller returns 200 if the service is available. Any other codes indicate that the service is not available.
+    For now, only 404 is used explicitly, but the client may also receive 500 if an internal error arises. In the future
+    we may add 402 to indicate a license issue.
+
+    Visual Studio IDE calls this when connecting to symbol server, but it doesn't use SymbolHttpClient due to restrictions
+    on binplacing micro-service DLLs inside Team Explorer package.
+
+    Trace Format: Artifact Services: 57, Symbol Service: 3, SymbolAvailabilityController: 6 -> 5736MM0 for all Exception traces
+- name: Client
+  description: |-
+    The endpoint to query and retrieve symbol client.
+
+    Trace Format: Artifact Services: 57, Symbol Service: 3, ClientController: 3 -> 5733MM0 for all Exception traces
+- name: Contents
+  description: |-
+    The endpoint to stitch chunks of a chunk dedup debug entry.
+
+    Trace Format: Artifact Services: 57, Symbol Service: 3, SymbolContentController: 7 -> 5737MM0 for all Exception traces
+- name: Requests
+  description: |-
+    The endpoints to perfrom CRUD operations on symbol requests and debug entries.
+
+    Trace Format: Artifact Services: 57, Symbol Service: 3, Requests2Controller: 5 -> 5735MM0 for all Exception traces
+- name: Symsrv
+  description: "The endpoint to query debug entries using a \"client key\". This is\
+    \ intended to be called by a client that implements \nMicrosoft's symbol protocol\
+    \ (symsrv).\n\nTrace Format: Artifact Services: 57, Symbol Service: 3, SymSrvController:\
+    \ 2 -> 5732MM0 for all Exception traces"
+paths:
+  /{organization}/_apis/symbol/availability:
+    get:
+      tags:
+      - Availability
+      description: Check the availability of symbol service. This includes checking
+        for feature flag, and possibly license in future. Note this is NOT an anonymous
+        endpoint, and the caller will be redirected to authentication before hitting
+        it.
+      operationId: Availability_Check Availability
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: The symbol service is available
+          content: {}
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: availability
+      x-ms-vss-method: CheckAvailabilityAsync
+  /{organization}/_apis/symbol/client:
+    head:
+      tags:
+      - Client
+      description: Get client version information.
+      operationId: Client_Head Client
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Operation successful. The information about the client version
+            can be found in the response headers. Note this doesn't guarantee a retrieval
+            to be successful.
+          content: {}
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: client
+      x-ms-vss-method: HeadClient
+  /{organization}/_apis/symbol/client/{clientType}:
+    get:
+      tags:
+      - Client
+      description: Get the client package.
+      operationId: Client_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: clientType
+        in: path
+        description: Either "EXE" for a zip file containing a Windows symbol client
+          (a.k.a. symbol.exe) along with dependencies, or "TASK" for a VSTS task that
+          can be run on a VSTS build agent. All the other values are invalid. The
+          parameter is case-insensitive.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successfully retrieved the client package. The user agent may
+            read response body to get the package.
+          content:
+            application/json:
+              schema:
+                type: string
+                format: Stream
+        404:
+          description: The client as specified by the client type is not found.
+          content:
+            application/json:
+              schema:
+                type: string
+                format: Stream
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: client
+      x-ms-vss-method: GetClient
+  /{organization}/_apis/symbol/requests:
+    get:
+      tags:
+      - Requests
+      description: Get a symbol request by request name.
+      operationId: Requests_Get Requests Request Name
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: requestName
+        in: query
+        description: The symbol request name.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successfully retrieved the symbol request as specified by the
+            request name.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Request'
+        404:
+          description: The symbol request as specified by the request name was not
+            found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Request'
+      security:
+      - oauth2:
+        - vso.symbols
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: requests
+      x-ms-vss-method: GetRequestsRequestNameAsync
+    post:
+      tags:
+      - Requests
+      description: Create a new symbol request.
+      operationId: Requests_Create Requests
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The symbol request to create.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+        required: true
+      responses:
+        201:
+          description: Successfully created a new symbol request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Request'
+        409:
+          description: The symbol request couldn't be created due to a server-side
+            conflict.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Request'
+      security:
+      - oauth2:
+        - vso.symbols_write
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: requests
+      x-ms-vss-method: CreateRequestsAsync
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/requests/POST__symbol_requests.json
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Requests
+      description: Delete a symbol request by request name.
+      operationId: Requests_Delete Requests Request Name
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: requestName
+        in: query
+        description: The symbol request name.
+        required: true
+        schema:
+          type: string
+      - name: synchronous
+        in: query
+        description: If true, delete all the debug entries under this request synchronously
+          in the current session. If false, the deletion will be postponed to a later
+          point and be executed automatically by the system.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: The request no longer exists.
+          content: {}
+      security:
+      - oauth2:
+        - vso.symbols_manage
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: requests
+      x-ms-vss-method: DeleteRequestsRequestNameAsync
+    patch:
+      tags:
+      - Requests
+      description: Update a symbol request by request name.
+      operationId: Requests_Update Requests Request Name
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: requestName
+        in: query
+        description: The symbol request name.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The symbol request.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+        required: true
+      responses:
+        200:
+          description: Successfully updated the symbol request as specified by the
+            request name.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Request'
+        404:
+          description: The symbol request as specified by the request name was not
+            found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Request'
+        409:
+          description: The symbol request as specified by the request name could not
+            be updated due to a server-side conflict, for exmaple, an unmatched etag.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Request'
+      security:
+      - oauth2:
+        - vso.symbols_write
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: requests
+      x-ms-vss-method: UpdateRequestsRequestNameAsync
+      x-codegen-request-body-name: body
+  /{organization}/_apis/symbol/requests/{requestId}:
+    get:
+      tags:
+      - Requests
+      description: Get a symbol request by request identifier.
+      operationId: Requests_Get Requests Request Id
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: requestId
+        in: path
+        description: The symbol request identifier.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successfully retrieved the symbol request as specified by the
+            request identifier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Request'
+        404:
+          description: The symbol request as specified by the request identifier was
+            not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Request'
+      security:
+      - oauth2:
+        - vso.symbols
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: requests
+      x-ms-vss-method: GetRequestsRequestIdAsync
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/requests/GET__symbol_requests__requestId_.json
+    post:
+      tags:
+      - Requests
+      description: Create debug entries for a symbol request as specified by its identifier.
+      operationId: Requests_Create Requests Request Id Debug Entries
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: requestId
+        in: path
+        description: The symbol request identifier.
+        required: true
+        schema:
+          type: string
+      - name: collection
+        in: query
+        description: A valid debug entry collection name. Must be "debugentries".
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: A batch that contains debug entries to create.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DebugEntryCreateBatch'
+        required: true
+      responses:
+        200:
+          description: Successfully created debug entries for the specified request.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DebugEntry'
+        400:
+          description: Could not create debug entries since the specified create behavior
+            is not recognized.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DebugEntry'
+        409:
+          description: Could not create debug entries since at least one entry already
+            exists and the specified create behavior is ThrowIfExists.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DebugEntry'
+      security:
+      - oauth2:
+        - vso.symbols_write
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: requests
+      x-ms-vss-method: CreateRequestsRequestIdDebugEntriesAsync
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/requests/POST__symbol_requests__requestId__debugentries.json
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Requests
+      description: Delete a symbol request by request identifier.
+      operationId: Requests_Delete Requests Request Id
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: requestId
+        in: path
+        description: The symbol request identifier.
+        required: true
+        schema:
+          type: string
+      - name: synchronous
+        in: query
+        description: If true, delete all the debug entries under this request synchronously
+          in the current session. If false, the deletion will be postponed to a later
+          point and be executed automatically by the system.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: The request no longer exists.
+          content: {}
+      security:
+      - oauth2:
+        - vso.symbols_manage
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: requests
+      x-ms-vss-method: DeleteRequestsRequestIdAsync
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/requests/DELETE__symbol_requests__requestId_.json
+    patch:
+      tags:
+      - Requests
+      description: Update a symbol request by request identifier.
+      operationId: Requests_Update Requests Request Id
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: requestId
+        in: path
+        description: The symbol request identifier.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The symbol request.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+        required: true
+      responses:
+        200:
+          description: Successfully updated the symbol request as specified by the
+            request identifier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Request'
+        404:
+          description: The symbol request as specified by the request identifier was
+            not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Request'
+        409:
+          description: The symbol request as specified by the request identifier could
+            not be updated due to a server-side conflict, for exmaple, an unmatched
+            etag.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Request'
+      security:
+      - oauth2:
+        - vso.symbols_write
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: requests
+      x-ms-vss-method: UpdateRequestsRequestIdAsync
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/requests/PATCH__symbol_requests__requestId_.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/symbol/requests/{requestId}/contents/{debugEntryId}:
+    get:
+      tags:
+      - Contents
+      description: Get a stitched debug entry for a symbol request as specified by
+        symbol request identifier and debug entry identifier.
+      operationId: Contents_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: requestId
+        in: path
+        description: The symbol request identifier.
+        required: true
+        schema:
+          type: string
+      - name: debugEntryId
+        in: path
+        description: The debug entry identifier.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: The debug entry is found and stream content is placed in the
+            response content.
+          content: {}
+        404:
+          description: No content was found for this debug entry identifier.
+          content: {}
+      security:
+      - oauth2:
+        - vso.symbols
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: contents
+      x-ms-vss-method: GetDebugEntryContentAsync
+  /{organization}/_apis/symbol/symsrv/{debugEntryClientKey}:
+    get:
+      tags:
+      - Symsrv
+      description: Given a client key, returns the best matched debug entry.
+      operationId: Symsrv_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: debugEntryClientKey
+        in: path
+        description: A "client key" used by both ends of Microsoft's symbol protocol
+          to identify a debug entry. The semantics of client key is governed by symsrv
+          and is beyond the scope of this documentation.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: The debug entry is found and its metadata returned as JSON.
+          content: {}
+        302:
+          description: The debug entry is found and its URI is placed in the Location
+            header.
+          content: {}
+        404:
+          description: No debug entry was found for this client key.
+          content: {}
+      security:
+      - oauth2:
+        - vso.symbols
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: symsrv
+      x-ms-vss-method: GetSymSrvDebugEntryClientKeyAsync
+components:
+  schemas:
+    DebugEntry:
+      description: A dual-purpose data object, the debug entry is used by the client
+        to publish the symbol file (with file's blob identifier, which can be calculated
+        from VSTS hashing algorithm) or query the file (with a client key). Since
+        the symbol server tries to return a matched symbol file with the richest information
+        level, it may not always point to the same symbol file for different queries
+        with same client key.
+      allOf:
+      - $ref: '#/components/schemas/ResourceBase'
+    DebugEntryCreateBatch:
+      type: object
+      properties:
+        createBehavior:
+          type: string
+          description: Defines what to do when a debug entry in the batch already
+            exists.
+          enum:
+          - throwIfExists
+          - skipIfExists
+          - overwriteIfExists
+          x-ms-enum:
+            name: DebugEntryCreateBehavior
+            values:
+            - value: throwIfExists
+              description: Throw exceptions at server end. This will translate to
+                409 (Conflict) HTTP status code.
+            - value: skipIfExists
+              description: Do not add this debug entry. The rest of the batch, if
+                any, is not affected.
+            - value: overwriteIfExists
+              description: Overwrite the existing debug entry.
+        debugEntries:
+          type: array
+          description: The debug entries.
+          items:
+            $ref: '#/components/schemas/DebugEntry'
+        proofNodes:
+          type: array
+          description: Serialized Proof nodes, used to verify uploads on server side
+            for Chunk Dedup DebugEntry
+          items:
+            type: string
+      description: A batch of debug entry to create.
+    IDomainId:
+      type: object
+      description: ""
+    JsonBlobBlockHash:
+      type: object
+      properties:
+        hashBytes:
+          type: array
+          description: Array of hash bytes.
+          items:
+            pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+            type: string
+            format: byte
+      description: BlobBlock hash formatted to be deserialized for symbol service.
+    JsonBlobIdentifier:
+      type: object
+      properties:
+        identifierValue:
+          type: array
+          items:
+            pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+            type: string
+            format: byte
+      description: ""
+    JsonBlobIdentifierWithBlocks:
+      type: object
+      properties:
+        blockHashes:
+          type: array
+          description: List of blob block hashes.
+          items:
+            $ref: '#/components/schemas/JsonBlobBlockHash'
+        identifierValue:
+          type: array
+          description: Array of blobId bytes.
+          items:
+            pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+            type: string
+            format: byte
+      description: BlobIdentifier with block hashes formatted to be deserialzied for
+        symbol service.
+    Request:
+      description: Symbol request.
+      allOf:
+      - $ref: '#/components/schemas/ResourceBase'
+    ResourceBase:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: The ID of user who created this item. Optional.
+          format: uuid
+        createdDate:
+          type: string
+          description: The date time when this item is created. Optional.
+          format: date-time
+        id:
+          type: string
+          description: An identifier for this item. Optional.
+        storageETag:
+          type: string
+          description: An opaque ETag used to synchronize with the version stored
+            at server end. Optional.
+        url:
+          type: string
+          description: A URI which can be used to retrieve this item in its raw format.
+            Optional. Note this is distinguished from other URIs that are present
+            in a derived resource.
+      description: ""
+  parameters:
+    api-Version:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0' to use
+        this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.symbols: Grants the ability to read symbols.
+            vso.symbols_write: Grants the ability to read and write symbols.
+            vso.symbols_manage: Grants the ability to read, write and manage symbols.
+x-ms-vss-area: Symbol
+x-ms-vss-resource-area-id: af607f94-69ba-4821-8159-f04e37b66350
+x-ms-paths:
+  /{organization}/_apis/symbol/requests?requestName={requestName}&collection={collection}:
+    post:
+      tags:
+      - Requests
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: requests
+      x-ms-vss-method: CreateRequestsRequestNameDebugEntriesAsync
+      description: Create debug entries for a symbol request as specified by its name.
+      operationId: Requests_Create Requests Request Name Debug Entries
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: organization
+        description: The name of the Azure DevOps organization.
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: A batch that contains debug entries to create.
+        required: true
+        schema:
+          $ref: '#/definitions/DebugEntryCreateBatch'
+      - in: query
+        name: requestName
+        description: The symbol request name.
+        required: true
+        type: string
+      - in: query
+        name: collection
+        description: A valid debug entry collection name. Must be "debugentries".
+        required: true
+        type: string
+      - $ref: '#/parameters/api-Version'
+      responses:
+        200:
+          description: Successfully created debug entries for the specified request.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DebugEntry'
+        400:
+          description: Could not create debug entries since the specified create behavior
+            is not recognized.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DebugEntry'
+        409:
+          description: Could not create debug entries since at least one entry already
+            exists and the specified create behavior is ThrowIfExists.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DebugEntry'
+      security:
+      - oauth2:
+        - vso.symbols_write

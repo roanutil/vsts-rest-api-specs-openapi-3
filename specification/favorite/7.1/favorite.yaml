@@ -1,0 +1,686 @@
+openapi: 3.0.1
+info:
+  title: Favorite
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 7.1-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Favorites
+  description: Controller for public REST operations on Favorites.
+paths:
+  /{organization}/_apis/favorite/favorites:
+    get:
+      tags:
+      - Favorites
+      operationId: Favorites_Get Favorites
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: artifactType
+        in: query
+        schema:
+          type: string
+      - name: artifactScopeType
+        in: query
+        schema:
+          type: string
+      - name: artifactScopeId
+        in: query
+        schema:
+          type: string
+      - name: includeExtendedDetails
+        in: query
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Favorite'
+      security:
+      - oauth2:
+        - vso.profile
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: favorites
+      x-ms-vss-method: GetFavorites
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Favorites/GET__favorites.json
+    post:
+      tags:
+      - Favorites
+      operationId: Favorites_Create Favorite
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FavoriteCreateParameters'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favorite'
+      security:
+      - oauth2:
+        - vso.profile_write
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: favorites
+      x-ms-vss-method: CreateFavorite
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Favorites/POST__createFavorite.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/favorite/favorites/{favoriteId}:
+    get:
+      tags:
+      - Favorites
+      operationId: Favorites_Get Favorite By Id
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: favoriteId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: artifactScopeType
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: artifactType
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: artifactScopeId
+        in: query
+        schema:
+          type: string
+      - name: includeExtendedDetails
+        in: query
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favorite'
+      security:
+      - oauth2:
+        - vso.profile
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: favorites
+      x-ms-vss-method: GetFavoriteById
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Favorites/GET__favoriteById.json
+    delete:
+      tags:
+      - Favorites
+      operationId: Favorites_Delete Favorite By Id
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: favoriteId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: artifactType
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: artifactScopeType
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: artifactScopeId
+        in: query
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.profile_write
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: favorites
+      x-ms-vss-method: DeleteFavoriteById
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Favorites/DELETE__favoriteById.json
+components:
+  schemas:
+    ArtifactProperties:
+      description: ""
+      allOf:
+      - type: object
+        additionalProperties:
+          type: object
+          properties: {}
+    ArtifactScope:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The identifier of the scope the artifact resides in. For a
+            TFS Project, this refers to the Project GUID string. For a Collection,
+            marked this property with an empty string.
+        name:
+          type: string
+          description: 'Name of the artifact scope (e.g. Project Name)  Note: This
+            property is a read-only extension over the stored favorite model. This
+            value cannot be overridden on writes.'
+        type:
+          type: string
+          description: Type of scope the favorite artifact resides in. Known scopes
+            include "Project" or "Collection"
+      description: Describes the scope a favorited Artifact resides in. e.g. A team
+        project.
+    Favorite:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        artifactId:
+          type: string
+          description: ID of the favorited artifact, unique in context of this artifact
+            type.
+        artifactIsDeleted:
+          type: boolean
+          description: Indicates if the artifact described by this favorite could
+            not be located.
+        artifactName:
+          type: string
+          description: Last known name of the artifact.
+        artifactProperties:
+          $ref: '#/components/schemas/ArtifactProperties'
+        artifactScope:
+          $ref: '#/components/schemas/ArtifactScope'
+        artifactType:
+          type: string
+          description: Type of artifact.
+        creationDate:
+          type: string
+          description: Date and time this Favorite was created on server.
+          format: date-time
+        id:
+          type: string
+          description: Unique Id of the favorite item, defined by server at creation
+            time.
+          format: uuid
+        owner:
+          $ref: '#/components/schemas/IdentityRef'
+        url:
+          type: string
+          description: Fully-Qualified link to this Resource
+      description: Implementation of Favorite contract following modern storage
+    FavoriteCreateParameters:
+      type: object
+      properties:
+        artifactId:
+          type: string
+        artifactName:
+          type: string
+        artifactProperties:
+          $ref: '#/components/schemas/ArtifactProperties'
+        artifactScope:
+          $ref: '#/components/schemas/ArtifactScope'
+        artifactType:
+          type: string
+      description: ""
+    FavoriteProvider:
+      description: Exposes a provider of favorites.
+      allOf:
+      - $ref: '#/components/schemas/FavoritesSecuredObject'
+    FavoritesSecuredObject:
+      type: object
+      properties:
+        token:
+          type: string
+      description: ""
+    GraphSubjectBase:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        descriptor:
+          type: string
+          description: The descriptor is the primary way to reference the graph subject
+            while the system is running. This field will uniquely identify the same
+            graph subject across both Accounts and Organizations.
+        displayName:
+          type: string
+          description: This is the non-unique display name of the graph subject. To
+            change this field, you must alter its value in the source provider.
+        url:
+          type: string
+          description: This url is the full route to the source resource of this graph
+            subject.
+      description: ""
+    IdentityRef:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/GraphSubjectBase'
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    VssJsonCollectionWrapper:
+      description: This class is used to serialize collections as a single JSON object
+        on the wire.
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: The number of serialized items.
+          format: int32
+      description: ""
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.1-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.profile: Grants the ability to read your profile, accounts, collections,
+              projects, teams, and other top-level organizational artifacts.
+            vso.profile_write: Grants the ability to write to your profile.
+x-ms-vss-area: Favorite
+x-ms-paths:
+  /{organization}/_apis/favorite/favorites?ownerScopeType={ownerScopeType}&ownerScopeId={ownerScopeId}:
+    post:
+      tags:
+      - Favorites
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: favorites
+      x-ms-vss-method: CreateFavoriteOfOwner
+      x-ms-preview: true
+      description: ""
+      operationId: Favorites_Create Favorite Of Owner
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: organization
+        description: The name of the Azure DevOps organization.
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: ""
+        required: true
+        schema:
+          $ref: '#/definitions/FavoriteCreateParameters'
+      - in: query
+        name: ownerScopeType
+        description: ""
+        required: true
+        type: string
+      - in: query
+        name: ownerScopeId
+        description: ""
+        required: true
+        type: string
+        format: uuid
+      - $ref: '#/parameters/api-Version-preview.1'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Favorite'
+      security:
+      - oauth2:
+        - vso.profile_write
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Favorites/POST__createFavoriteOfOwner.json
+    get:
+      tags:
+      - Favorites
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: favorites
+      x-ms-vss-method: GetFavoritesOfOwner
+      x-ms-preview: true
+      description: ""
+      operationId: Favorites_Get Favorites Of Owner
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: organization
+        description: The name of the Azure DevOps organization.
+        required: true
+        type: string
+      - in: query
+        name: ownerScopeType
+        description: ""
+        required: true
+        type: string
+      - in: query
+        name: ownerScopeId
+        description: ""
+        required: true
+        type: string
+        format: uuid
+      - in: query
+        name: artifactType
+        description: ""
+        required: false
+        type: string
+      - in: query
+        name: artifactScopeType
+        description: ""
+        required: false
+        type: string
+      - in: query
+        name: artifactScopeId
+        description: ""
+        required: false
+        type: string
+      - in: query
+        name: includeExtendedDetails
+        description: ""
+        required: false
+        type: boolean
+      - $ref: '#/parameters/api-Version-preview.1'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Favorite'
+      security:
+      - oauth2:
+        - vso.profile
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Favorites/GET__favoritesOfOwner.json
+  ? /{organization}/_apis/favorite/favorites?artifactType={artifactType}&artifactId={artifactId}&artifactScopeType={artifactScopeType}
+  : get:
+      tags:
+      - Favorites
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: favorites
+      x-ms-vss-method: GetFavoriteByArtifact
+      x-ms-preview: true
+      description: ""
+      operationId: Favorites_Get Favorite By Artifact
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: organization
+        description: The name of the Azure DevOps organization.
+        required: true
+        type: string
+      - in: query
+        name: artifactType
+        description: ""
+        required: true
+        type: string
+      - in: query
+        name: artifactId
+        description: ""
+        required: true
+        type: string
+      - in: query
+        name: artifactScopeType
+        description: ""
+        required: true
+        type: string
+      - in: query
+        name: artifactScopeId
+        description: ""
+        required: false
+        type: string
+      - in: query
+        name: includeExtendedDetails
+        description: ""
+        required: false
+        type: boolean
+      - $ref: '#/parameters/api-Version-preview.1'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Favorite'
+      security:
+      - oauth2:
+        - vso.profile
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Favorites/GET__favoriteByArtifact.json
+  ? /{organization}/_apis/favorite/favorites/{favoriteId}?ownerScopeType={ownerScopeType}&ownerScopeId={ownerScopeId}&artifactType={artifactType}&artifactScopeType={artifactScopeType}
+  : delete:
+      tags:
+      - Favorites
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: favorites
+      x-ms-vss-method: DeleteFavoriteOfOwnerById
+      x-ms-preview: true
+      description: ""
+      operationId: Favorites_Delete Favorite Of Owner By Id
+      parameters:
+      - in: path
+        name: organization
+        description: The name of the Azure DevOps organization.
+        required: true
+        type: string
+      - in: path
+        name: favoriteId
+        description: ""
+        required: true
+        type: string
+        format: uuid
+      - in: query
+        name: ownerScopeType
+        description: ""
+        required: true
+        type: string
+      - in: query
+        name: ownerScopeId
+        description: ""
+        required: true
+        type: string
+        format: uuid
+      - in: query
+        name: artifactType
+        description: ""
+        required: true
+        type: string
+      - in: query
+        name: artifactScopeType
+        description: ""
+        required: true
+        type: string
+      - in: query
+        name: artifactScopeId
+        description: ""
+        required: false
+        type: string
+      - $ref: '#/parameters/api-Version-preview.1'
+      responses:
+        200:
+          description: successful operation
+      security:
+      - oauth2:
+        - vso.profile_write
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Favorites/DELETE__favoriteOfOwnerById.json
+  ? /{organization}/_apis/favorite/favorites/{favoriteId}?ownerScopeType={ownerScopeType}&ownerScopeId={ownerScopeId}&artifactScopeType={artifactScopeType}&artifactType={artifactType}
+  : get:
+      tags:
+      - Favorites
+      x-ms-docs-override-version: 7.1-preview.1
+      x-ms-vss-resource: favorites
+      x-ms-vss-method: GetFavoriteOfOwnerById
+      x-ms-preview: true
+      description: ""
+      operationId: Favorites_Get Favorite Of Owner By Id
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: organization
+        description: The name of the Azure DevOps organization.
+        required: true
+        type: string
+      - in: path
+        name: favoriteId
+        description: ""
+        required: true
+        type: string
+        format: uuid
+      - in: query
+        name: ownerScopeType
+        description: ""
+        required: true
+        type: string
+      - in: query
+        name: ownerScopeId
+        description: ""
+        required: true
+        type: string
+        format: uuid
+      - in: query
+        name: artifactScopeType
+        description: ""
+        required: true
+        type: string
+      - in: query
+        name: artifactType
+        description: ""
+        required: true
+        type: string
+      - in: query
+        name: artifactScopeId
+        description: ""
+        required: false
+        type: string
+      - in: query
+        name: includeExtendedDetails
+        description: ""
+        required: false
+        type: boolean
+      - $ref: '#/parameters/api-Version-preview.1'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Favorite'
+      security:
+      - oauth2:
+        - vso.profile
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Favorites/GET__favoritesOfOwnerById.json

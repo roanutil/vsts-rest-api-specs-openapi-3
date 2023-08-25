@@ -1,0 +1,1556 @@
+openapi: 3.0.1
+info:
+  title: MemberEntitlementManagement
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 5.1-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://vsaex.dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Group Entitlements
+  description: APIs to manage Group Entitlements.
+- name: Members
+  description: APIs to Manage memberships for the Group Entitlements
+- name: User Entitlements
+  description: APIs to manage User Entitlements.
+- name: User Entitlement Summary
+  description: APIs to get User Entitlements Summary.
+paths:
+  /{organization}/_apis/groupentitlements:
+    get:
+      tags:
+      - Group Entitlements
+      description: Get the group entitlements for an account.
+      operationId: Group Entitlements_List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupEntitlement'
+      security:
+      - oauth2:
+        - vso.memberentitlementmanagement
+      x-ms-docs-override-version: 5.1-preview.1
+      x-ms-vss-resource: groupEntitlements
+      x-ms-vss-method: GetGroupEntitlements
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/GroupEntitlements/GET__memberEntitlementManagement_GroupEntitlements.json
+    post:
+      tags:
+      - Group Entitlements
+      description: Create a group entitlement with license rule, extension rule.
+      operationId: Group Entitlements_Add
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: ruleOption
+        in: query
+        description: RuleOption [ApplyGroupRule/TestApplyGroupRule] - specifies if
+          the rules defined in group entitlement should be created and applied to
+          it’s members (default option) or just be tested
+        schema:
+          type: string
+          enum:
+          - applyGroupRule
+          - testApplyGroupRule
+          x-ms-enum:
+            name: RuleOption
+            values:
+            - value: applyGroupRule
+              description: ""
+            - value: testApplyGroupRule
+              description: ""
+        x-ms-enum:
+          name: RuleOption
+          values:
+          - value: applyGroupRule
+            description: ""
+          - value: testApplyGroupRule
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: GroupEntitlement object specifying License Rule, Extensions Rule
+          for the group. Based on the rules the members of the group will be given
+          licenses and extensions. The Group Entitlement can be used to add the group
+          to another project level groups
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupEntitlement'
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupEntitlementOperationReference'
+      security:
+      - oauth2:
+        - vso.memberentitlementmanagement_write
+      x-ms-docs-override-version: 5.1-preview.1
+      x-ms-vss-resource: groupEntitlements
+      x-ms-vss-method: AddGroupEntitlement
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/GroupEntitlements/POST__memberEntitlementManagement_GroupEntitlement.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/groupentitlements/{groupId}:
+    get:
+      tags:
+      - Group Entitlements
+      description: |-
+        Get a group entitlement.
+
+        If the group entitlement does not exist, returns null.
+      operationId: Group Entitlements_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: ID of the group.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupEntitlement'
+      security:
+      - oauth2:
+        - vso.memberentitlementmanagement
+      x-ms-docs-override-version: 5.1-preview.1
+      x-ms-vss-resource: groupEntitlements
+      x-ms-vss-method: GetGroupEntitlement
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/GroupEntitlements/GET__memberEntitlementManagement_GroupEntitlement.json
+    delete:
+      tags:
+      - Group Entitlements
+      description: Delete a group entitlement.
+      operationId: Group Entitlements_Delete
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: ID of the group to delete.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: ruleOption
+        in: query
+        description: RuleOption [ApplyGroupRule/TestApplyGroupRule] - specifies if
+          the rules defined in group entitlement should be deleted and the changes
+          are applied to it’s members (default option) or just be tested
+        schema:
+          type: string
+          enum:
+          - applyGroupRule
+          - testApplyGroupRule
+          x-ms-enum:
+            name: RuleOption
+            values:
+            - value: applyGroupRule
+              description: ""
+            - value: testApplyGroupRule
+              description: ""
+        x-ms-enum:
+          name: RuleOption
+          values:
+          - value: applyGroupRule
+            description: ""
+          - value: testApplyGroupRule
+            description: ""
+      - name: removeGroupMembership
+        in: query
+        description: Optional parameter that specifies whether the group with the
+          given ID should be removed from all other groups
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupEntitlementOperationReference'
+      security:
+      - oauth2:
+        - vso.memberentitlementmanagement_write
+      x-ms-docs-override-version: 5.1-preview.1
+      x-ms-vss-resource: groupEntitlements
+      x-ms-vss-method: DeleteGroupEntitlement
+      x-ms-preview: true
+    patch:
+      tags:
+      - Group Entitlements
+      description: Update entitlements (License Rule, Extensions Rule, Project memberships
+        etc.) for a group.
+      operationId: Group Entitlements_Update
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: ID of the group.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: ruleOption
+        in: query
+        description: RuleOption [ApplyGroupRule/TestApplyGroupRule] - specifies if
+          the rules defined in group entitlement should be updated and the changes
+          are applied to it’s members (default option) or just be tested
+        schema:
+          type: string
+          enum:
+          - applyGroupRule
+          - testApplyGroupRule
+          x-ms-enum:
+            name: RuleOption
+            values:
+            - value: applyGroupRule
+              description: ""
+            - value: testApplyGroupRule
+              description: ""
+        x-ms-enum:
+          name: RuleOption
+          values:
+          - value: applyGroupRule
+            description: ""
+          - value: testApplyGroupRule
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: JsonPatchDocument containing the operations to perform on the
+          group.
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/JsonPatchDocument'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupEntitlementOperationReference'
+      security:
+      - oauth2:
+        - vso.memberentitlementmanagement_write
+      x-ms-docs-override-version: 5.1-preview.1
+      x-ms-vss-resource: groupEntitlements
+      x-ms-vss-method: UpdateGroupEntitlement
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/GroupEntitlements/PATCH_memberEntitlementManagement_GroupEntitlement.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/GroupEntitlements/{groupId}/members:
+    get:
+      tags:
+      - Members
+      description: Get direct members of a Group.
+      operationId: Members_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Id of the Group.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: maxResults
+        in: query
+        description: Maximum number of results to retrieve.
+        schema:
+          type: integer
+          format: int32
+      - name: pagingToken
+        in: query
+        description: Paging Token from the previous page fetched. If the 'pagingToken'
+          is null, the results would be fetched from the beginning of the Members
+          List.
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedGraphMemberList'
+      security:
+      - oauth2:
+        - vso.memberentitlementmanagement
+      x-ms-docs-override-version: 5.1-preview.1
+      x-ms-vss-resource: members
+      x-ms-vss-method: GetGroupMembers
+      x-ms-preview: true
+  /{organization}/_apis/GroupEntitlements/{groupId}/members/{memberId}:
+    put:
+      tags:
+      - Members
+      description: Add a member to a Group.
+      operationId: Members_Add
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Id of the Group.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: memberId
+        in: path
+        description: Id of the member to add.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: 5.1-preview.1
+      x-ms-vss-resource: members
+      x-ms-vss-method: AddMemberToGroup
+      x-ms-preview: true
+    delete:
+      tags:
+      - Members
+      description: Remove a member from a Group.
+      operationId: Members_Remove Member From Group
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Id of the group.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: memberId
+        in: path
+        description: Id of the member to remove.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.memberentitlementmanagement_write
+      x-ms-docs-override-version: 5.1-preview.1
+      x-ms-vss-resource: members
+      x-ms-vss-method: RemoveMemberFromGroup
+      x-ms-preview: true
+  /{organization}/_apis/userentitlements:
+    get:
+      tags:
+      - User Entitlements
+      description: Get a paged set of user entitlements matching the filter criteria.
+        If no filter is is passed, a page from all the account users is returned.
+      operationId: User Entitlements_Get User Entitlements
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: top
+        in: query
+        description: Maximum number of the user entitlements to return. Max value
+          is 10000. Default value is 100
+        schema:
+          type: integer
+          format: int32
+      - name: skip
+        in: query
+        description: 'Offset: Number of records to skip. Default value is 0'
+        schema:
+          type: integer
+          format: int32
+      - name: filter
+        in: query
+        description: Comma (",") separated list of properties and their values to
+          filter on. Currently, the API only supports filtering by ExtensionId. An
+          example parameter would be filter=extensionId eq search.
+        schema:
+          type: string
+      - name: sortOption
+        in: query
+        description: PropertyName and Order (separated by a space ( )) to sort on
+          (e.g. LastAccessDate Desc)
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.2'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedGraphMemberList'
+      security:
+      - oauth2:
+        - vso.memberentitlementmanagement
+      x-ms-docs-override-version: 5.1-preview.2
+      x-ms-vss-resource: userEntitlements
+      x-ms-vss-method: GetUserEntitlements
+      x-ms-preview: true
+    post:
+      tags:
+      - User Entitlements
+      description: Add a user, assign license and extensions and make them a member
+        of a project group in an account.
+      operationId: User Entitlements_Add
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.2'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: UserEntitlement object specifying License, Extensions and Project/Team
+          groups the user should be added to.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserEntitlement'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserEntitlementsPostResponse'
+      security:
+      - oauth2:
+        - vso.memberentitlementmanagement_write
+      x-ms-docs-override-version: 5.1-preview.2
+      x-ms-vss-resource: userEntitlements
+      x-ms-vss-method: AddUserEntitlement
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/UserEntitlements/POST__memberEntitlementManagement_UserEntitlement.json
+      x-codegen-request-body-name: body
+    patch:
+      tags:
+      - User Entitlements
+      description: Edit the entitlements (License, Extensions, Projects, Teams etc)
+        for one or more users.
+      operationId: User Entitlements_Update User Entitlements
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: doNotSendInviteForNewUsers
+        in: query
+        description: Whether to send email invites to new users or not
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.2'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: JsonPatchDocument containing the operations to perform.
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/JsonPatchDocument'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserEntitlementOperationReference'
+      security:
+      - oauth2:
+        - vso.memberentitlementmanagement_write
+      x-ms-docs-override-version: 5.1-preview.2
+      x-ms-vss-resource: userEntitlements
+      x-ms-vss-method: UpdateUserEntitlements
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/UserEntitlements/PATCH__memberEntitlementManagement_UserEntitlements.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/userentitlements/{userId}:
+    get:
+      tags:
+      - User Entitlements
+      description: Get User Entitlement for a user.
+      operationId: User Entitlements_Get User Entitlement
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: path
+        description: ID of the user.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.2'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserEntitlement'
+      security:
+      - oauth2:
+        - vso.memberentitlementmanagement
+      x-ms-docs-override-version: 5.1-preview.2
+      x-ms-vss-resource: userEntitlements
+      x-ms-vss-method: GetUserEntitlement
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/UserEntitlements/GET__memberEntitlementManagement_UserEntitlementById.json
+    delete:
+      tags:
+      - User Entitlements
+      description: |-
+        Delete a user from the account.
+
+        The delete operation includes unassigning Extensions and Licenses and removing the user from all project memberships.
+        The user would continue to have access to the account if she is member of an AAD group, that is added directly to the account.
+      operationId: User Entitlements_Delete
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: path
+        description: ID of the user.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.2'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.memberentitlementmanagement_write
+      x-ms-docs-override-version: 5.1-preview.2
+      x-ms-vss-resource: userEntitlements
+      x-ms-vss-method: DeleteUserEntitlement
+      x-ms-preview: true
+    patch:
+      tags:
+      - User Entitlements
+      description: Edit the entitlements (License, Extensions, Projects, Teams etc)
+        for a user.
+      operationId: User Entitlements_Update User Entitlement
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: path
+        description: ID of the user.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.2'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: JsonPatchDocument containing the operations to perform on the
+          user.
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/JsonPatchDocument'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserEntitlementsPatchResponse'
+      security:
+      - oauth2:
+        - vso.memberentitlementmanagement_write
+      x-ms-docs-override-version: 5.1-preview.2
+      x-ms-vss-resource: userEntitlements
+      x-ms-vss-method: UpdateUserEntitlement
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/UserEntitlements/PATCH__memberEntitlementManagement_UserEntitlementById.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/userentitlementsummary:
+    get:
+      tags:
+      - User Entitlement Summary
+      description: Get summary of Licenses, Extension, Projects, Groups and their
+        assignments in the collection.
+      operationId: User Entitlement Summary_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: select
+        in: query
+        description: Comma (",") separated list of properties to select. Supported
+          property names are {AccessLevels, Licenses, Extensions, Projects, Groups}.
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersSummary'
+      security:
+      - oauth2:
+        - vso.memberentitlementmanagement
+      x-ms-docs-override-version: 5.1-preview.1
+      x-ms-vss-resource: userEntitlementSummary
+      x-ms-vss-method: GetUsersSummary
+      x-ms-preview: true
+components:
+  schemas:
+    AccessLevel:
+      type: object
+      properties:
+        accountLicenseType:
+          type: string
+          description: Type of Account License (e.g. Express, Stakeholder etc.)
+          enum:
+          - none
+          - earlyAdopter
+          - express
+          - professional
+          - advanced
+          - stakeholder
+          x-ms-enum:
+            name: AccountLicenseType
+            values:
+            - value: none
+              description: ""
+            - value: earlyAdopter
+              description: ""
+            - value: express
+              description: ""
+            - value: professional
+              description: ""
+            - value: advanced
+              description: ""
+            - value: stakeholder
+              description: ""
+        assignmentSource:
+          type: string
+          description: Assignment Source of the License (e.g. Group, Unknown etc.
+          enum:
+          - none
+          - unknown
+          - groupRule
+          x-ms-enum:
+            name: AssignmentSource
+            values:
+            - value: none
+              description: ""
+            - value: unknown
+              description: ""
+            - value: groupRule
+              description: ""
+        licenseDisplayName:
+          type: string
+          description: Display name of the License
+        licensingSource:
+          type: string
+          description: Licensing Source (e.g. Account. MSDN etc.)
+          enum:
+          - none
+          - account
+          - msdn
+          - profile
+          - auto
+          - trial
+          x-ms-enum:
+            name: LicensingSource
+            values:
+            - value: none
+              description: ""
+            - value: account
+              description: ""
+            - value: msdn
+              description: ""
+            - value: profile
+              description: ""
+            - value: auto
+              description: ""
+            - value: trial
+              description: ""
+        msdnLicenseType:
+          type: string
+          description: Type of MSDN License (e.g. Visual Studio Professional, Visual
+            Studio Enterprise etc.)
+          enum:
+          - none
+          - eligible
+          - professional
+          - platforms
+          - testProfessional
+          - premium
+          - ultimate
+          - enterprise
+          x-ms-enum:
+            name: MsdnLicenseType
+            values:
+            - value: none
+              description: ""
+            - value: eligible
+              description: ""
+            - value: professional
+              description: ""
+            - value: platforms
+              description: ""
+            - value: testProfessional
+              description: ""
+            - value: premium
+              description: ""
+            - value: ultimate
+              description: ""
+            - value: enterprise
+              description: ""
+        status:
+          type: string
+          description: User status in the account
+          enum:
+          - none
+          - active
+          - disabled
+          - deleted
+          - pending
+          - expired
+          - pendingDisabled
+          x-ms-enum:
+            name: AccountUserStatus
+            values:
+            - value: none
+              description: ""
+            - value: active
+              description: User has signed in at least once to the VSTS account
+            - value: disabled
+              description: User cannot sign in; primarily used by admin to temporarily
+                remove a user due to absence or license reallocation
+            - value: deleted
+              description: User is removed from the VSTS account by the VSTS account
+                admin
+            - value: pending
+              description: User is invited to join the VSTS account by the VSTS account
+                admin, but has not signed up/signed in yet
+            - value: expired
+              description: User can sign in; primarily used when license is in expired
+                state and we give a grace period
+            - value: pendingDisabled
+              description: User is disabled; if reenabled, they will still be in the
+                Pending state
+        statusMessage:
+          type: string
+          description: Status message.
+      description: License assigned to a user
+    BaseOperationResult:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: List of error codes paired with their corresponding error messages
+          items:
+            type: object
+            properties: {}
+        isSuccess:
+          type: boolean
+          description: Success status of the operation
+      description: ""
+    Extension:
+      type: object
+      properties:
+        assignmentSource:
+          type: string
+          description: Assignment source for this extension. I.e. explicitly assigned
+            or from a group rule.
+          enum:
+          - none
+          - unknown
+          - groupRule
+          x-ms-enum:
+            name: AssignmentSource
+            values:
+            - value: none
+              description: ""
+            - value: unknown
+              description: ""
+            - value: groupRule
+              description: ""
+        id:
+          type: string
+          description: Gallery Id of the Extension.
+        name:
+          type: string
+          description: Friendly name of this extension.
+        source:
+          type: string
+          description: 'Source of this extension assignment. Ex: msdn, account, none,
+            etc.'
+          enum:
+          - none
+          - account
+          - msdn
+          - profile
+          - auto
+          - trial
+          x-ms-enum:
+            name: LicensingSource
+            values:
+            - value: none
+              description: ""
+            - value: account
+              description: ""
+            - value: msdn
+              description: ""
+            - value: profile
+              description: ""
+            - value: auto
+              description: ""
+            - value: trial
+              description: ""
+      description: An extension assigned to a user
+    ExtensionSummaryData:
+      description: Summary of Extensions in the organization.
+      allOf:
+      - $ref: '#/components/schemas/SummaryData'
+    GraphGroup:
+      description: Graph group entity
+      allOf:
+      - $ref: '#/components/schemas/GraphMember'
+    GraphMember:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/GraphSubject'
+    GraphSubject:
+      description: Top-level graph entity
+      allOf:
+      - $ref: '#/components/schemas/GraphSubjectBase'
+    GraphSubjectBase:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        descriptor:
+          type: string
+          description: The descriptor is the primary way to reference the graph subject
+            while the system is running. This field will uniquely identify the same
+            graph subject across both Accounts and Organizations.
+        displayName:
+          type: string
+          description: This is the non-unique display name of the graph subject. To
+            change this field, you must alter its value in the source provider.
+        url:
+          type: string
+          description: This url is the full route to the source resource of this graph
+            subject.
+      description: ""
+    GraphUser:
+      description: Graph user entity
+      allOf:
+      - $ref: '#/components/schemas/GraphMember'
+    Group:
+      type: object
+      properties:
+        displayName:
+          type: string
+          description: Display Name of the Group
+        groupType:
+          type: string
+          description: Group Type
+          enum:
+          - projectStakeholder
+          - projectReader
+          - projectContributor
+          - projectAdministrator
+          - custom
+          x-ms-enum:
+            name: GroupType
+            values:
+            - value: projectStakeholder
+              description: ""
+            - value: projectReader
+              description: ""
+            - value: projectContributor
+              description: ""
+            - value: projectAdministrator
+              description: ""
+            - value: custom
+              description: ""
+      description: Project Group (e.g. Contributor, Reader etc.)
+    GroupEntitlement:
+      type: object
+      properties:
+        extensionRules:
+          type: array
+          description: Extension Rules.
+          items:
+            $ref: '#/components/schemas/Extension'
+        group:
+          $ref: '#/components/schemas/GraphGroup'
+        id:
+          type: string
+          description: The unique identifier which matches the Id of the GraphMember.
+          format: uuid
+        lastExecuted:
+          type: string
+          description: '[Readonly] The last time the group licensing rule was executed
+            (regardless of whether any changes were made).'
+          format: date-time
+        licenseRule:
+          $ref: '#/components/schemas/AccessLevel'
+        members:
+          type: array
+          description: Group members. Only used when creating a new group.
+          items:
+            $ref: '#/components/schemas/UserEntitlement'
+        projectEntitlements:
+          type: array
+          description: Relation between a project and the member's effective permissions
+            in that project.
+          items:
+            $ref: '#/components/schemas/ProjectEntitlement'
+        status:
+          type: string
+          description: The status of the group rule.
+          enum:
+          - applyPending
+          - applied
+          - incompatible
+          - unableToApply
+          x-ms-enum:
+            name: GroupLicensingRuleStatus
+            values:
+            - value: applyPending
+              description: Rule is created or updated, but apply is pending
+            - value: applied
+              description: Rule is applied
+            - value: incompatible
+              description: The group rule was incompatible
+            - value: unableToApply
+              description: Rule failed to apply unexpectedly and should be retried
+      description: A group entity with additional properties including its license,
+        extensions, and project membership
+    GroupEntitlementOperationReference:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/OperationReference'
+    GroupOperationResult:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/BaseOperationResult'
+    GroupOption:
+      type: object
+      properties:
+        accessLevel:
+          $ref: '#/components/schemas/AccessLevel'
+        group:
+          $ref: '#/components/schemas/Group'
+      description: Group option to add a user to
+    JsonPatchDocument:
+      description: The JSON model for JSON Patch Operations
+      allOf:
+      - type: array
+        items:
+          $ref: '#/components/schemas/JsonPatchOperation'
+    JsonPatchOperation:
+      type: object
+      properties:
+        from:
+          type: string
+          description: The path to copy from for the Move/Copy operation.
+        op:
+          type: string
+          description: The patch operation
+          enum:
+          - add
+          - remove
+          - replace
+          - move
+          - copy
+          - test
+          x-ms-enum:
+            name: Operation
+            values:
+            - value: add
+              description: ""
+            - value: remove
+              description: ""
+            - value: replace
+              description: ""
+            - value: move
+              description: ""
+            - value: copy
+              description: ""
+            - value: test
+              description: ""
+        path:
+          type: string
+          description: The path for the operation. In the case of an array, a zero
+            based index can be used to specify the position in the array (e.g. /biscuits/0/name).
+            The "-" character can be used instead of an index to insert at the end
+            of the array (e.g. /biscuits/-).
+        value:
+          type: object
+          properties: {}
+          description: The value for the operation. This is either a primitive or
+            a JToken.
+      description: The JSON model for a JSON Patch operation
+    LicenseSummaryData:
+      description: Summary of Licenses in the organization.
+      allOf:
+      - $ref: '#/components/schemas/SummaryData'
+    MemberEntitlement:
+      description: 'Deprecated: Use UserEntitlement instead'
+      allOf:
+      - $ref: '#/components/schemas/UserEntitlement'
+    MemberEntitlementOperationReference:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/OperationReference'
+    MemberEntitlementsPatchResponse:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/MemberEntitlementsResponseBase'
+    MemberEntitlementsPostResponse:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/MemberEntitlementsResponseBase'
+    MemberEntitlementsResponseBase:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: True if all operations were successful.
+        memberEntitlement:
+          $ref: '#/components/schemas/MemberEntitlement'
+      description: ""
+    OperationReference:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the operation.
+          format: uuid
+        pluginId:
+          type: string
+          description: Unique identifier for the plugin.
+          format: uuid
+        status:
+          type: string
+          description: The current status of the operation.
+          enum:
+          - notSet
+          - queued
+          - inProgress
+          - cancelled
+          - succeeded
+          - failed
+          x-ms-enum:
+            name: OperationStatus
+            values:
+            - value: notSet
+              description: The operation does not have a status set.
+            - value: queued
+              description: The operation has been queued.
+            - value: inProgress
+              description: The operation is in progress.
+            - value: cancelled
+              description: The operation was cancelled by the user.
+            - value: succeeded
+              description: The operation completed successfully.
+            - value: failed
+              description: The operation completed with a failure.
+        url:
+          type: string
+          description: URL to get the full operation object.
+      description: Reference for an async operation.
+    OperationResult:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: List of error codes paired with their corresponding error messages.
+          items:
+            type: object
+            properties: {}
+        isSuccess:
+          type: boolean
+          description: Success status of the operation.
+        memberId:
+          type: string
+          description: Identifier of the Member being acted upon.
+          format: uuid
+        result:
+          $ref: '#/components/schemas/MemberEntitlement'
+      description: ""
+    PagedGraphMemberList:
+      type: object
+      properties:
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserEntitlement'
+      description: A page of users
+    ProjectEntitlement:
+      type: object
+      properties:
+        assignmentSource:
+          type: string
+          description: Assignment Source (e.g. Group or Unknown).
+          enum:
+          - none
+          - unknown
+          - groupRule
+          x-ms-enum:
+            name: AssignmentSource
+            values:
+            - value: none
+              description: ""
+            - value: unknown
+              description: ""
+            - value: groupRule
+              description: ""
+        group:
+          $ref: '#/components/schemas/Group'
+        projectPermissionInherited:
+          type: string
+          description: Whether the user is inheriting permissions to a project through
+            a Azure DevOps or AAD group membership.
+          enum:
+          - notSet
+          - notInherited
+          - inherited
+          x-ms-enum:
+            name: ProjectPermissionInherited
+            values:
+            - value: notSet
+              description: ""
+            - value: notInherited
+              description: ""
+            - value: inherited
+              description: ""
+        projectRef:
+          $ref: '#/components/schemas/ProjectRef'
+        teamRefs:
+          type: array
+          description: Team Ref.
+          items:
+            $ref: '#/components/schemas/TeamRef'
+      description: Relation between a project and the user's effective permissions
+        in that project.
+    ProjectRef:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Project ID.
+          format: uuid
+        name:
+          type: string
+          description: Project Name.
+      description: A reference to a project
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    SummaryData:
+      type: object
+      properties:
+        assigned:
+          type: integer
+          description: Count of Licenses already assigned.
+          format: int32
+        available:
+          type: integer
+          description: Available Count.
+          format: int32
+        includedQuantity:
+          type: integer
+          description: Quantity
+          format: int32
+        total:
+          type: integer
+          description: Total Count.
+          format: int32
+      description: ""
+    TeamRef:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Team ID
+          format: uuid
+        name:
+          type: string
+          description: Team Name
+      description: A reference to a team
+    UserEntitlement:
+      type: object
+      properties:
+        accessLevel:
+          $ref: '#/components/schemas/AccessLevel'
+        dateCreated:
+          type: string
+          description: '[Readonly] Date the user was added to the collection.'
+          format: date-time
+        extensions:
+          type: array
+          description: User's extensions.
+          items:
+            $ref: '#/components/schemas/Extension'
+        groupAssignments:
+          type: array
+          description: '[Readonly] GroupEntitlements that this user belongs to.'
+          items:
+            $ref: '#/components/schemas/GroupEntitlement'
+        id:
+          type: string
+          description: The unique identifier which matches the Id of the Identity
+            associated with the GraphMember.
+          format: uuid
+        lastAccessedDate:
+          type: string
+          description: '[Readonly] Date the user last accessed the collection.'
+          format: date-time
+        projectEntitlements:
+          type: array
+          description: Relation between a project and the user's effective permissions
+            in that project.
+          items:
+            $ref: '#/components/schemas/ProjectEntitlement'
+        user:
+          $ref: '#/components/schemas/GraphUser'
+      description: A user entity with additional properties including their license,
+        extensions, and project membership
+    UserEntitlementOperationReference:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/OperationReference'
+    UserEntitlementOperationResult:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: List of error codes paired with their corresponding error messages.
+          items:
+            type: object
+            properties: {}
+        isSuccess:
+          type: boolean
+          description: Success status of the operation.
+        result:
+          $ref: '#/components/schemas/UserEntitlement'
+        userId:
+          type: string
+          description: Identifier of the Member being acted upon.
+          format: uuid
+      description: ""
+    UserEntitlementsPatchResponse:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/UserEntitlementsResponseBase'
+    UserEntitlementsPostResponse:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/UserEntitlementsResponseBase'
+    UserEntitlementsResponseBase:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: True if all operations were successful.
+        userEntitlement:
+          $ref: '#/components/schemas/UserEntitlement'
+      description: ""
+    UsersSummary:
+      type: object
+      properties:
+        availableAccessLevels:
+          type: array
+          description: Available Access Levels
+          items:
+            $ref: '#/components/schemas/AccessLevel'
+        extensions:
+          type: array
+          description: Summary of Extensions in the organization
+          items:
+            $ref: '#/components/schemas/ExtensionSummaryData'
+        groupOptions:
+          type: array
+          description: Group Options
+          items:
+            $ref: '#/components/schemas/GroupOption'
+        licenses:
+          type: array
+          description: Summary of Licenses in the organization
+          items:
+            $ref: '#/components/schemas/LicenseSummaryData'
+        projectRefs:
+          type: array
+          description: Summary of Projects in the organization
+          items:
+            $ref: '#/components/schemas/ProjectRef'
+      description: Summary of licenses and extensions assigned to users in the organization
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '5.1-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+    api-Version-preview.2:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '5.1-preview.2'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.memberentitlementmanagement: Grants the ability to read users, their
+              licenses as well as projects and extensions they can access
+            vso.memberentitlementmanagement_write: Grants the ability to manage users,
+              their licenses as well as projects and extensions they can access
+x-ms-vss-area: MemberEntitlementManagement
+x-ms-vss-resource-area-id: 68ddce18-2501-45f1-a17b-7931a9922690

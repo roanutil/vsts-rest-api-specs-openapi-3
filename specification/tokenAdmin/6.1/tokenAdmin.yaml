@@ -1,0 +1,444 @@
+openapi: 3.0.1
+info:
+  title: TokenAdmin
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 6.1-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://vssps.dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Personal Access Tokens
+  description: This resource allows token administrators to retrieve personal access
+    token (PAT) details for their organization's users.
+- name: Revocation Rules
+  description: |-
+    This resource allows token administrators to create revocation rules
+    that prevent the usage of OAuth authorizations that cannot be revoked directly.
+- name: Revocations
+  description: |-
+    This resource allows token administrators to revoke the OAuth authorizations,
+    including personal access tokens (PATs), for their organization's users.
+paths:
+  /{organization}/_apis/tokenadmin/personalaccesstokens/{subjectDescriptor}:
+    get:
+      tags:
+      - Personal Access Tokens
+      description: Lists of all the session token details of the personal access tokens
+        (PATs) for a particular user.
+      operationId: Personal Access Tokens_List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: subjectDescriptor
+        in: path
+        description: The descriptor of the target user.
+        required: true
+        schema:
+          type: string
+      - name: pageSize
+        in: query
+        description: The maximum number of results to return on each page.
+        schema:
+          type: integer
+          format: int32
+      - name: continuationToken
+        in: query
+        description: An opaque data blob that allows the next page of data to resume
+          immediately after where the previous page ended. The only reliable way to
+          know if there is more data left is the presence of a continuation token.
+        schema:
+          type: string
+      - name: isPublic
+        in: query
+        description: Set to false for PAT tokens and true for SSH tokens.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '6.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: An an array containing all the session token objects corresponding
+            to the user's PATs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenAdminPagedSessionTokens'
+        400:
+          description: The input is invalid, such as by containing an invalid subject
+            descriptor, page size, or continuation token
+          content: {}
+        401:
+          description: If the caller does not have permission to administrate tokens
+          content: {}
+        404:
+          description: If the user with the given subject descriptor cannot be found.
+          content: {}
+      security:
+      - oauth2:
+        - vso.tokenadministration
+      x-ms-docs-override-version: 6.1-preview.1
+      x-ms-vss-resource: personalAccessTokens
+      x-ms-vss-method: ListPersonalAccessTokens
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/PersonalAccessTokens/GetPersonalAccessTokensForAUserInYourOrganization.json
+  /{organization}/_apis/tokenadmin/revocationrules:
+    post:
+      tags:
+      - Revocation Rules
+      description: |-
+        Creates a revocation rule to prevent the further usage of any OAuth authorizations that were created before the current point in time and which match the conditions in the rule.
+
+        Not all kinds of OAuth authorizations can be revoked directly.
+        Some, such as self-describing session tokens, must instead by revoked by creating a rule
+        which will be evaluated and used to reject matching OAuth credentials at authentication time.
+        Revocation rules created through this endpoint will apply to all credentials that were issued
+        before the datetime at which the rule was created and which match one or more additional conditions.
+      operationId: Revocation Rules_Create
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '6.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: 'The revocation rule to create. The rule must specify a space-separated
+          list of scopes, after which preexisting OAuth authorizations that match
+          that any of the scopes will be rejected. For a list of all OAuth scopes
+          supported by VSTS, see: https://docs.microsoft.com/en-us/vsts/integrate/get-started/authentication/oauth?view=vsts#scopes
+          The rule may also specify the time before which to revoke tokens.'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenAdminRevocationRule'
+        required: true
+      responses:
+        201:
+          description: The revocation rule was created successfully.
+          content: {}
+        400:
+          description: The input is invalid, such as by not containing a scope.
+          content: {}
+        401:
+          description: If the caller does not have permission to administrate tokens
+          content: {}
+      security:
+      - oauth2:
+        - vso.tokenadministration
+      x-ms-docs-override-version: 6.1-preview.1
+      x-ms-vss-resource: revocationRules
+      x-ms-vss-method: CreateRevocationRule
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/RevocationRules/RevokeSelfDescribingSessionTokensForATimeAndScope.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/tokenadmin/revocations:
+    post:
+      tags:
+      - Revocations
+      description: Revokes the listed OAuth authorizations.
+      operationId: Revocations_Revoke Authorizations
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: isPublic
+        in: query
+        description: Set to false for PAT tokens and true for SSH tokens.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '6.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The list of objects containing the authorization IDs of the OAuth
+          authorizations, such as session tokens retrieved by listed a users PATs,
+          that should be revoked.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/TokenAdminRevocation'
+        required: true
+      responses:
+        204:
+          description: The authorizations were deleted successfully.
+          content: {}
+        400:
+          description: The input is invalid, such as by not containing an authorization
+            ID.
+          content: {}
+        401:
+          description: If the caller does not have permission to administrate tokens
+          content: {}
+      security:
+      - oauth2:
+        - vso.tokenadministration
+      x-ms-docs-override-version: 6.1-preview.1
+      x-ms-vss-resource: revocations
+      x-ms-vss-method: RevokeAuthorizations
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Revocations/RevokeAuthorizations.json
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    SessionToken:
+      type: object
+      properties:
+        accessId:
+          type: string
+          format: uuid
+        alternateToken:
+          type: string
+          description: This is populated when user requests a compact token. The alternate
+            token value is self describing token.
+        authorizationId:
+          type: string
+          format: uuid
+        claims:
+          type: object
+          additionalProperties:
+            type: string
+        clientId:
+          type: string
+          format: uuid
+        displayName:
+          type: string
+        hostAuthorizationId:
+          type: string
+          format: uuid
+        isPublic:
+          type: boolean
+        isValid:
+          type: boolean
+        publicData:
+          type: string
+        scope:
+          type: string
+        source:
+          type: string
+        targetAccounts:
+          type: array
+          items:
+            type: string
+            format: uuid
+        token:
+          type: string
+          description: This is computed and not returned in Get queries
+        userId:
+          type: string
+          format: uuid
+        validFrom:
+          type: string
+          format: date-time
+        validTo:
+          type: string
+          format: date-time
+      description: Represents a session token used to access Azure DevOps resources
+    SessionTokenResult:
+      type: object
+      properties:
+        hasError:
+          type: boolean
+        sessionToken:
+          $ref: '#/components/schemas/SessionToken'
+        sessionTokenError:
+          type: string
+          enum:
+          - none
+          - displayNameRequired
+          - invalidDisplayName
+          - invalidValidTo
+          - invalidScope
+          - userIdRequired
+          - invalidUserId
+          - invalidUserType
+          - accessDenied
+          - failedToIssueAccessToken
+          - invalidClient
+          - invalidClientType
+          - invalidClientId
+          - invalidTargetAccounts
+          - hostAuthorizationNotFound
+          - authorizationNotFound
+          - failedToUpdateAccessToken
+          - sourceNotSupported
+          - invalidSourceIP
+          - invalidSource
+          - duplicateHash
+          - sshPolicyDisabled
+          - invalidToken
+          - tokenNotFound
+          - invalidAuthorizationId
+          - failedToReadTenantPolicy
+          - globalPatPolicyViolation
+          - fullScopePatPolicyViolation
+          - patLifespanPolicyViolation
+          x-ms-enum:
+            name: SessionTokenError
+            values:
+            - value: none
+              description: ""
+            - value: displayNameRequired
+              description: ""
+            - value: invalidDisplayName
+              description: ""
+            - value: invalidValidTo
+              description: ""
+            - value: invalidScope
+              description: ""
+            - value: userIdRequired
+              description: ""
+            - value: invalidUserId
+              description: ""
+            - value: invalidUserType
+              description: ""
+            - value: accessDenied
+              description: ""
+            - value: failedToIssueAccessToken
+              description: ""
+            - value: invalidClient
+              description: ""
+            - value: invalidClientType
+              description: ""
+            - value: invalidClientId
+              description: ""
+            - value: invalidTargetAccounts
+              description: ""
+            - value: hostAuthorizationNotFound
+              description: ""
+            - value: authorizationNotFound
+              description: ""
+            - value: failedToUpdateAccessToken
+              description: ""
+            - value: sourceNotSupported
+              description: ""
+            - value: invalidSourceIP
+              description: ""
+            - value: invalidSource
+              description: ""
+            - value: duplicateHash
+              description: ""
+            - value: sshPolicyDisabled
+              description: ""
+            - value: invalidToken
+              description: ""
+            - value: tokenNotFound
+              description: ""
+            - value: invalidAuthorizationId
+              description: ""
+            - value: failedToReadTenantPolicy
+              description: ""
+            - value: globalPatPolicyViolation
+              description: ""
+            - value: fullScopePatPolicyViolation
+              description: ""
+            - value: patLifespanPolicyViolation
+              description: ""
+      description: ""
+    TokenAdminPagedSessionTokens:
+      type: object
+      properties:
+        continuationToken:
+          type: string
+          description: The continuation token that can be used to retrieve the next
+            page of session tokens, or <code>null</code> if there is no next page.
+          format: uuid
+        value:
+          type: array
+          description: The list of all session tokens in the current page.
+          items:
+            $ref: '#/components/schemas/SessionToken'
+      description: A paginated list of session tokens. Session tokens correspond to
+        OAuth credentials such as personal access tokens (PATs) and other OAuth authorizations.
+    TokenAdminRevocation:
+      type: object
+      properties:
+        authorizationId:
+          type: string
+          description: The authorization ID of the OAuth authorization to revoke.
+          format: uuid
+      description: A request to revoke a particular delegated authorization.
+    TokenAdminRevocationRule:
+      type: object
+      properties:
+        createdBefore:
+          type: string
+          description: A datetime cutoff. Tokens created before this time will be
+            rejected. This is an optional parameter. If omitted, defaults to the time
+            at which the rule was created.
+          format: date-time
+        scopes:
+          type: string
+          description: 'A string containing a space-delimited list of OAuth scopes.
+            A token matching any one of the scopes will be rejected. For a list of
+            all OAuth scopes supported by Azure DevOps, see: https://docs.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/oauth?view=azure-devops#scopes
+            This is a mandatory parameter.'
+      description: A rule which is applied to disable any incoming delegated authorization
+        which matches the given properties.
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '6.1-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.tokenadministration: Grants the ability to manage (view and revoke)
+              existing tokens to organization administrators
+x-ms-vss-area: TokenAdmin
+x-ms-vss-resource-area-id: af68438b-ed04-4407-9eb6-f1dbae3f922e

@@ -1,0 +1,1574 @@
+openapi: 3.0.1
+info:
+  title: WorkItemTracking
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 4.1-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Behaviors
+- name: Fields
+- name: Processes
+- name: Rules
+- name: States
+- name: Work Item Types
+paths:
+  /{organization}/_apis/work/processes:
+    get:
+      tags:
+      - Processes
+      description: Returns a list of all processes.
+      operationId: List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - projects
+          x-ms-enum:
+            name: GetProcessExpandLevel
+            values:
+            - value: none
+              description: ""
+            - value: projects
+              description: ""
+        x-ms-enum:
+          name: GetProcessExpandLevel
+          values:
+          - value: none
+            description: ""
+          - value: projects
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProcessModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: processes
+      x-ms-vss-method: GetProcesses
+      x-ms-preview: true
+      x-ms-examples:
+        Get the list of processes:
+          $ref: ./httpExamples/processes/GET__processes.json
+    post:
+      tags:
+      - Processes
+      description: Creates a process.
+      operationId: Create
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProcessModel'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: processes
+      x-ms-vss-method: CreateProcess
+      x-ms-preview: true
+      x-ms-examples:
+        Create the process:
+          $ref: ./httpExamples/processes/POST__create_process.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/work/processes/{processId}/behaviors:
+    get:
+      tags:
+      - Behaviors
+      description: Returns a list of all behaviors in the process.
+      operationId: List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - fields
+          x-ms-enum:
+            name: GetBehaviorsExpand
+            values:
+            - value: none
+              description: ""
+            - value: fields
+              description: ""
+        x-ms-enum:
+          name: GetBehaviorsExpand
+          values:
+          - value: none
+            description: ""
+          - value: fields
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemBehavior'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: behaviors
+      x-ms-vss-method: GetBehaviors
+      x-ms-preview: true
+      x-ms-examples:
+        Get the list of process behaviors:
+          $ref: ./httpExamples/behaviors/GET__behaviors_list.json
+  /{organization}/_apis/work/processes/{processId}/behaviors/{behaviorRefName}:
+    get:
+      tags:
+      - Behaviors
+      description: Returns a behavior of the process.
+      operationId: Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: behaviorRefName
+        in: path
+        description: Reference name of the behavior
+        required: true
+        schema:
+          type: string
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - fields
+          x-ms-enum:
+            name: GetBehaviorsExpand
+            values:
+            - value: none
+              description: ""
+            - value: fields
+              description: ""
+        x-ms-enum:
+          name: GetBehaviorsExpand
+          values:
+          - value: none
+            description: ""
+          - value: fields
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemBehavior'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: behaviors
+      x-ms-vss-method: GetBehavior
+      x-ms-preview: true
+      x-ms-examples:
+        Get the process behavior definition:
+          $ref: ./httpExamples/behaviors/GET__behavior.json
+  /{organization}/_apis/work/processes/{processId}/fields:
+    get:
+      tags:
+      - Fields
+      description: Returns a list of all fields in a process.
+      operationId: Get Fields
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FieldModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: fields
+      x-ms-vss-method: GetFields
+      x-ms-preview: true
+      x-ms-examples:
+        Get the list of process fields:
+          $ref: ./httpExamples/fields/GET__process_fields.json
+  /{organization}/_apis/work/processes/{processId}/workitemtypes:
+    get:
+      tags:
+      - Work Item Types
+      description: Returns a list of all work item types in a process.
+      operationId: List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - states
+          - behaviors
+          - layout
+          x-ms-enum:
+            name: GetWorkItemTypeExpand
+            values:
+            - value: none
+              description: ""
+            - value: states
+              description: ""
+            - value: behaviors
+              description: ""
+            - value: layout
+              description: ""
+        x-ms-enum:
+          name: GetWorkItemTypeExpand
+          values:
+          - value: none
+            description: ""
+          - value: states
+            description: ""
+          - value: behaviors
+            description: ""
+          - value: layout
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemTypeModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypes
+      x-ms-vss-method: GetWorkItemTypes
+      x-ms-preview: true
+      x-ms-examples:
+        Get work item types:
+          $ref: ./httpExamples/workItemTypes/GET__wits.json
+  /{organization}/_apis/work/processes/{processId}/workitemtypes/{witRefName}:
+    get:
+      tags:
+      - Work Item Types
+      description: Returns a single work item type in a process.
+      operationId: Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - states
+          - behaviors
+          - layout
+          x-ms-enum:
+            name: GetWorkItemTypeExpand
+            values:
+            - value: none
+              description: ""
+            - value: states
+              description: ""
+            - value: behaviors
+              description: ""
+            - value: layout
+              description: ""
+        x-ms-enum:
+          name: GetWorkItemTypeExpand
+          values:
+          - value: none
+            description: ""
+          - value: states
+            description: ""
+          - value: behaviors
+            description: ""
+          - value: layout
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemTypeModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: workItemTypes
+      x-ms-vss-method: GetWorkItemType
+      x-ms-preview: true
+      x-ms-examples:
+        Get work item type:
+          $ref: ./httpExamples/workItemTypes/GET__wit.json
+  /{organization}/_apis/work/processes/{processId}/workItemTypes/{witRefName}/fields:
+    get:
+      tags:
+      - Fields
+      description: Returns a list of all fields in a work item type.
+      operationId: Get Work Item Type Fields
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FieldModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: fields
+      x-ms-vss-method: GetWorkItemTypeFields
+      x-ms-preview: true
+      x-ms-examples:
+        Get the list of work item type fields:
+          $ref: ./httpExamples/fields/GET__wit_fields.json
+  /{organization}/_apis/work/processes/{processId}/workItemTypes/{witRefName}/rules:
+    get:
+      tags:
+      - Rules
+      description: Returns a list of all rules in the work item type of the process.
+      operationId: List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FieldRuleModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: rules
+      x-ms-vss-method: GetWorkItemTypeRules
+      x-ms-preview: true
+      x-ms-examples:
+        Get the list of rules for the work item type:
+          $ref: ./httpExamples/rules/GET__wit_rules.json
+    post:
+      tags:
+      - Rules
+      description: Adds a rule to work item type in the process.
+      operationId: Add
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FieldRuleModel'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldRuleModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: rules
+      x-ms-vss-method: AddWorkItemTypeRule
+      x-ms-preview: true
+      x-ms-examples:
+        Add the rule definition:
+          $ref: ./httpExamples/rules/POST__wit_rule.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/work/processes/{processId}/workItemTypes/{witRefName}/rules/{ruleId}:
+    get:
+      tags:
+      - Rules
+      description: Returns a single rule in the work item type of the process.
+      operationId: Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: ruleId
+        in: path
+        description: The ID of the rule
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldRuleModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: rules
+      x-ms-vss-method: GetWorkItemTypeRule
+      x-ms-preview: true
+      x-ms-examples:
+        Get the specified rule definition:
+          $ref: ./httpExamples/rules/GET__wit_rule.json
+    put:
+      tags:
+      - Rules
+      description: Updates a rule in the work item type of the process.
+      operationId: Update
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: ruleId
+        in: path
+        description: The ID of the rule
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FieldRuleModel'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldRuleModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: rules
+      x-ms-vss-method: UpdateWorkItemTypeRule
+      x-ms-preview: true
+      x-ms-examples:
+        Update the rule definition:
+          $ref: ./httpExamples/rules/PUT__wit_rule.json
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Rules
+      description: Removes a rule from the work item type in the process.
+      operationId: Delete
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: ruleId
+        in: path
+        description: The ID of the rule
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: rules
+      x-ms-vss-method: DeleteWorkItemTypeRule
+      x-ms-preview: true
+      x-ms-examples:
+        Delete the rule:
+          $ref: ./httpExamples/rules/DELETE__wit_rule.json
+  /{organization}/_apis/work/processes/{processId}/workItemTypes/{witRefName}/states:
+    get:
+      tags:
+      - States
+      description: Returns a list of all state definitions in a work item type of
+        the process.
+      operationId: List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItemStateResultModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: states
+      x-ms-vss-method: GetStateDefinitions
+      x-ms-preview: true
+      x-ms-examples:
+        Get state definitions:
+          $ref: ./httpExamples/states/GET__wit_states.json
+  /{organization}/_apis/work/processes/{processId}/workItemTypes/{witRefName}/states/{stateId}:
+    get:
+      tags:
+      - States
+      description: Returns a single state definition in a work item type of the process.
+      operationId: Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: witRefName
+        in: path
+        description: The reference name of the work item type
+        required: true
+        schema:
+          type: string
+      - name: stateId
+        in: path
+        description: The ID of the state
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemStateResultModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: states
+      x-ms-vss-method: GetStateDefinition
+      x-ms-preview: true
+      x-ms-examples:
+        Get state definition:
+          $ref: ./httpExamples/states/GET__wit_state.json
+  /{organization}/_apis/work/processes/{processTypeId}:
+    get:
+      tags:
+      - Processes
+      description: Returns a single process of a specified ID.
+      operationId: Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processTypeId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: $expand
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - projects
+          x-ms-enum:
+            name: GetProcessExpandLevel
+            values:
+            - value: none
+              description: ""
+            - value: projects
+              description: ""
+        x-ms-enum:
+          name: GetProcessExpandLevel
+          values:
+          - value: none
+            description: ""
+          - value: projects
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: processes
+      x-ms-vss-method: GetProcessById
+      x-ms-preview: true
+      x-ms-examples:
+        Get the specific process definition:
+          $ref: ./httpExamples/processes/GET__process.json
+    delete:
+      tags:
+      - Processes
+      description: Removes a process of a specific ID.
+      operationId: Delete
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processTypeId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: processes
+      x-ms-vss-method: DeleteProcess
+      x-ms-preview: true
+      x-ms-examples:
+        Delete the process definition:
+          $ref: ./httpExamples/processes/DELETE__process.json
+    patch:
+      tags:
+      - Processes
+      description: Updates a process of a specific ID.
+      operationId: Update
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processTypeId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '4.1-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProcessModel'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessModel'
+      x-ms-docs-override-version: 4.1-preview.1
+      x-ms-vss-resource: processes
+      x-ms-vss-method: UpdateProcess
+      x-ms-preview: true
+      x-ms-examples:
+        Update the process definition:
+          $ref: ./httpExamples/processes/PATCH__update_process.json
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    Control:
+      type: object
+      properties:
+        contribution:
+          $ref: '#/components/schemas/WitContribution'
+        controlType:
+          type: string
+          description: Type of the control.
+        height:
+          type: integer
+          description: Height of the control, for html controls.
+          format: int32
+        id:
+          type: string
+          description: The id for the layout node.
+        inherited:
+          type: boolean
+          description: A value indicating whether this layout node has been inherited
+            from a parent layout.  This is expected to only be only set by the combiner.
+        isContribution:
+          type: boolean
+          description: A value indicating if the layout node is contribution or not.
+        label:
+          type: string
+          description: Label for the field
+        metadata:
+          type: string
+          description: Inner text of the control.
+        order:
+          type: integer
+          format: int32
+        overridden:
+          type: boolean
+          description: A value indicating whether this layout node has been overridden
+            by a child layout.
+        readOnly:
+          type: boolean
+          description: A value indicating if the control is readonly.
+        visible:
+          type: boolean
+          description: A value indicating if the control should be hidden or not.
+        watermark:
+          type: string
+          description: Watermark text for the textbox.
+      description: Represent a control in the form.
+    CreateProcessModel:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the process
+        name:
+          type: string
+          description: Name of the process
+        parentProcessTypeId:
+          type: string
+          description: The ID of the parent process
+          format: uuid
+        referenceName:
+          type: string
+          description: Reference name of the process
+      description: ""
+    Extension:
+      type: object
+      properties:
+        id:
+          type: string
+      description: Represents the extensions part of the layout
+    FieldModel:
+      type: object
+      properties:
+        description:
+          type: string
+        id:
+          type: string
+        isIdentity:
+          type: boolean
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+          - string
+          - integer
+          - dateTime
+          - plainText
+          - html
+          - treePath
+          - history
+          - double
+          - guid
+          - boolean
+          - identity
+          - picklistInteger
+          - picklistString
+          - picklistDouble
+          x-ms-enum:
+            name: FieldType
+            values:
+            - value: string
+              description: ""
+            - value: integer
+              description: ""
+            - value: dateTime
+              description: ""
+            - value: plainText
+              description: ""
+            - value: html
+              description: ""
+            - value: treePath
+              description: ""
+            - value: history
+              description: ""
+            - value: double
+              description: ""
+            - value: guid
+              description: ""
+            - value: boolean
+              description: ""
+            - value: identity
+              description: ""
+            - value: picklistInteger
+              description: ""
+            - value: picklistString
+              description: ""
+            - value: picklistDouble
+              description: ""
+        url:
+          type: string
+      description: ""
+    FieldRuleModel:
+      type: object
+      properties:
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/RuleActionModel'
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/RuleConditionModel'
+        friendlyName:
+          type: string
+        id:
+          type: string
+          format: uuid
+        isDisabled:
+          type: boolean
+        isSystem:
+          type: boolean
+      description: ""
+    FormLayout:
+      type: object
+      properties:
+        extensions:
+          type: array
+          description: Gets and sets extensions list
+          items:
+            $ref: '#/components/schemas/Extension'
+        pages:
+          type: array
+          description: Top level tabs of the layout.
+          items:
+            $ref: '#/components/schemas/Page'
+        systemControls:
+          type: array
+          description: Headers controls of the layout.
+          items:
+            $ref: '#/components/schemas/Control'
+      description: ""
+    Group:
+      type: object
+      properties:
+        contribution:
+          $ref: '#/components/schemas/WitContribution'
+        controls:
+          type: array
+          description: Controls to be put in the group.
+          items:
+            $ref: '#/components/schemas/Control'
+        height:
+          type: integer
+          description: The height for the contribution.
+          format: int32
+        id:
+          type: string
+          description: The id for the layout node.
+        inherited:
+          type: boolean
+          description: A value indicating whether this layout node has been inherited
+            from a parent layout.  This is expected to only be only set by the combiner.
+        isContribution:
+          type: boolean
+          description: A value indicating if the layout node is contribution are not.
+        label:
+          type: string
+          description: Label for the group.
+        order:
+          type: integer
+          description: Order in which the group should appear in the section.
+          format: int32
+        overridden:
+          type: boolean
+          description: A value indicating whether this layout node has been overridden
+            by a child layout.
+        visible:
+          type: boolean
+          description: A value indicating if the group should be hidden or not.
+      description: Represent a group in the form that holds controls in it.
+    Page:
+      type: object
+      properties:
+        contribution:
+          $ref: '#/components/schemas/WitContribution'
+        id:
+          type: string
+          description: The id for the layout node.
+        inherited:
+          type: boolean
+          description: A value indicating whether this layout node has been inherited
+            from a parent layout.  This is expected to only be only set by the combiner.
+        isContribution:
+          type: boolean
+          description: A value indicating if the layout node is contribution are not.
+        label:
+          type: string
+          description: The label for the page.
+        locked:
+          type: boolean
+          description: A value indicating whether any user operations are permitted
+            on this page and the contents of this page
+        order:
+          type: integer
+          description: Order in which the page should appear in the layout.
+          format: int32
+        overridden:
+          type: boolean
+          description: A value indicating whether this layout node has been overridden
+            by a child layout.
+        pageType:
+          type: string
+          description: The icon for the page.
+          enum:
+          - custom
+          - history
+          - links
+          - attachments
+          x-ms-enum:
+            name: PageType
+            values:
+            - value: custom
+              description: ""
+            - value: history
+              description: ""
+            - value: links
+              description: ""
+            - value: attachments
+              description: ""
+        sections:
+          type: array
+          description: The sections of the page.
+          items:
+            $ref: '#/components/schemas/Section'
+        visible:
+          type: boolean
+          description: A value indicating if the page should be hidden or not.
+      description: ""
+    ProcessModel:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the process
+        name:
+          type: string
+          description: Name of the process
+        projects:
+          type: array
+          description: Projects in this process
+          items:
+            $ref: '#/components/schemas/ProjectReference'
+        properties:
+          $ref: '#/components/schemas/ProcessProperties'
+        referenceName:
+          type: string
+          description: Reference name of the process
+        typeId:
+          type: string
+          description: The ID of the process
+          format: uuid
+      description: ""
+    ProcessProperties:
+      type: object
+      properties:
+        class:
+          type: string
+          description: Class of the process
+          enum:
+          - system
+          - derived
+          - custom
+          x-ms-enum:
+            name: ProcessClass
+            values:
+            - value: system
+              description: ""
+            - value: derived
+              description: ""
+            - value: custom
+              description: ""
+        isDefault:
+          type: boolean
+          description: Is the process default process
+        isEnabled:
+          type: boolean
+          description: Is the process enabled
+        parentProcessTypeId:
+          type: string
+          description: ID of the parent process
+          format: uuid
+        version:
+          type: string
+          description: Version of the process
+      description: Properties of the process
+    ProjectReference:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the project
+        id:
+          type: string
+          description: The ID of the project
+          format: uuid
+        name:
+          type: string
+          description: Name of the project
+        url:
+          type: string
+          description: Url of the project
+      description: ""
+    RuleActionModel:
+      type: object
+      properties:
+        actionType:
+          type: string
+        targetField:
+          type: string
+        value:
+          type: string
+      description: ""
+    RuleConditionModel:
+      type: object
+      properties:
+        conditionType:
+          type: string
+        field:
+          type: string
+        value:
+          type: string
+      description: ""
+    Section:
+      type: object
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+        id:
+          type: string
+          description: The id for the layout node.
+        overridden:
+          type: boolean
+          description: A value indicating whether this layout node has been overridden
+            by a child layout.
+      description: ""
+    UpdateProcessModel:
+      type: object
+      properties:
+        description:
+          type: string
+        isDefault:
+          type: boolean
+        isEnabled:
+          type: boolean
+        name:
+          type: string
+      description: ""
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+    WitContribution:
+      type: object
+      properties:
+        contributionId:
+          type: string
+          description: The id for the contribution.
+        height:
+          type: integer
+          description: The height for the contribution.
+          format: int32
+        inputs:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: A dictionary holding key value pairs for contribution inputs.
+        showOnDeletedWorkItem:
+          type: boolean
+          description: A value indicating if the contribution should be show on deleted
+            workItem.
+      description: ""
+    WorkItemBehavior:
+      type: object
+      properties:
+        abstract:
+          type: boolean
+        color:
+          type: string
+        description:
+          type: string
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkItemBehaviorField'
+        id:
+          type: string
+        inherits:
+          $ref: '#/components/schemas/WorkItemBehaviorReference'
+        name:
+          type: string
+        overriden:
+          type: boolean
+        rank:
+          type: integer
+          format: int32
+        url:
+          type: string
+      description: ""
+    WorkItemBehaviorField:
+      type: object
+      properties:
+        behaviorFieldId:
+          type: string
+        id:
+          type: string
+        url:
+          type: string
+      description: ""
+    WorkItemBehaviorReference:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+      description: ""
+    WorkItemStateResultModel:
+      type: object
+      properties:
+        color:
+          type: string
+        hidden:
+          type: boolean
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        order:
+          type: integer
+          format: int32
+        stateCategory:
+          type: string
+        url:
+          type: string
+      description: ""
+    WorkItemTypeBehavior:
+      type: object
+      properties:
+        behavior:
+          $ref: '#/components/schemas/WorkItemBehaviorReference'
+        isDefault:
+          type: boolean
+        url:
+          type: string
+      description: ""
+    WorkItemTypeModel:
+      type: object
+      properties:
+        behaviors:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkItemTypeBehavior'
+        class:
+          type: string
+          enum:
+          - system
+          - derived
+          - custom
+          x-ms-enum:
+            name: WorkItemTypeClass
+            values:
+            - value: system
+              description: ""
+            - value: derived
+              description: ""
+            - value: custom
+              description: ""
+        color:
+          type: string
+        description:
+          type: string
+        icon:
+          type: string
+        id:
+          type: string
+        inherits:
+          type: string
+          description: Parent WIT Id/Internal ReferenceName that it inherits from
+        isDisabled:
+          type: boolean
+        layout:
+          $ref: '#/components/schemas/FormLayout'
+        name:
+          type: string
+        states:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkItemStateResultModel'
+        url:
+          type: string
+      description: ""
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '4.1-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+x-ms-vss-area: WorkItemTracking

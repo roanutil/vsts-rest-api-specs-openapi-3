@@ -1,0 +1,421 @@
+openapi: 3.0.1
+info:
+  title: WorkItemTrackingProcessTemplate
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 6.0-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Behaviors
+- name: Processes
+  description: Exposes APIs for ProcessTemplate imports and exports
+paths:
+  /{organization}/_apis/work/processadmin/{processId}/behaviors:
+    get:
+      tags:
+      - Behaviors
+      description: Returns a list of behaviors for the process.
+      operationId: Behaviors_List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: processId
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '6.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminBehavior'
+      x-ms-docs-override-version: 6.0-preview.1
+      x-ms-vss-resource: behaviors
+      x-ms-vss-method: GetBehaviors
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/behaviors/GET__admin_behaviors_list.json
+  /{organization}/_apis/work/processadmin/processes/export/{id}:
+    get:
+      tags:
+      - Processes
+      description: Returns requested process template.
+      operationId: Processes_Export Process Template
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: The ID of the process
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '6.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: Stream
+      x-ms-docs-override-version: 6.0-preview.1
+      x-ms-vss-resource: processes
+      x-ms-vss-method: Export
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/processes/GET__export_template.json
+  /{organization}/_apis/work/processadmin/processes/import:
+    post:
+      tags:
+      - Processes
+      description: Imports a process from zip file.
+      operationId: Processes_Import Process Template
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: ignoreWarnings
+        in: query
+        description: Ignores validation warnings. Default value is false.
+        schema:
+          type: boolean
+      - name: replaceExistingTemplate
+        in: query
+        description: Replaces the existing template. Default value is true.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '6.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Stream to upload
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: Stream
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessImportResult'
+      x-ms-docs-override-version: 6.0-preview.1
+      x-ms-vss-resource: processes
+      x-ms-vss-method: Import
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/processes/POST__import_process.json
+      x-codegen-request-body-name: body
+  /{organization}/_apis/work/processadmin/processes/status/{id}:
+    get:
+      tags:
+      - Processes
+      description: Tells whether promote has completed for the specified promote job
+        ID.
+      operationId: Processes_Import Process Template Status
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: The ID of the promote job operation
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '6.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessPromoteStatus'
+      x-ms-docs-override-version: 6.0-preview.1
+      x-ms-vss-resource: processes
+      x-ms-vss-method: Status
+      x-ms-preview: true
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/processes/GET__import_process_status_template.json
+components:
+  schemas:
+    AdminBehavior:
+      type: object
+      properties:
+        abstract:
+          type: boolean
+          description: Is the behavior abstract (i.e. can not be associated with any
+            work item type).
+        color:
+          type: string
+          description: The color associated with the behavior.
+        custom:
+          type: boolean
+          description: Indicates if the behavior is custom.
+        description:
+          type: string
+          description: The description of the behavior.
+        fields:
+          type: array
+          description: List of behavior fields.
+          items:
+            $ref: '#/components/schemas/AdminBehaviorField'
+        id:
+          type: string
+          description: Behavior ID.
+        inherits:
+          type: string
+          description: Parent behavior reference.
+        name:
+          type: string
+          description: The behavior name.
+        overriden:
+          type: boolean
+          description: Is the behavior overrides a behavior from system process.
+        rank:
+          type: integer
+          description: The rank.
+          format: int32
+      description: Describes an admin behavior for a process.
+    AdminBehaviorField:
+      type: object
+      properties:
+        behaviorFieldId:
+          type: string
+          description: The behavior field identifier.
+        id:
+          type: string
+          description: The behavior ID.
+        name:
+          type: string
+          description: The behavior name.
+      description: Describes an admin behavior field.
+    CheckTemplateExistenceResult:
+      type: object
+      properties:
+        doesTemplateExist:
+          type: boolean
+          description: Indicates whether a template exists.
+        existingTemplateName:
+          type: string
+          description: The name of the existing template.
+        existingTemplateTypeId:
+          type: string
+          description: The existing template type identifier.
+          format: uuid
+        requestedTemplateName:
+          type: string
+          description: The name of the requested template.
+      description: Describes result of a check template existence request.
+    ProcessImportResult:
+      type: object
+      properties:
+        checkExistenceResult:
+          $ref: '#/components/schemas/CheckTemplateExistenceResult'
+        helpUrl:
+          type: string
+          description: Help URL.
+        id:
+          type: string
+          description: ID of the import operation.
+          format: uuid
+        isNew:
+          type: boolean
+          description: Whether this imported process is new.
+        promoteJobId:
+          type: string
+          description: The promote job identifier.
+          format: uuid
+        validationResults:
+          type: array
+          description: The list of validation results.
+          items:
+            $ref: '#/components/schemas/ValidationIssue'
+      description: Describes the result of a Process Import request.
+    ProcessPromoteStatus:
+      type: object
+      properties:
+        complete:
+          type: integer
+          description: Number of projects for which promote is complete.
+          format: int32
+        id:
+          type: string
+          description: ID of the promote operation.
+          format: uuid
+        message:
+          type: string
+          description: The error message associated with the promote operation. The
+            string will be empty if there are no errors.
+        pending:
+          type: integer
+          description: Number of projects for which promote is pending.
+          format: int32
+        remainingRetries:
+          type: integer
+          description: The remaining retries.
+          format: int32
+        successful:
+          type: boolean
+          description: True if promote finished all the projects successfully. False
+            if still in progress or any project promote failed.
+      description: Describes result of process operation promote.
+    ValidationIssue:
+      type: object
+      properties:
+        description:
+          type: string
+        file:
+          type: string
+        helpLink:
+          type: string
+        issueType:
+          type: string
+          enum:
+          - warning
+          - error
+          x-ms-enum:
+            name: ValidationIssueType
+            values:
+            - value: warning
+              description: ""
+            - value: error
+              description: ""
+        line:
+          type: integer
+          format: int32
+      description: ""
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '6.0-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+x-ms-vss-area: WorkItemTrackingProcessTemplate
+x-ms-vss-resource-area-id: 5264459e-e5e0-4bd8-b118-0985e68a4ec5
+x-ms-paths:
+  /{organization}/_apis/work/processadmin/{processId}/behaviors?behaviorRefName={behaviorRefName}:
+    get:
+      tags:
+      - Behaviors
+      x-ms-docs-override-version: 6.0-preview.1
+      x-ms-vss-resource: behaviors
+      x-ms-vss-method: GetBehavior
+      x-ms-preview: true
+      description: Returns a behavior for the process.
+      operationId: Behaviors_Get
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: organization
+        description: The name of the Azure DevOps organization.
+        required: true
+        type: string
+      - in: path
+        name: processId
+        description: The ID of the process
+        required: true
+        type: string
+        format: uuid
+      - in: query
+        name: behaviorRefName
+        description: The reference name of the behavior
+        required: true
+        type: string
+      - $ref: '#/parameters/api-Version-preview.1'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/AdminBehavior'
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/behaviors/GET__admin_behavior.json

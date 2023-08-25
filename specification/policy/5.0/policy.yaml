@@ -1,0 +1,888 @@
+openapi: 3.0.1
+info:
+  title: Policy
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: "5.0"
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Configurations
+  description: "This API provides a way to create, list, update, and delete code policy\
+    \ configurations.  For more information, see \n[Improve code quality with branch\
+    \ policies](https://go.microsoft.com/fwlink/?linkid=859025)"
+- name: Evaluations
+- name: Revisions
+  description: This API provides a way to get policy configuration revisions.
+- name: Types
+  description: This API provides a way to list the available policy types.
+paths:
+  /{organization}/{project}/_apis/policy/configurations:
+    get:
+      tags:
+      - Configurations
+      description: |-
+        Get a list of policy configurations in a project.
+
+        The 'scope' parameter for this API should not be used, except for legacy compatability reasons. It returns specifically
+        scoped policies and does not support heirarchical nesting. Instead, use the /_apis/git/policy/configurations API, which provides
+        first class scope filtering support.
+
+        The optional `policyType` parameter can be used to filter the set of policies returned from this method.
+      operationId: List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: scope
+        in: query
+        description: '[Provided for legacy reasons] The scope on which a subset of
+          policies is defined.'
+        schema:
+          type: string
+      - name: policyType
+        in: query
+        description: Filter returned policies to only this type
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PolicyConfiguration'
+      security:
+      - oauth2:
+        - vso.code
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: configurations
+      x-ms-vss-method: GetPolicyConfigurations
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Configurations/GET__policy_configurations.json
+  /{organization}/{project}/_apis/policy/configurations/{configurationId}:
+    get:
+      tags:
+      - Configurations
+      description: Get a policy configuration by its ID.
+      operationId: Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: configurationId
+        in: path
+        description: ID of the policy configuration
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyConfiguration'
+      security:
+      - oauth2:
+        - vso.code
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: configurations
+      x-ms-vss-method: GetPolicyConfiguration
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Configurations/GET__policy_configurations__configurationId_.json
+    put:
+      tags:
+      - Configurations
+      description: Update a policy configuration by its ID.
+      operationId: Update
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: configurationId
+        in: path
+        description: ID of the existing policy configuration to be updated.
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The policy configuration to update.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PolicyConfiguration'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyConfiguration'
+      security:
+      - oauth2:
+        - vso.code_write
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: configurations
+      x-ms-vss-method: UpdatePolicyConfiguration
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Configurations/PUT__policy_configurations__configurationId_.json
+      x-codegen-request-body-name: body
+    post:
+      tags:
+      - Configurations
+      description: Create a policy configuration of a given policy type.
+      operationId: Create
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: configurationId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+          x-ms-required: false
+        x-ms-required: false
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The policy configuration to create.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PolicyConfiguration'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyConfiguration'
+      security:
+      - oauth2:
+        - vso.code_write
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: configurations
+      x-ms-vss-method: CreatePolicyConfiguration
+      x-ms-examples:
+        Example policy:
+          $ref: ./httpExamples/Configurations/POST__policy_configurations.json
+        Approval count policy:
+          $ref: ./httpExamples/Configurations/POST__policy_configurations2.json
+        Build policy:
+          $ref: ./httpExamples/Configurations/POST__policy_configurations3.json
+        Work item policy:
+          $ref: ./httpExamples/Configurations/POST__policy_configurations4.json
+        Merge strategy policy:
+          $ref: ./httpExamples/Configurations/POST__policy_configurations5.json
+        Git case enforcement policy:
+          $ref: ./httpExamples/Configurations/POST__policy_configurations6.json
+        Git maximum blob size policy:
+          $ref: ./httpExamples/Configurations/POST__policy_configurations7.json
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Configurations
+      description: Delete a policy configuration by its ID.
+      operationId: Delete
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: configurationId
+        in: path
+        description: ID of the policy configuration to delete.
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: NoContent
+          content: {}
+      security:
+      - oauth2:
+        - vso.code_write
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: configurations
+      x-ms-vss-method: DeletePolicyConfiguration
+      x-ms-examples:
+        ?
+        : $ref: ./httpExamples/Configurations/DELETE__policy_configurations__configurationId_.json
+  /{organization}/{project}/_apis/policy/configurations/{configurationId}/revisions:
+    get:
+      tags:
+      - Revisions
+      description: Retrieve all revisions for a given policy.
+      operationId: List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: configurationId
+        in: path
+        description: The policy configuration ID.
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: $top
+        in: query
+        description: The number of revisions to retrieve.
+        schema:
+          type: integer
+          format: int32
+      - name: $skip
+        in: query
+        description: The number of revisions to ignore. For example, to retrieve results
+          101-150, set top to 50 and skip to 100.
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PolicyConfiguration'
+      security:
+      - oauth2:
+        - vso.code
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: revisions
+      x-ms-vss-method: GetPolicyConfigurationRevisions
+  /{organization}/{project}/_apis/policy/configurations/{configurationId}/revisions/{revisionId}:
+    get:
+      tags:
+      - Revisions
+      description: Retrieve a specific revision of a given policy by ID.
+      operationId: Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: configurationId
+        in: path
+        description: The policy configuration ID.
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: revisionId
+        in: path
+        description: The revision ID.
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyConfiguration'
+      security:
+      - oauth2:
+        - vso.code
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: revisions
+      x-ms-vss-method: GetPolicyConfigurationRevision
+  /{organization}/{project}/_apis/policy/evaluations:
+    get:
+      tags:
+      - Evaluations
+      description: |-
+        Retrieves a list of all the policy evaluation statuses for a specific pull request.
+
+        Evaluations are retrieved using an artifact ID which uniquely identifies the pull request.
+        To generate an artifact ID for a pull request, use this template:
+        ```
+        vstfs:///CodeReview/CodeReviewId/{projectId}/{pullRequestId}
+        ```
+      operationId: List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: artifactId
+        in: query
+        description: A string which uniquely identifies the target of a policy evaluation.
+        required: true
+        schema:
+          type: string
+      - name: includeNotApplicable
+        in: query
+        description: Some policies might determine that they do not apply to a specific
+          pull request. Setting this parameter to true will return evaluation records
+          even for policies which don't apply to this pull request.
+        schema:
+          type: boolean
+      - name: $top
+        in: query
+        description: The number of policy evaluation records to retrieve.
+        schema:
+          type: integer
+          format: int32
+      - name: $skip
+        in: query
+        description: The number of policy evaluation records to ignore. For example,
+          to retrieve results 101-150, set top to 50 and skip to 100.
+        schema:
+          type: integer
+          format: int32
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PolicyEvaluationRecord'
+      security:
+      - oauth2:
+        - vso.code
+      x-ms-docs-override-version: 5.0-preview.1
+      x-ms-vss-resource: evaluations
+      x-ms-vss-method: GetPolicyEvaluations
+      x-ms-preview: true
+  /{organization}/{project}/_apis/policy/evaluations/{evaluationId}:
+    get:
+      tags:
+      - Evaluations
+      description: |-
+        Gets the present evaluation state of a policy.
+
+        Each policy which applies to a pull request will have an evaluation state which is specific to that policy running
+        in the context of that pull request. Each evaluation is uniquely identified via a Guid. You can find all the policy
+        evaluations for a specific pull request using the List operation of this controller.
+      operationId: Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: evaluationId
+        in: path
+        description: ID of the policy evaluation to be retrieved.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyEvaluationRecord'
+      security:
+      - oauth2:
+        - vso.code
+      x-ms-docs-override-version: 5.0-preview.1
+      x-ms-vss-resource: evaluations
+      x-ms-vss-method: GetPolicyEvaluation
+      x-ms-preview: true
+    patch:
+      tags:
+      - Evaluations
+      description: |-
+        Requeue the policy evaluation.
+
+        Some policies define a "requeue" action which performs some policy-specific operation.
+        You can trigger this operation by updating an existing policy evaluation and setting the
+        PolicyEvaluationRecord.Status field to Queued.
+        Although any policy evaluation can be requeued, at present only build policies perform any action
+        in response. Requeueing a build policy will queue a new build to run (cancelling any existing build which
+        is running).
+      operationId: Requeue Policy Evaluation
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: evaluationId
+        in: path
+        description: ID of the policy evaluation to be retrieved.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyEvaluationRecord'
+      security:
+      - oauth2:
+        - vso.code_write
+      x-ms-docs-override-version: 5.0-preview.1
+      x-ms-vss-resource: evaluations
+      x-ms-vss-method: RequeuePolicyEvaluation
+      x-ms-preview: true
+  /{organization}/{project}/_apis/policy/types:
+    get:
+      tags:
+      - Types
+      description: Retrieve all available policy types.
+      operationId: List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PolicyType'
+      security:
+      - oauth2:
+        - vso.code
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: types
+      x-ms-vss-method: GetPolicyTypes
+  /{organization}/{project}/_apis/policy/types/{typeId}:
+    get:
+      tags:
+      - Types
+      description: Retrieve a specific policy type by ID.
+      operationId: Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: typeId
+        in: path
+        description: The policy ID.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyType'
+      security:
+      - oauth2:
+        - vso.code
+      x-ms-docs-override-version: "5.0"
+      x-ms-vss-resource: types
+      x-ms-vss-method: GetPolicyType
+components:
+  schemas:
+    GraphSubjectBase:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        descriptor:
+          type: string
+          description: The descriptor is the primary way to reference the graph subject
+            while the system is running. This field will uniquely identify the same
+            graph subject across both Accounts and Organizations.
+        displayName:
+          type: string
+          description: This is the non-unique display name of the graph subject. To
+            change this field, you must alter its value in the source provider.
+        url:
+          type: string
+          description: This url is the full route to the source resource of this graph
+            subject.
+      description: ""
+    IdentityRef:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/GraphSubjectBase'
+    JObject:
+      type: object
+      properties:
+        item:
+          type: string
+          format: JToken
+        type:
+          type: string
+          format: JTokenType
+      description: ""
+    PolicyConfiguration:
+      description: The full policy configuration with settings.
+      allOf:
+      - $ref: '#/components/schemas/VersionedPolicyConfigurationRef'
+    PolicyConfigurationRef:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The policy configuration ID.
+          format: int32
+        type:
+          $ref: '#/components/schemas/PolicyTypeRef'
+        url:
+          type: string
+          description: The URL where the policy configuration can be retrieved.
+      description: Policy configuration reference.
+    PolicyEvaluationRecord:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        artifactId:
+          type: string
+          description: A string which uniquely identifies the target of a policy evaluation.
+        completedDate:
+          type: string
+          description: Time when this policy finished evaluating on this pull request.
+          format: date-time
+        configuration:
+          $ref: '#/components/schemas/PolicyConfiguration'
+        context:
+          $ref: '#/components/schemas/JObject'
+        evaluationId:
+          type: string
+          description: Guid which uniquely identifies this evaluation record (one
+            policy running on one pull request).
+          format: uuid
+        startedDate:
+          type: string
+          description: Time when this policy was first evaluated on this pull request.
+          format: date-time
+        status:
+          type: string
+          description: Status of the policy (Running, Approved, Failed, etc.)
+          enum:
+          - queued
+          - running
+          - approved
+          - rejected
+          - notApplicable
+          - broken
+          x-ms-enum:
+            name: PolicyEvaluationStatus
+            values:
+            - value: queued
+              description: The policy is either queued to run, or is waiting for some
+                event before progressing.
+            - value: running
+              description: The policy is currently running.
+            - value: approved
+              description: The policy has been fulfilled for this pull request.
+            - value: rejected
+              description: The policy has rejected this pull request.
+            - value: notApplicable
+              description: The policy does not apply to this pull request.
+            - value: broken
+              description: The policy has encountered an unexpected error.
+      description: This record encapsulates the current state of a policy as it applies
+        to one specific pull request. Each pull request has a unique PolicyEvaluationRecord
+        for each pull request which the policy applies to.
+    PolicyType:
+      description: User-friendly policy type with description (used for querying policy
+        types).
+      allOf:
+      - $ref: '#/components/schemas/PolicyTypeRef'
+    PolicyTypeRef:
+      type: object
+      properties:
+        displayName:
+          type: string
+          description: Display name of the policy type.
+        id:
+          type: string
+          description: The policy type ID.
+          format: uuid
+        url:
+          type: string
+          description: The URL where the policy type can be retrieved.
+      description: Policy type reference.
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    VersionedPolicyConfigurationRef:
+      description: A particular revision for a policy configuration.
+      allOf:
+      - $ref: '#/components/schemas/PolicyConfigurationRef'
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+  parameters:
+    api-Version:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '5.0' to use
+        this version of the api.
+      required: true
+      schema:
+        type: string
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '5.0-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.code: Grants the ability to read source code and metadata about commits,
+              changesets, branches, and other version control artifacts. Also grants
+              the ability to search code and get notified about version control events
+              via service hooks.
+            vso.code_write: Grants the ability to read, update, and delete source
+              code, access metadata about commits, changesets, branches, and other
+              version control artifacts. Also grants the ability to create and manage
+              pull requests and code reviews and to receive notifications about version
+              control events via service hooks.
+x-ms-vss-area: Policy
+x-ms-vss-resource-area-id: fb13a388-40dd-4a04-b530-013a739c72ef

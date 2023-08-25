@@ -1,0 +1,335 @@
+openapi: 3.0.1
+info:
+  title: TokenAdministration
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 5.2-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Token List Global Identities
+- name: Token Personal Access Tokens
+  description: This resource allows token administrators to retrieve personal access
+    token (PAT) details for their organization's users.
+- name: Token Revocations
+  description: |-
+    This resource allows token administrators to revoke the OAuth authorizations,
+    including personal access tokens (PATs), for their organization's users.
+paths:
+  /_apis/tokenadministration/tokenlistglobalidentities:
+    post:
+      tags:
+      - Token List Global Identities
+      description: Revokes the listed OAuth authorizations.
+      operationId: List
+      parameters:
+      - name: isPublic
+        in: query
+        description: Set to false for PAT tokens and true for SSH tokens.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.2-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The list of identities containing the authorization IDs of the
+          OAuth authorizations, such as session tokens retrieved by listed a users
+          PATs, that should be checked for global access tokens.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/TokenAdminRevocation'
+        required: true
+      responses:
+        400:
+          description: The input is invalid, such as by not containing an authorization
+            ID.
+          content: {}
+        401:
+          description: If the caller does not have permission to administrate tokens
+          content: {}
+      security:
+      - oauth2:
+        - vso.tokenadministration
+      x-ms-docs-override-version: 5.2-preview.1
+      x-ms-vss-resource: tokenListGlobalIdentities
+      x-ms-vss-method: ListIdentitiesWithGlobalAccessTokens
+      x-ms-preview: true
+      x-codegen-request-body-name: body
+  /_apis/tokenadministration/tokenpersonalaccesstokens/{subjectDescriptor}:
+    post:
+      tags:
+      - Token Personal Access Tokens
+      description: Lists of all the session token details of the personal access tokens
+        (PATs) for a particular user.
+      operationId: List
+      parameters:
+      - name: subjectDescriptor
+        in: path
+        description: The descriptor of the target user.
+        required: true
+        schema:
+          type: string
+      - name: pageSize
+        in: query
+        description: The maximum number of results to return on each page.
+        schema:
+          type: integer
+          format: int32
+      - name: continuationToken
+        in: query
+        description: An opaque data blob that allows the next page of data to resume
+          immediately after where the previous page ended. The only reliable way to
+          know if there is more data left is the presence of a continuation token.
+        schema:
+          type: string
+      - name: isPublic
+        in: query
+        description: Set to false for PAT tokens and true for SSH tokens.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.2-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        required: true
+      responses:
+        200:
+          description: An an array containing all the session token objects corresponding
+            to the user's PATs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenAdminPagedSessionTokens'
+        400:
+          description: The input is invalid, such as by containing an invalid subject
+            descriptor, page size, or continuation token
+          content: {}
+        401:
+          description: If the caller does not have permission to administrate tokens
+          content: {}
+        404:
+          description: If the user with the given subject descriptor cannot be found.
+          content: {}
+      security:
+      - oauth2:
+        - vso.tokenadministration
+      x-ms-docs-override-version: 5.2-preview.1
+      x-ms-vss-resource: tokenPersonalAccessTokens
+      x-ms-vss-method: ListPersonalAccessTokens
+      x-ms-preview: true
+      x-codegen-request-body-name: body
+  /_apis/tokenadministration/tokenrevocations:
+    post:
+      tags:
+      - Token Revocations
+      description: Revokes the listed OAuth authorizations.
+      operationId: Revoke Authorizations
+      parameters:
+      - name: hostId
+        in: query
+        description: Host Id to display on the notification page to manage tokens.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: isPublic
+        in: query
+        description: Set to false for PAT tokens and true for SSH tokens.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '5.2-preview.1'
+          to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The list of objects containing the authorization IDs of the OAuth
+          authorizations, such as session tokens retrieved by listed a users PATs,
+          that should be revoked.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenAdministrationRevocation'
+        required: true
+      responses:
+        204:
+          description: The authorizations were deleted successfully.
+          content: {}
+        400:
+          description: The input is invalid, such as by not containing an authorization
+            ID and/or Host Id.
+          content: {}
+        401:
+          description: If the caller does not have permission to administrate tokens
+          content: {}
+      security:
+      - oauth2:
+        - vso.tokenadministration
+      x-ms-docs-override-version: 5.2-preview.1
+      x-ms-vss-resource: tokenRevocations
+      x-ms-vss-method: RevokeAuthorizations
+      x-ms-preview: true
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    SessionToken:
+      type: object
+      properties:
+        accessId:
+          type: string
+          format: uuid
+        alternateToken:
+          type: string
+          description: This is populated when user requests a compact token. The alternate
+            token value is self describing token.
+        authorizationId:
+          type: string
+          format: uuid
+        claims:
+          type: object
+          additionalProperties:
+            type: string
+        clientId:
+          type: string
+          format: uuid
+        displayName:
+          type: string
+        hostAuthorizationId:
+          type: string
+          format: uuid
+        isPublic:
+          type: boolean
+        isValid:
+          type: boolean
+        publicData:
+          type: string
+        scope:
+          type: string
+        source:
+          type: string
+        targetAccounts:
+          type: array
+          items:
+            type: string
+            format: uuid
+        token:
+          type: string
+          description: This is computed and not returned in Get queries
+        userId:
+          type: string
+          format: uuid
+        validFrom:
+          type: string
+          format: date-time
+        validTo:
+          type: string
+          format: date-time
+      description: ""
+    TokenAdministrationRevocation:
+      type: object
+      properties:
+        audience:
+          type: array
+          description: A list of audience (target accounts) to limit the revocations
+            to
+          items:
+            type: string
+        authorizationIds:
+          type: array
+          description: A list of authorization ID of the OAuth authorization to revoke.
+          items:
+            type: string
+            format: uuid
+      description: ""
+    TokenAdminPagedSessionTokens:
+      type: object
+      properties:
+        continuationToken:
+          type: string
+          description: The continuation token that can be used to retrieve the next
+            page of session tokens, or <code>null</code> if there is no next page.
+          format: uuid
+        value:
+          type: array
+          description: The list of all session tokens in the current page.
+          items:
+            $ref: '#/components/schemas/SessionToken'
+      description: A paginated list of session tokens. Session tokens correspond to
+        OAuth credentials such as personal access tokens (PATs) and other OAuth authorizations.
+    TokenAdminRevocation:
+      type: object
+      properties:
+        authorizationId:
+          type: string
+          description: The authorization ID of the OAuth authorization to revoke.
+          format: uuid
+      description: A request to revoke a particular delegated authorization.
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '5.2-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.tokenadministration: Grants the ability to manage (view and revoke)
+              existing tokens to organization administrators
+x-ms-vss-area: TokenAdministration
+x-ms-vss-resource-area-id: 95935461-9e54-44bd-b9fb-04f4dd05d640

@@ -1,0 +1,2030 @@
+openapi: 3.0.1
+info:
+  title: ServiceEndpoint
+  description: ""
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: "7.0"
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://https://fabrikam-fiber-inc:8080/DefaultCollection/
+security:
+- accessToken: []
+tags:
+- name: Endpointproxy
+- name: Endpoints
+- name: Executionhistory
+- name: Types
+paths:
+  /{collection}/_apis/serviceendpoint/endpoints:
+    put:
+      tags:
+      - Endpoints
+      description: Update the service endpoints.
+      operationId: Endpoints_Update Service Endpoints
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Names of the service endpoints to update.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ServiceEndpoint'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceEndpoint'
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: endpoints
+      x-ms-vss-method: UpdateServiceEndpoints
+      x-ms-examples:
+        Update service endpoints:
+          $ref: ./httpExamples/endpoints/UpdateServiceEndpoints-onprem.json
+      x-codegen-request-body-name: body
+    post:
+      tags:
+      - Endpoints
+      description: Creates a new service endpoint
+      operationId: Endpoints_Create
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Service endpoint to create
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceEndpoint'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceEndpoint'
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: endpoints
+      x-ms-vss-method: CreateServiceEndpoint
+      x-ms-examples:
+        Create service endpoint:
+          $ref: ./httpExamples/endpoints/CreateGenericEndpoint-onprem.json
+        Create Azure RM service endpoint:
+          $ref: ./httpExamples/endpoints/CreateAzureRMEndpoint-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/_apis/serviceendpoint/endpoints/{endpointId}:
+    put:
+      tags:
+      - Endpoints
+      description: Update the service endpoint
+      operationId: Endpoints_Update Service Endpoint
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: endpointId
+        in: path
+        description: Endpoint Id of the endpoint to update
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: operation
+        in: query
+        description: operation type
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Updated data for the endpoint
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceEndpoint'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceEndpoint'
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: endpoints
+      x-ms-vss-method: UpdateServiceEndpoint
+      x-ms-examples:
+        Update service endpoint:
+          $ref: ./httpExamples/endpoints/UpdateServiceEndpoint-onprem.json
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Endpoints
+      description: Delete a service endpoint
+      operationId: Endpoints_Delete
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: endpointId
+        in: path
+        description: Endpoint Id of endpoint to delete
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: projectIds
+        in: query
+        description: project Ids from which endpoint needs to be deleted
+        required: true
+        schema:
+          type: string
+          format: array (string)
+      - name: deep
+        in: query
+        description: delete the spn created by endpoint
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: endpoints
+      x-ms-vss-method: DeleteServiceEndpoint
+      x-ms-examples:
+        Delete service endpoint:
+          $ref: ./httpExamples/endpoints/DeleteServiceEndpoint-onprem.json
+    patch:
+      tags:
+      - Endpoints
+      description: Share service endpoint across projects
+      operationId: Endpoints_Share Service Endpoint
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: endpointId
+        in: path
+        description: Endpoint Id of the endpoint to share
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Project reference details of the target project
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ServiceEndpointProjectReference'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content: {}
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: endpoints
+      x-ms-vss-method: ShareServiceEndpoint
+      x-ms-examples:
+        Share service endpoint:
+          $ref: ./httpExamples/endpoints/ShareServiceEndpoint-onprem.json
+      x-codegen-request-body-name: body
+  /{collection}/_apis/serviceendpoint/types:
+    get:
+      tags:
+      - Types
+      description: Get service endpoint types.
+      operationId: Types_List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: query
+        description: Type of service endpoint.
+        schema:
+          type: string
+      - name: scheme
+        in: query
+        description: Scheme of service endpoint.
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceEndpointType'
+      security:
+      - oauth2:
+        - vso.serviceendpoint
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: types
+      x-ms-vss-method: GetServiceEndpointTypes
+      x-ms-examples:
+        Get service endpoint types:
+          $ref: ./httpExamples/types/GET__ServiceEndpointTypes-onprem.json
+  /{collection}/{project}/_apis/serviceendpoint/{endpointId}/executionhistory:
+    get:
+      tags:
+      - Executionhistory
+      description: Get service endpoint execution records.
+      operationId: Executionhistory_List
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: endpointId
+        in: path
+        description: Id of the service endpoint.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: top
+        in: query
+        description: Number of service endpoint execution records to get.
+        schema:
+          type: integer
+          format: int32
+      - name: continuationToken
+        in: query
+        description: A continuation token, returned by a previous call to this method,
+          that can be used to return the next set of records
+        schema:
+          type: integer
+          format: int64
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceEndpointExecutionRecord'
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: executionhistory
+      x-ms-vss-method: GetServiceEndpointExecutionRecords
+      x-ms-examples:
+        Get service endpoint execution record:
+          $ref: ./httpExamples/executionhistory/GET__ServiceEndpointExecutionRecords-onprem.json
+  /{collection}/{project}/_apis/serviceendpoint/endpointproxy:
+    post:
+      tags:
+      - Endpointproxy
+      description: Use ExecuteServiceEndpointRequest API Instead
+      operationId: Endpointproxy_Query
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Describes the data source to fetch.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataSourceBinding'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      deprecated: true
+      security:
+      - oauth2:
+        - vso.serviceendpoint_query
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: endpointproxy
+      x-ms-vss-method: QueryServiceEndpoint
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/serviceendpoint/endpoints:
+    get:
+      tags:
+      - Endpoints
+      description: Get the service endpoints by name.
+      operationId: Endpoints_Get Service Endpoints By Names
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: endpointNames
+        in: query
+        description: Names of the service endpoints.
+        required: true
+        schema:
+          type: string
+          format: array (string)
+      - name: type
+        in: query
+        description: Type of the service endpoints.
+        schema:
+          type: string
+      - name: authSchemes
+        in: query
+        description: Authorization schemes used for service endpoints.
+        schema:
+          type: string
+          format: array (string)
+      - name: owner
+        in: query
+        description: Owner for service endpoints.
+        schema:
+          type: string
+      - name: includeFailed
+        in: query
+        description: Failed flag for service endpoints.
+        schema:
+          type: boolean
+      - name: includeDetails
+        in: query
+        description: Flag to include more details for service endpoints. This is for
+          internal use only and the flag will be treated as false for all other requests
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceEndpoint'
+      security:
+      - oauth2:
+        - vso.serviceendpoint
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: endpoints
+      x-ms-vss-method: GetServiceEndpointsByNames
+      x-ms-examples:
+        Get service endpoints by names:
+          $ref: ./httpExamples/endpoints/GetServiceEndpointsByName-onprem.json
+    post:
+      tags:
+      - Endpoints
+      description: Gets the service endpoints and patch new authorization parameters
+      operationId: Endpoints_Get Service Endpoints With Refreshed Authentication
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: endpointIds
+        in: query
+        description: Ids of the service endpoints.
+        required: true
+        schema:
+          type: string
+          format: array (uuid)
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Scope, Validity of Token requested.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/RefreshAuthenticationParameters'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceEndpoint'
+      security:
+      - oauth2:
+        - vso.serviceendpoint_manage
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: endpoints
+      x-ms-vss-method: GetServiceEndpointsWithRefreshedAuthentication
+      x-codegen-request-body-name: body
+  /{collection}/{project}/_apis/serviceendpoint/endpoints/{endpointId}:
+    get:
+      tags:
+      - Endpoints
+      description: Get the service endpoint details.
+      operationId: Endpoints_Get
+      parameters:
+      - name: collection
+        in: path
+        description: The name of the Azure DevOps collection.
+        required: true
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project ID or project name
+        required: true
+        schema:
+          type: string
+      - name: endpointId
+        in: path
+        description: Id of the service endpoint.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: actionFilter
+        in: query
+        description: Action filter for the service connection. It specifies the action
+          which can be performed on the service connection.
+        schema:
+          type: string
+          enum:
+          - none
+          - manage
+          - use
+          - view
+          x-ms-enum:
+            name: ServiceEndpointActionFilter
+            values:
+            - value: none
+              description: ""
+            - value: manage
+              description: ""
+            - value: use
+              description: ""
+            - value: view
+              description: ""
+        x-ms-enum:
+          name: ServiceEndpointActionFilter
+          values:
+          - value: none
+            description: ""
+          - value: manage
+            description: ""
+          - value: use
+            description: ""
+          - value: view
+            description: ""
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.0' to use
+          this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceEndpoint'
+      security:
+      - oauth2:
+        - vso.serviceendpoint
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: endpoints
+      x-ms-vss-method: GetServiceEndpointDetails
+      x-ms-examples:
+        Get service endpoint details:
+          $ref: ./httpExamples/endpoints/GetServiceEndpointDetails-onprem.json
+components:
+  schemas:
+    AadOauthTokenRequest:
+      type: object
+      properties:
+        refresh:
+          type: boolean
+        resource:
+          type: string
+        tenantId:
+          type: string
+        token:
+          type: string
+      description: ""
+    AadOauthTokenResult:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshTokenCache:
+          type: string
+      description: ""
+    AuthConfiguration:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/OAuthConfiguration'
+    AuthenticationSchemeReference:
+      type: object
+      properties:
+        inputs:
+          type: object
+          additionalProperties:
+            type: string
+          description: Gets or sets the key and value of the fields used for authentication.
+        type:
+          type: string
+          description: Gets or sets the type of authentication scheme of an endpoint.
+      description: Specifies the authentication scheme to be used for authentication.
+    AuthorizationHeader:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Gets or sets the name of authorization header.
+        value:
+          type: string
+          description: Gets or sets the value of authorization header.
+      description: Represents the header of the REST request.
+    AzureAppService:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      description: ""
+    AzureKeyVaultPermission:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/AzureResourcePermission'
+    AzureManagementGroup:
+      type: object
+      properties:
+        displayName:
+          type: string
+          description: Display name of azure management group
+        id:
+          type: string
+          description: Id of azure management group
+        name:
+          type: string
+          description: Azure management group name
+        tenantId:
+          type: string
+          description: Id of tenant from which azure management group belogs
+      description: Azure Management Group
+    AzureManagementGroupQueryResult:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+          description: Error message in case of an exception
+        value:
+          type: array
+          description: List of azure management groups
+          items:
+            $ref: '#/components/schemas/AzureManagementGroup'
+      description: Azure management group query result
+    AzureMLWorkspace:
+      type: object
+      properties:
+        id:
+          type: string
+        location:
+          type: string
+        name:
+          type: string
+      description: ""
+    AzurePermission:
+      type: object
+      properties:
+        provisioned:
+          type: boolean
+        resourceProvider:
+          type: string
+      description: ""
+    AzureResourcePermission:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/AzurePermission'
+    AzureRoleAssignmentPermission:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/AzurePermission'
+    AzureSpnOperationStatus:
+      type: object
+      properties:
+        state:
+          type: string
+        statusMessage:
+          type: string
+      description: ""
+    AzureSubscription:
+      type: object
+      properties:
+        displayName:
+          type: string
+        subscriptionId:
+          type: string
+        subscriptionTenantId:
+          type: string
+        subscriptionTenantName:
+          type: string
+      description: ""
+    AzureSubscriptionQueryResult:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+        value:
+          type: array
+          items:
+            $ref: '#/components/schemas/AzureSubscription'
+      description: ""
+    ClientCertificate:
+      type: object
+      properties:
+        value:
+          type: string
+          description: Gets or sets the value of client certificate.
+      description: Specifies the client certificate to be used for the endpoint request.
+    DataSource:
+      type: object
+      properties:
+        authenticationScheme:
+          $ref: '#/components/schemas/AuthenticationSchemeReference'
+        callbackContextTemplate:
+          type: string
+          description: Gets or sets the pagination format supported by this data source(ContinuationToken/SkipTop).
+        callbackRequiredTemplate:
+          type: string
+          description: Gets or sets the template to check if subsequent call is needed.
+        endpointUrl:
+          type: string
+          description: Gets or sets the endpoint url of the data source.
+        headers:
+          type: array
+          description: Gets or sets the authorization headers of the request.
+          items:
+            $ref: '#/components/schemas/AuthorizationHeader'
+        initialContextTemplate:
+          type: string
+          description: Gets or sets the initial value of the query params.
+        name:
+          type: string
+          description: Gets or sets the name of the data source.
+        requestContent:
+          type: string
+          description: Gets or sets the request content of the endpoint request.
+        requestVerb:
+          type: string
+          description: Gets or sets the request method of the endpoint request.
+        resourceUrl:
+          type: string
+          description: Gets or sets the resource url of the endpoint request.
+        resultSelector:
+          type: string
+          description: Gets or sets the result selector to filter the response of
+            the endpoint request.
+      description: Specifies the data sources for this endpoint.
+    DataSourceBinding:
+      description: Represents the data source binding of the endpoint.
+      allOf:
+      - $ref: '#/components/schemas/DataSourceBindingBase'
+    DataSourceBindingBase:
+      type: object
+      properties:
+        callbackContextTemplate:
+          type: string
+          description: Pagination format supported by this data source(ContinuationToken/SkipTop).
+        callbackRequiredTemplate:
+          type: string
+          description: Subsequent calls needed?
+        dataSourceName:
+          type: string
+          description: Gets or sets the name of the data source.
+        endpointId:
+          type: string
+          description: Gets or sets the endpoint Id.
+        endpointUrl:
+          type: string
+          description: Gets or sets the url of the service endpoint.
+        headers:
+          type: array
+          description: Gets or sets the authorization headers.
+          items:
+            $ref: '#/components/schemas/AuthorizationHeader'
+        initialContextTemplate:
+          type: string
+          description: Defines the initial value of the query params
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Gets or sets the parameters for the data source.
+        requestContent:
+          type: string
+          description: Gets or sets http request body
+        requestVerb:
+          type: string
+          description: Gets or sets http request verb
+        resultSelector:
+          type: string
+          description: Gets or sets the result selector.
+        resultTemplate:
+          type: string
+          description: Gets or sets the result template.
+        target:
+          type: string
+          description: Gets or sets the target of the data source.
+      description: Represents binding of data source for the service endpoint request.
+    DataSourceDetails:
+      type: object
+      properties:
+        dataSourceName:
+          type: string
+          description: Gets or sets the data source name.
+        dataSourceUrl:
+          type: string
+          description: Gets or sets the data source url.
+        headers:
+          type: array
+          description: Gets or sets the request headers.
+          items:
+            $ref: '#/components/schemas/AuthorizationHeader'
+        initialContextTemplate:
+          type: string
+          description: Gets or sets the initialization context used for the initial
+            call to the data source
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Gets the parameters of data source.
+        requestContent:
+          type: string
+          description: Gets or sets the data source request content.
+        requestVerb:
+          type: string
+          description: Gets or sets the data source request verb. Get/Post are the
+            only implemented types
+        resourceUrl:
+          type: string
+          description: Gets or sets the resource url of data source.
+        resultSelector:
+          type: string
+          description: Gets or sets the result selector.
+      description: Represents details of the service endpoint data source.
+    DependencyBinding:
+      type: object
+      properties:
+        key:
+          type: string
+          description: Gets or sets the value of the field on which url is dependent.
+        value:
+          type: string
+          description: Gets or sets the corresponding value of url.
+      description: Represents the details of the input on which a given input is dependent.
+    DependencyData:
+      type: object
+      properties:
+        input:
+          type: string
+          description: Gets or sets the category of dependency data.
+        map:
+          type: array
+          description: Gets or sets the key-value pair to specify properties and their
+            values.
+          items:
+            type: object
+            properties: {}
+      description: Represents the dependency data for the endpoint inputs.
+    DependsOn:
+      type: object
+      properties:
+        input:
+          type: string
+          description: Gets or sets the ID of the field on which URL's value is dependent.
+        map:
+          type: array
+          description: Gets or sets key-value pair containing other's field value
+            and corresponding url value.
+          items:
+            $ref: '#/components/schemas/DependencyBinding'
+      description: Represents the inputs on which any given input is dependent.
+    EndpointAuthorization:
+      type: object
+      properties:
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Gets or sets the parameters for the selected authorization
+            scheme.
+        scheme:
+          type: string
+          description: Gets or sets the scheme used for service endpoint authentication.
+      description: Represents the authorization used for service endpoint.
+    EndpointOperationStatus:
+      type: object
+      properties:
+        state:
+          type: string
+        statusMessage:
+          type: string
+      description: ""
+    EndpointUrl:
+      type: object
+      properties:
+        dependsOn:
+          $ref: '#/components/schemas/DependsOn'
+        displayName:
+          type: string
+          description: Gets or sets the display name of service endpoint url.
+        format:
+          type: string
+          description: Gets or sets the format of the url.
+        helpText:
+          type: string
+          description: Gets or sets the help text of service endpoint url.
+        isVisible:
+          type: string
+          description: Gets or sets the visibility of service endpoint url.
+        value:
+          type: string
+          description: Gets or sets the value of service endpoint url.
+      description: Represents url of the service endpoint.
+    GraphSubjectBase:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        descriptor:
+          type: string
+          description: The descriptor is the primary way to reference the graph subject
+            while the system is running. This field will uniquely identify the same
+            graph subject across both Accounts and Collections.
+        displayName:
+          type: string
+          description: This is the non-unique display name of the graph subject. To
+            change this field, you must alter its value in the source provider.
+        url:
+          type: string
+          description: This url is the full route to the source resource of this graph
+            subject.
+      description: ""
+    HelpLink:
+      type: object
+      properties:
+        text:
+          type: string
+          description: Gets or sets the help text.
+        url:
+          type: string
+          description: Gets or sets the public url of the help documentation.
+      description: Specifies the public url of the help documentation.
+    IdentityRef:
+      description: ""
+      allOf:
+      - $ref: '#/components/schemas/GraphSubjectBase'
+    InputDescriptor:
+      type: object
+      properties:
+        dependencyInputIds:
+          type: array
+          description: The ids of all inputs that the value of this input is dependent
+            on.
+          items:
+            type: string
+        description:
+          type: string
+          description: Description of what this input is used for
+        groupName:
+          type: string
+          description: The group localized name to which this input belongs and can
+            be shown as a header for the container that will include all the inputs
+            in the group.
+        hasDynamicValueInformation:
+          type: boolean
+          description: If true, the value information for this input is dynamic and
+            should be fetched when the value of dependency inputs change.
+        id:
+          type: string
+          description: Identifier for the subscription input
+        inputMode:
+          type: string
+          description: Mode in which the value of this input should be entered
+          enum:
+          - none
+          - textBox
+          - passwordBox
+          - combo
+          - radioButtons
+          - checkBox
+          - textArea
+          x-ms-enum:
+            name: InputMode
+            values:
+            - value: none
+              description: This input should not be shown in the UI
+            - value: textBox
+              description: An input text box should be shown
+            - value: passwordBox
+              description: An password input box should be shown
+            - value: combo
+              description: A select/combo control should be shown
+            - value: radioButtons
+              description: Radio buttons should be shown
+            - value: checkBox
+              description: Checkbox should be shown(for true/false values)
+            - value: textArea
+              description: A multi-line text area should be shown
+        isConfidential:
+          type: boolean
+          description: Gets whether this input is confidential, such as for a password
+            or application key
+        name:
+          type: string
+          description: Localized name which can be shown as a label for the subscription
+            input
+        properties:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: Custom properties for the input which can be used by the service
+            provider
+        type:
+          type: string
+          description: Underlying data type for the input value. When this value is
+            specified, InputMode, Validation and Values are optional.
+        useInDefaultDescription:
+          type: boolean
+          description: Gets whether this input is included in the default generated
+            action description.
+        validation:
+          $ref: '#/components/schemas/InputValidation'
+        valueHint:
+          type: string
+          description: A hint for input value. It can be used in the UI as the input
+            placeholder.
+        values:
+          $ref: '#/components/schemas/InputValues'
+      description: Describes an input for subscriptions.
+    InputValidation:
+      type: object
+      properties:
+        dataType:
+          type: string
+          description: Gets or sets the data data type to validate.
+          enum:
+          - none
+          - string
+          - number
+          - boolean
+          - guid
+          - uri
+          x-ms-enum:
+            name: InputDataType
+            values:
+            - value: none
+              description: No data type is specified.
+            - value: string
+              description: Represents a textual value.
+            - value: number
+              description: Represents a numeric value.
+            - value: boolean
+              description: Represents a value of true or false.
+            - value: guid
+              description: Represents a Guid.
+            - value: uri
+              description: Represents a URI.
+        isRequired:
+          type: boolean
+          description: Gets or sets if this is a required field.
+        maxLength:
+          type: integer
+          description: Gets or sets the maximum length of this descriptor.
+          format: int32
+        maxValue:
+          type: string
+          description: Gets or sets the minimum value for this descriptor.
+          format: decimal
+        minLength:
+          type: integer
+          description: Gets or sets the minimum length of this descriptor.
+          format: int32
+        minValue:
+          type: string
+          description: Gets or sets the minimum value for this descriptor.
+          format: decimal
+        pattern:
+          type: string
+          description: Gets or sets the pattern to validate.
+        patternMismatchErrorMessage:
+          type: string
+          description: Gets or sets the error on pattern mismatch.
+      description: Describes what values are valid for a subscription input
+    InputValue:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: Any other data about this input
+        displayValue:
+          type: string
+          description: The text to show for the display of this value
+        value:
+          type: string
+          description: The value to store for this input
+      description: Information about a single value for an input
+    InputValues:
+      type: object
+      properties:
+        defaultValue:
+          type: string
+          description: The default value to use for this input
+        error:
+          $ref: '#/components/schemas/InputValuesError'
+        inputId:
+          type: string
+          description: The id of the input
+        isDisabled:
+          type: boolean
+          description: Should this input be disabled
+        isLimitedToPossibleValues:
+          type: boolean
+          description: Should the value be restricted to one of the values in the
+            PossibleValues (True) or are the values in PossibleValues just a suggestion
+            (False)
+        isReadOnly:
+          type: boolean
+          description: Should this input be made read-only
+        possibleValues:
+          type: array
+          description: Possible values that this input can take
+          items:
+            $ref: '#/components/schemas/InputValue'
+      description: Information about the possible/allowed values for a given subscription
+        input
+    InputValuesError:
+      type: object
+      properties:
+        message:
+          type: string
+          description: The error message.
+      description: Error information related to a subscription input value.
+    JObject:
+      type: object
+      properties:
+        item:
+          $ref: '#/components/schemas/JToken'
+        type:
+          type: string
+          description: Gets the node type for this JToken.
+          format: JTokenType
+      description: Represents a JSON object.
+    JToken:
+      type: object
+      properties:
+        first:
+          $ref: '#/components/schemas/JToken'
+        hasValues:
+          type: boolean
+          description: Gets a value indicating whether this token has child tokens.
+        item:
+          $ref: '#/components/schemas/JToken'
+        last:
+          $ref: '#/components/schemas/JToken'
+        next:
+          $ref: '#/components/schemas/JToken'
+        parent:
+          type: string
+          description: Gets or sets the parent.
+          format: JContainer
+        path:
+          type: string
+          description: Gets the path of the JSON token.
+        previous:
+          $ref: '#/components/schemas/JToken'
+        root:
+          $ref: '#/components/schemas/JToken'
+        type:
+          type: string
+          description: Gets the node type for this JToken.
+          format: JTokenType
+      description: Represents an abstract JSON token.
+    OAuth2TokenResult:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        error:
+          type: string
+        errorDescription:
+          type: string
+        expiresIn:
+          type: string
+        issuedAt:
+          type: string
+        refreshToken:
+          type: string
+        scope:
+          type: string
+      description: ""
+    OAuthConfiguration:
+      type: object
+      properties:
+        clientId:
+          type: string
+          description: Gets or sets the ClientId
+        clientSecret:
+          type: string
+          description: Gets or sets the ClientSecret
+        createdBy:
+          $ref: '#/components/schemas/IdentityRef'
+        createdOn:
+          type: string
+          description: Gets or sets the time when config was created.
+          format: date-time
+        endpointType:
+          type: string
+          description: Gets or sets the type of the endpoint.
+        id:
+          type: string
+          description: Gets or sets the unique identifier of this field
+          format: uuid
+        modifiedBy:
+          $ref: '#/components/schemas/IdentityRef'
+        modifiedOn:
+          type: string
+          description: Gets or sets the time when variable group was modified
+          format: date-time
+        name:
+          type: string
+          description: Gets or sets the name
+        url:
+          type: string
+          description: Gets or sets the Url
+      description: ""
+    OAuthConfigurationParams:
+      type: object
+      properties:
+        clientId:
+          type: string
+          description: Gets or sets the ClientId
+        clientSecret:
+          type: string
+          description: Gets or sets the ClientSecret
+        endpointType:
+          type: string
+          description: Gets or sets the type of the endpoint.
+        name:
+          type: string
+          description: Gets or sets the name
+        url:
+          type: string
+          description: Gets or sets the Url
+      description: ""
+    OAuthEndpointStatus:
+      type: object
+      properties:
+        state:
+          type: string
+        statusMessage:
+          type: string
+      description: ""
+    Parameter:
+      type: object
+      properties:
+        isSecret:
+          type: boolean
+        value:
+          type: string
+      description: ""
+    ProjectReference:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+      description: ""
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are
+            readonly, we only want to expose them as read only.
+      description: The class to represent a collection of REST reference links.
+    RefreshAuthenticationParameters:
+      type: object
+      properties:
+        endpointId:
+          type: string
+          description: EndpointId which needs new authentication params
+          format: uuid
+        scope:
+          type: array
+          description: Scope of the token requested. For GitHub marketplace apps,
+            scope contains repository Ids
+          items:
+            type: integer
+            format: int32
+        tokenValidityInMinutes:
+          type: integer
+          description: The requested endpoint authentication should be valid for _
+            minutes. Authentication params will not be refreshed if the token contained
+            in endpoint already has active token.
+          format: int16
+      description: Specify the properties for refreshing the endpoint authentication
+        object being queried
+    ResultTransformationDetails:
+      type: object
+      properties:
+        callbackContextTemplate:
+          type: string
+          description: Gets or sets the template for callback parameters
+        callbackRequiredTemplate:
+          type: string
+          description: Gets or sets the template to decide whether to callback or
+            not
+        resultTemplate:
+          type: string
+          description: Gets or sets the template for result transformation.
+      description: Represents template to transform the result data.
+    ServiceEndpoint:
+      type: object
+      properties:
+        administratorsGroup:
+          $ref: '#/components/schemas/IdentityRef'
+        authorization:
+          $ref: '#/components/schemas/EndpointAuthorization'
+        createdBy:
+          $ref: '#/components/schemas/IdentityRef'
+        data:
+          type: object
+          additionalProperties:
+            type: string
+        description:
+          type: string
+          description: Gets or sets the description of endpoint.
+        groupScopeId:
+          type: string
+          description: This is a deprecated field.
+          format: uuid
+        id:
+          type: string
+          description: Gets or sets the identifier of this endpoint.
+          format: uuid
+        isReady:
+          type: boolean
+          description: EndPoint state indicator
+        isShared:
+          type: boolean
+          description: Indicates whether service endpoint is shared with other projects
+            or not.
+        name:
+          type: string
+          description: Gets or sets the friendly name of the endpoint.
+        operationStatus:
+          $ref: '#/components/schemas/JObject'
+        owner:
+          type: string
+          description: Owner of the endpoint Supported values are "library", "agentcloud"
+        readersGroup:
+          $ref: '#/components/schemas/IdentityRef'
+        serviceEndpointProjectReferences:
+          type: array
+          description: All other project references where the service endpoint is
+            shared.
+          items:
+            $ref: '#/components/schemas/ServiceEndpointProjectReference'
+        type:
+          type: string
+          description: Gets or sets the type of the endpoint.
+        url:
+          type: string
+          description: Gets or sets the url of the endpoint.
+      description: Represents an endpoint which may be used by an orchestration job.
+    ServiceEndpointAuthenticationScheme:
+      type: object
+      properties:
+        authorizationHeaders:
+          type: array
+          description: Gets or sets the authorization headers of service endpoint
+            authentication scheme.
+          items:
+            $ref: '#/components/schemas/AuthorizationHeader'
+        authorizationUrl:
+          type: string
+          description: Gets or sets the Authorization url required to authenticate
+            using OAuth2
+        clientCertificates:
+          type: array
+          description: Gets or sets the certificates of service endpoint authentication
+            scheme.
+          items:
+            $ref: '#/components/schemas/ClientCertificate'
+        dataSourceBindings:
+          type: array
+          description: Gets or sets the data source bindings of the endpoint.
+          items:
+            $ref: '#/components/schemas/DataSourceBinding'
+        displayName:
+          type: string
+          description: Gets or sets the display name for the service endpoint authentication
+            scheme.
+        inputDescriptors:
+          type: array
+          description: Gets or sets the input descriptors for the service endpoint
+            authentication scheme.
+          items:
+            $ref: '#/components/schemas/InputDescriptor'
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+          description: Gets or sets the properties of service endpoint authentication
+            scheme.
+        requiresOAuth2Configuration:
+          type: boolean
+          description: Gets or sets whether this auth scheme requires OAuth2 configuration
+            or not.
+        scheme:
+          type: string
+          description: Gets or sets the scheme for service endpoint authentication.
+      description: Represents the authentication scheme used to authenticate the endpoint.
+    ServiceEndpointDetails:
+      type: object
+      properties:
+        authorization:
+          $ref: '#/components/schemas/EndpointAuthorization'
+        data:
+          type: object
+          additionalProperties:
+            type: string
+          description: Gets or sets the data of service endpoint.
+        type:
+          type: string
+          description: Gets or sets the type of service endpoint.
+        url:
+          type: string
+          description: Gets or sets the connection url of service endpoint.
+      description: Represents details of the service endpoint.
+    ServiceEndpointExecutionData:
+      type: object
+      properties:
+        definition:
+          $ref: '#/components/schemas/ServiceEndpointExecutionOwner'
+        finishTime:
+          type: string
+          description: Gets the finish time of service endpoint execution.
+          format: date-time
+        id:
+          type: integer
+          description: Gets the Id of service endpoint execution data.
+          format: int64
+        owner:
+          $ref: '#/components/schemas/ServiceEndpointExecutionOwner'
+        planType:
+          type: string
+          description: Gets the plan type of service endpoint execution data.
+        result:
+          type: string
+          description: Gets the result of service endpoint execution.
+          enum:
+          - succeeded
+          - succeededWithIssues
+          - failed
+          - canceled
+          - skipped
+          - abandoned
+          x-ms-enum:
+            name: ServiceEndpointExecutionResult
+            values:
+            - value: succeeded
+              description: '"Service endpoint request succeeded.'
+            - value: succeededWithIssues
+              description: '"Service endpoint request succeeded but with some issues.'
+            - value: failed
+              description: '"Service endpoint request failed.'
+            - value: canceled
+              description: '"Service endpoint request was cancelled.'
+            - value: skipped
+              description: '"Service endpoint request was skipped.'
+            - value: abandoned
+              description: '"Service endpoint request was abandoned.'
+        startTime:
+          type: string
+          description: Gets the start time of service endpoint execution.
+          format: date-time
+      description: Represents service endpoint execution data.
+    ServiceEndpointExecutionOwner:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        id:
+          type: integer
+          description: Gets or sets the Id of service endpoint execution owner.
+          format: int32
+        name:
+          type: string
+          description: Gets or sets the name of service endpoint execution owner.
+      description: Represents execution owner of the service endpoint.
+    ServiceEndpointExecutionRecord:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ServiceEndpointExecutionData'
+        endpointId:
+          type: string
+          description: Gets the Id of service endpoint.
+          format: uuid
+      description: Represents the details of service endpoint execution.
+    ServiceEndpointExecutionRecordsInput:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ServiceEndpointExecutionData'
+        endpointIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+      description: ""
+    ServiceEndpointOAuthConfigurationReference:
+      type: object
+      properties:
+        configurationId:
+          type: string
+          format: uuid
+        serviceEndpointId:
+          type: string
+          format: uuid
+        serviceEndpointProjectId:
+          type: string
+          format: uuid
+      description: ""
+    ServiceEndpointProjectReference:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Gets or sets description of the service endpoint.
+        name:
+          type: string
+          description: Gets or sets name of the service endpoint.
+        projectReference:
+          $ref: '#/components/schemas/ProjectReference'
+      description: ""
+    ServiceEndpointRequest:
+      type: object
+      properties:
+        dataSourceDetails:
+          $ref: '#/components/schemas/DataSourceDetails'
+        resultTransformationDetails:
+          $ref: '#/components/schemas/ResultTransformationDetails'
+        serviceEndpointDetails:
+          $ref: '#/components/schemas/ServiceEndpointDetails'
+      description: ""
+    ServiceEndpointRequestResult:
+      type: object
+      properties:
+        callbackContextParameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Gets or sets the parameters used to make subsequent calls to
+            the data source
+        callbackRequired:
+          type: boolean
+          description: Gets or sets the flat that decides if another call to the data
+            source is to be made
+        errorMessage:
+          type: string
+          description: Gets or sets the error message of the service endpoint request
+            result.
+        result:
+          $ref: '#/components/schemas/JToken'
+        statusCode:
+          type: string
+          description: Gets or sets the status code of the service endpoint request
+            result.
+          enum:
+          - continue
+          - switchingProtocols
+          - ok
+          - created
+          - accepted
+          - nonAuthoritativeInformation
+          - noContent
+          - resetContent
+          - partialContent
+          - multipleChoices
+          - ambiguous
+          - movedPermanently
+          - moved
+          - found
+          - redirect
+          - seeOther
+          - redirectMethod
+          - notModified
+          - useProxy
+          - unused
+          - temporaryRedirect
+          - redirectKeepVerb
+          - badRequest
+          - unauthorized
+          - paymentRequired
+          - forbidden
+          - notFound
+          - methodNotAllowed
+          - notAcceptable
+          - proxyAuthenticationRequired
+          - requestTimeout
+          - conflict
+          - gone
+          - lengthRequired
+          - preconditionFailed
+          - requestEntityTooLarge
+          - requestUriTooLong
+          - unsupportedMediaType
+          - requestedRangeNotSatisfiable
+          - expectationFailed
+          - upgradeRequired
+          - internalServerError
+          - notImplemented
+          - badGateway
+          - serviceUnavailable
+          - gatewayTimeout
+          - httpVersionNotSupported
+          x-ms-enum:
+            name: HttpStatusCode
+            values:
+            - value: continue
+              description: ""
+            - value: switchingProtocols
+              description: ""
+            - value: ok
+              description: ""
+            - value: created
+              description: ""
+            - value: accepted
+              description: ""
+            - value: nonAuthoritativeInformation
+              description: ""
+            - value: noContent
+              description: ""
+            - value: resetContent
+              description: ""
+            - value: partialContent
+              description: ""
+            - value: multipleChoices
+              description: ""
+            - value: ambiguous
+              description: ""
+            - value: movedPermanently
+              description: ""
+            - value: moved
+              description: ""
+            - value: found
+              description: ""
+            - value: redirect
+              description: ""
+            - value: seeOther
+              description: ""
+            - value: redirectMethod
+              description: ""
+            - value: notModified
+              description: ""
+            - value: useProxy
+              description: ""
+            - value: unused
+              description: ""
+            - value: temporaryRedirect
+              description: ""
+            - value: redirectKeepVerb
+              description: ""
+            - value: badRequest
+              description: ""
+            - value: unauthorized
+              description: ""
+            - value: paymentRequired
+              description: ""
+            - value: forbidden
+              description: ""
+            - value: notFound
+              description: ""
+            - value: methodNotAllowed
+              description: ""
+            - value: notAcceptable
+              description: ""
+            - value: proxyAuthenticationRequired
+              description: ""
+            - value: requestTimeout
+              description: ""
+            - value: conflict
+              description: ""
+            - value: gone
+              description: ""
+            - value: lengthRequired
+              description: ""
+            - value: preconditionFailed
+              description: ""
+            - value: requestEntityTooLarge
+              description: ""
+            - value: requestUriTooLong
+              description: ""
+            - value: unsupportedMediaType
+              description: ""
+            - value: requestedRangeNotSatisfiable
+              description: ""
+            - value: expectationFailed
+              description: ""
+            - value: upgradeRequired
+              description: ""
+            - value: internalServerError
+              description: ""
+            - value: notImplemented
+              description: ""
+            - value: badGateway
+              description: ""
+            - value: serviceUnavailable
+              description: ""
+            - value: gatewayTimeout
+              description: ""
+            - value: httpVersionNotSupported
+              description: ""
+      description: Represents result of the service endpoint request.
+    ServiceEndpointType:
+      type: object
+      properties:
+        authenticationSchemes:
+          type: array
+          description: Authentication scheme of service endpoint type.
+          items:
+            $ref: '#/components/schemas/ServiceEndpointAuthenticationScheme'
+        dataSources:
+          type: array
+          description: Data sources of service endpoint type.
+          items:
+            $ref: '#/components/schemas/DataSource'
+        dependencyData:
+          type: array
+          description: Dependency data of service endpoint type.
+          items:
+            $ref: '#/components/schemas/DependencyData'
+        description:
+          type: string
+          description: Gets or sets the description of service endpoint type.
+        displayName:
+          type: string
+          description: Gets or sets the display name of service endpoint type.
+        endpointUrl:
+          $ref: '#/components/schemas/EndpointUrl'
+        helpLink:
+          $ref: '#/components/schemas/HelpLink'
+        helpMarkDown:
+          type: string
+          description: Gets or sets the help text shown at the endpoint create dialog.
+        iconUrl:
+          type: string
+          description: Gets or sets the icon url of service endpoint type.
+        inputDescriptors:
+          type: array
+          description: Input descriptor of service endpoint type.
+          items:
+            $ref: '#/components/schemas/InputDescriptor'
+        name:
+          type: string
+          description: Gets or sets the name of service endpoint type.
+        trustedHosts:
+          type: array
+          description: Trusted hosts of a service endpoint type.
+          items:
+            type: string
+        uiContributionId:
+          type: string
+          description: Gets or sets the ui contribution id of service endpoint type.
+      description: Represents type of the service endpoint.
+    VssJsonCollectionWrapper:
+      description: This class is used to serialized collections as a single JSON object
+        on the wire, to avoid serializing JSON arrays directly to the client, which
+        can be a security hole
+      allOf:
+      - $ref: '#/components/schemas/VssJsonCollectionWrapperBase'
+    VssJsonCollectionWrapperBase:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      description: ""
+  parameters:
+    api-Version:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0' to use
+        this version of the api.
+      required: true
+      schema:
+        type: string
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.0-preview.1'
+        to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the
+        token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.serviceendpoint: Grants the ability to read service endpoints.
+            vso.serviceendpoint_manage: Grants the ability to read, query and manage
+              service endpoints.
+            vso.serviceendpoint_query: Grants the ability to read and query service
+              endpoints.
+x-ms-vss-area: ServiceEndpoint
+x-ms-vss-resource-area-id: 1814ab31-2f4f-4a9f-8761-f4d77dc5a5d7
+x-ms-paths:
+  /{collection}/{project}/_apis/serviceendpoint/endpointproxy?endpointId={endpointId}:
+    post:
+      tags:
+      - Endpointproxy
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: endpointproxy
+      x-ms-vss-method: ExecuteServiceEndpointRequest
+      description: Proxy for a GET request defined by a service endpoint.
+      operationId: Endpointproxy_Execute Service Endpoint Request
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: collection
+        description: The name of the Azure DevOps collection.
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: Service endpoint request.
+        required: true
+        schema:
+          $ref: '#/definitions/ServiceEndpointRequest'
+      - in: path
+        name: project
+        description: Project ID or project name
+        required: true
+        type: string
+      - in: query
+        name: endpointId
+        description: Id of the service endpoint.
+        required: true
+        type: string
+      - $ref: '#/parameters/api-Version'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ServiceEndpointRequestResult'
+      security:
+      - oauth2:
+        - vso.serviceendpoint_query
+      x-ms-examples:
+        Execute service endpoint request:
+          $ref: ./httpExamples/endpointproxy/POST__ExecuteServiceEndpointRequestAsync-onprem.json
+  /{collection}/{project}/_apis/serviceendpoint/endpoints?:
+    get:
+      tags:
+      - Endpoints
+      x-ms-docs-override-version: "7.0"
+      x-ms-vss-resource: endpoints
+      x-ms-vss-method: GetServiceEndpoints
+      description: Get the service endpoints.
+      operationId: Endpoints_Get Service Endpoints
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: collection
+        description: The name of the Azure DevOps collection.
+        required: true
+        type: string
+      - in: path
+        name: project
+        description: Project ID or project name
+        required: true
+        type: string
+      - in: query
+        name: type
+        description: Type of the service endpoints.
+        required: false
+        type: string
+      - in: query
+        name: authSchemes
+        description: Authorization schemes used for service endpoints.
+        required: false
+        type: string
+        format: array (string)
+      - in: query
+        name: endpointIds
+        description: Ids of the service endpoints.
+        required: false
+        type: string
+        format: array (uuid)
+      - in: query
+        name: owner
+        description: Owner for service endpoints.
+        required: false
+        type: string
+      - in: query
+        name: includeFailed
+        description: Failed flag for service endpoints.
+        required: false
+        type: boolean
+      - in: query
+        name: includeDetails
+        description: Flag to include more details for service endpoints. This is for
+          internal use only and the flag will be treated as false for all other requests
+        required: false
+        type: boolean
+      - $ref: '#/parameters/api-Version'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ServiceEndpoint'
+      security:
+      - oauth2:
+        - vso.serviceendpoint
+      x-ms-examples:
+        Get service endpoints:
+          $ref: ./httpExamples/endpoints/ListEndpoints-onprem.json
+x-ms-parameterized-host:
+  hostTemplate: '{instance}'
+  parameters:
+  - name: instance
+    description: TFS server name ({server:port})
+    required: true
+    type: string
+    in: path
